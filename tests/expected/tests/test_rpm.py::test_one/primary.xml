@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<metadata xmlns="http://linux.duke.edu/metadata/common" xmlns:rpm="http://linux.duke.edu/metadata/rpm" packages="1">
+  <package type="rpm">
+    <name>sudo-setuid</name>
+    <arch>x86_64</arch>
+    <version epoch="0" ver="1.8.17p1" rel="34" />
+    <checksum type="sha256" pkgid="YES">9268854320030a2b27654325b585ff85551386d8d11ba68336bbf982d80ce201</checksum>
+    <summary>setuid components for the sudo package.</summary>
+    <description>setuid components for the sudo package.</description>
+    <packager>Koji</packager>
+    <url>http://www.sudo.ws/dist/sudo-1.8.17p1.tar.gz</url>
+    <time file="1717163107" build="1466775784" />
+    <size package="56464" installed="130280" archive="130532" />
+    <location href="sudo-setuid-1.8.17p1-34.x86_64.rpm" />
+    <format>
+      <rpm:license>ISC MIT-Opengroup</rpm:license>
+      <rpm:vendor>Koji</rpm:vendor>
+      <rpm:group>Default</rpm:group>
+      <rpm:buildhost>kojibuild03</rpm:buildhost>
+      <rpm:sourcerpm>sudo-1.8.17p1-34.src.rpm</rpm:sourcerpm>
+      <rpm:header-range start="4392" end="6924" />
+      <rpm:provides>
+        <rpm:entry name="sudo-setuid" flags="EQ" epoch="0" ver="1.8.17p1" rel="34" />
+        <rpm:entry name="sudo-setuid(x86-64)" flags="EQ" epoch="0" ver="1.8.17p1" rel="34" />
+      </rpm:provides>
+      <rpm:requires>
+        <rpm:entry name="libsudo_util.so.0()(64bit)" />
+        <rpm:entry name="libutil.so.1()(64bit)" />
+        <rpm:entry name="libutil.so.1(GLIBC_2.2.5)(64bit)" />
+        <rpm:entry name="libc.so.6(GLIBC_2.14)(64bit)" />
+      </rpm:requires>
+    </format>
+    <file>/usr/bin/sudo</file>
+  </package>
+</metadata>

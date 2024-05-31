@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<otherdata xmlns="http://linux.duke.edu/metadata/other" packages="1">
+  <package pkgid="9268854320030a2b27654325b585ff85551386d8d11ba68336bbf982d80ce201" name="sudo-setuid" arch="x86_64">
+    <version epoch="0" ver="1.8.17p1" rel="34" />
+  </package>
+</otherdata>

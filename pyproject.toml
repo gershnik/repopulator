@@ -1,0 +1,64 @@
+[build-system]
+requires = [
+    "setuptools>=61"
+]
+build-backend = "setuptools.build_meta"
+
+#[tool.setuptools]
+#include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "repopulator.version.VERSION"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project]
+name = "repopulator"
+dynamic = ["version"]
+description="Portably create software repositories for different operating systems"
+readme="README.md"
+authors= [
+    { name = 'Eugene Gershnik', email='gershnik@hotmail.com'}
+]
+requires-python = ">=3.8"
+dependencies = [
+    "arpy==2.3.0",
+    "cryptography==42.0.7"
+]
+keywords = ["apt", "rpm"]
+license = {text = "BSD-3-Clause"}
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    
+    "License :: OSI Approved :: BSD License",
+    
+    "Operating System :: OS Independent",
+
+    "Environment :: Console",
+
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    
+    "Topic :: System",
+    "Topic :: System :: Archiving :: Packaging",
+    "Topic :: System :: Software Distribution",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+
+    "Typing :: Typed"
+]
+
+[project.urls]
+Homepage = 'https://github.com/gershnik/repopulator'
+
+
+
