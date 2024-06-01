@@ -20,6 +20,9 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy-3.8", "pypy-3.9"]
+        exclude:
+          - os: windows-latest
+            python-version: "pypy-3.8" #no cryptography available there
 
     env:
       PGP_KEY_NAME: ${{ secrets.PGP_KEY_NAME }}
