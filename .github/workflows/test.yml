@@ -33,7 +33,7 @@ jobs:
         shell: bash
         run: |
           echo -n "${{ secrets.PGP_KEY }}" | base64 --decode | gpg --import --batch --pinentry-mode=loopback
-          echo -n "${{ secrets.BSD_KEY }}" > ${{ github.workspace }}/bsd-key
+          echo -n "${{ secrets.BSD_KEY }}" > $GITHUB_WORKSPACE/bsd-key
 
       - name: Set up Python
         uses: actions/setup-python@v5
