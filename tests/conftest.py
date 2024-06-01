@@ -62,7 +62,7 @@ def binaries_path(request: pytest.FixtureRequest):
 
 @pytest.fixture
 def output_path(request: pytest.FixtureRequest):
-    path: Path = PACKAGE_PATH / 'output' / request.node.nodeid
+    path: Path = PACKAGE_PATH / 'output' / (request.node.nodeid).replace('::', '.')
     if path.exists():
         shutil.rmtree(path)
     path.mkdir(parents=True)
@@ -73,7 +73,7 @@ def output_path(request: pytest.FixtureRequest):
 
 @pytest.fixture
 def expected_path(request) -> Path:
-    path: Path = PACKAGE_PATH / 'expected' / request.node.nodeid
+    path: Path = PACKAGE_PATH / 'expected' / (request.node.nodeid).replace('::', '.')
     return path
 
 @pytest.fixture(scope='session')

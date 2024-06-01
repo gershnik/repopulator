@@ -24,16 +24,16 @@ jobs:
     env:
       PGP_KEY_NAME: ${{ secrets.PGP_KEY_NAME }}
       PGP_KEY_PASSWD: ${{ secrets.PGP_KEY_PASSWD }}
-      BSD_KEY: $HOME/.ssh/bsd-key
+      BSD_KEY: ${{ github.workspace }}/bsd-key
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Preprare Keys
+        shell: bash
         run: |
           echo -n "${{ secrets.PGP_KEY }}" | base64 --decode | gpg --import --batch --pinentry-mode=loopback
-          mkdir -p $HOME/.ssh
-          echo -n "${{ secrets.BSD_KEY }}" > $HOME/.ssh/bsd-key
+          echo -n "${{ secrets.BSD_KEY }}" > ${{ github.workspace }}/bsd-key
 
       - name: Set up Python
         uses: actions/setup-python@v5
