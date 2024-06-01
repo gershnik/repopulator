@@ -32,6 +32,7 @@ jobs:
       - name: Preprare Keys
         run: |
           echo -n "${{ secrets.PGP_KEY }}" | base64 --decode | gpg --import --batch --pinentry-mode=loopback
+          mkdir -p $HOME/.ssh
           echo -n "${{ secrets.BSD_KEY }}" > $HOME/.ssh/bsd-key
 
       - name: Set up Python
