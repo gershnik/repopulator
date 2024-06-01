@@ -44,7 +44,7 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture 
 def binaries_path(request: pytest.FixtureRequest):
     binaries = PACKAGE_PATH / 'output/binaries'
-    binaries.mkdir(exist_ok=True)
+    binaries.mkdir(exist_ok=True, parents=True)
     mark = request.node.get_closest_marker("download")
     if mark is None:
         return binaries
