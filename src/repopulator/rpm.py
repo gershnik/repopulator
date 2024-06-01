@@ -532,7 +532,8 @@ class RpmRepo:
         tree = ET.ElementTree(repomd)
         indentTree(tree)
         repomdPath = repodata / 'repomd.xml'
-        tree.write(repomdPath, encoding="utf-8", xml_declaration=True)
+        with open(repomdPath, 'wb') as f:
+            tree.write(f, encoding="utf-8", xml_declaration=True)
         os.utime(repomdPath, (now.timestamp(), now.timestamp()))
 
         signer.signExternal(repomdPath, repomdPath.parent / (repomdPath.name + '.asc'))
@@ -552,7 +553,8 @@ class RpmRepo:
         tree = ET.ElementTree(metadata)
         indentTree(tree)
         path = repodata / 'primary.xml'
-        tree.write(path, encoding="utf-8", xml_declaration=True)
+        with open(path, 'wb') as f:
+            tree.write(f, encoding="utf-8", xml_declaration=True)
         return path
     
     def __exportFilelists(self, repodata: Path) -> Path:
@@ -565,7 +567,8 @@ class RpmRepo:
         tree = ET.ElementTree(filelists)
         indentTree(tree)
         path = repodata / 'filelists.xml'
-        tree.write(path, encoding="utf-8", xml_declaration=True)
+        with open(path, 'wb') as f:
+            tree.write(f, encoding="utf-8", xml_declaration=True)
         return path
     
     def __exportOther(self, repodata: Path) -> Path:
@@ -578,7 +581,8 @@ class RpmRepo:
         tree = ET.ElementTree(other)
         indentTree(tree)
         path = repodata / 'other.xml'
-        tree.write(path, encoding="utf-8", xml_declaration=True)
+        with open(path, 'wb') as f:
+            tree.write(f, encoding="utf-8", xml_declaration=True)
         return path
 
     
@@ -606,7 +610,7 @@ class RpmRepo:
         open_checksum.set('type', 'sha256')
         open_checksum.text = open_digest.hexdigest()
         location = ET.SubElement(parent, 'location')
-        location.set('href', str(gzPath.relative_to(root)))
+        location.set('href', gzPath.relative_to(root).as_posix())
         ET.SubElement(parent, 'timestamp').text = str(int(st.st_mtime))
         ET.SubElement(parent, 'size').text = str(st.st_size)
         ET.SubElement(parent, 'open-size').text = str(open_st.st_size)

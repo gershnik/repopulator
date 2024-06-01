@@ -245,7 +245,7 @@ class AptDistribution:
                 for packageIndex in packageIndices:
                     with open(packageIndex, "rb") as packFile:
                         digest = file_digest(packFile, hashFunc)
-                    f.write(f' {digest.hexdigest()} {packageIndex.stat().st_size: >16} {packageIndex.relative_to(distDir)}\n'.encode())
+                    f.write(f' {digest.hexdigest()} {packageIndex.stat().st_size: >16} {packageIndex.relative_to(distDir).as_posix()}\n'.encode())
         
         os.utime(Release_path, (now.timestamp(), now.timestamp()))
 
