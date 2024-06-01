@@ -2,15 +2,15 @@
 
 # repolulator
 
-A portable Python library to generate binary software repositories (APT, YUM/DNF etc.) 
-
 [![License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Language](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org)
 [![python](https://img.shields.io/badge/python->=3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 
+A portable Python library to generate binary software repositories (APT, YUM/DNF etc.) 
+
 ## Purpose
 
-Ever needed to build an APT package repository on Fedora? Or perhaps a DNF repository on Debian? How about FreeBSD repository on Windows or Mac? This library allows you to do all these things and more.
+Ever needed to build an APT package repository on Fedora? Or perhaps a DNF repository on Debian? How about FreeBSD repository on Windows or Mac? This library allows you to do all these things and more. And yes, you can do it even on Windows if you are so inclined for some reason.
 
 All binary package repositories have their own tools that usually range from being "non-portable" to "portable with lots of effort to limited platforms only". On the other hand it is often convenient to build software packages in a Map/Reduce fashion where a single host collects multiple packages built for different platforms to produce binary repositories. Such host will necessarily need to be able to build repositories for "foreign" packages. This library is an attempt to enable such scenario.
 
@@ -32,6 +32,16 @@ pip install repopulator
 ```
 
 ### Sample Usage
+
+The basic outline of the usage is the same for all repository types:
+- Create the repository object
+- Add packages to it. These must be files somewhere on your filesystem *which is not their final destination*
+- Some repositories like APT have additional subdivisions (distributions for APT). If so you need to create them and assign packages added to repository to them
+- Export the repository to the destination folder. This overwrites any repository already there (but not any extra files you might have). 
+
+That's all there is to it. Note that there is no ability to "load" existing repositories and change them. This is deliberate. If you want to do incremental repository maintenance it is far easier to keep necessary info yourself in your own format than to parse it out of various repositories. 
+
+Currently repositories are required to be signed and you need to provide signing info for export (see examples below). This requirement might be relaxed in future versions.
 
 #### APT
 
