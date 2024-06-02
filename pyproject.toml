@@ -23,7 +23,10 @@ dependencies = [
     "arpy==2.3.0",
     "cryptography==42.0.7"
 ]
-keywords = ["apt", "rpm"]
+keywords = [
+    "cross-platform", "apt-repository", "yum-repositories", 
+    "freebsd-packages", "rpm-repositories", "apt-repo", "yum-repos"
+]
 license = {text = "BSD-3-Clause"}
 classifiers = [
     "Development Status :: 3 - Alpha",
