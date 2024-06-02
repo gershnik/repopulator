@@ -25,7 +25,7 @@ jobs:
 
     - name: Setup Python environment
       run: |
-        pip3 install -r requirements.txt
+        pip3 install build
 
     - name: Build Source Distribution
       run: |

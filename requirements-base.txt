@@ -1,4 +1,0 @@
-python-dotenv==1.0.1
-arpy==2.3.0
-cryptography==42.0.7
-#rpmfile==2.0.0

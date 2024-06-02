@@ -1,4 +1,7 @@
-build
-pytest
+#these are dev requirements, not distribution ones
 
--r 'requirements-base.txt'
+build
+twine
+pytest
+python-dotenv
+
