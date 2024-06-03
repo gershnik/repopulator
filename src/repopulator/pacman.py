@@ -21,12 +21,12 @@ from datetime import datetime, timezone
 from .pgp_signer import PgpSigner
 from .util import NoPublicConstructor, VersionKey, file_digest, lowerBound
 
-from typing import IO, Any, BinaryIO, Generator, KeysView, Mapping, Optional, Sequence
+from typing import IO, Any, BinaryIO, KeysView, Mapping, Optional, Sequence
 
 class PacmanPackage(metaclass=NoPublicConstructor):
     @classmethod
     def _load(cls, srcPath: Path, repoFilename: str) -> PacmanPackage:
-        sigPath = (srcPath.parent) / (srcPath.name + '.sig')
+        sigPath = srcPath.parent / (srcPath.name + '.sig')
         if not sigPath.exists():
             sigPath = None
         
@@ -53,20 +53,21 @@ class PacmanPackage(metaclass=NoPublicConstructor):
             if info is None:
                 raise Exception(f'{srcPath} is not a valid Pacman package: no .PKGINFO file')
 
-        desc = {}
-        desc['FILENAME'] = repoFilename
-        desc['NAME'] = info['pkgname']
-        desc['BASE'] = info['pkgbase']
-        desc['VERSION'] = info['pkgver']
-        desc['DESC'] = info['pkgdesc']
-        desc['CSIZE'] = str(st.st_size)
-        desc['ISIZE'] = info['size']
-        desc['SHA256SUM'] = digest
-        desc['URL'] = info['url']
-        desc['LICENSE'] = info['license']
-        desc['ARCH'] = info['arch']
-        desc['BUILDDATE'] = info['builddate']
-        desc['PACKAGER'] = info['packager']
+        desc = {
+            'FILENAME': repoFilename,
+            'NAME': info['pkgname'],
+            'BASE': info['pkgbase'],
+            'VERSION': info['pkgver'],
+            'DESC': info['pkgdesc'],
+            'CSIZE': str(st.st_size),
+            'ISIZE': info['size'],
+            'SHA256SUM': digest,
+            'URL': info['url'],
+            'LICENSE': info['license'],
+            'ARCH': info['arch'],
+            'BUILDDATE': info['builddate'],
+            'PACKAGER': info['packager']
+        }
         if (replaces := info.get('replace')) is not None:
             desc['REPLACES'] = replaces
         if (conflicts := info.get('conflict')) is not None:
@@ -256,7 +257,8 @@ class PacmanRepo:
         if not keepExpanded:
             shutil.rmtree(expanded)
 
-    def __collectArchive(self, srcDir: Path, destDir: Path, signer: PgpSigner, now: datetime,
+    @staticmethod
+    def __collectArchive(srcDir: Path, destDir: Path, signer: PgpSigner, now: datetime,
                          stem: str, packages: Sequence[PacmanPackage], filenames: Sequence[str]):
         def norm(info: tarfile.TarInfo):
             info.uid = 0
@@ -282,7 +284,8 @@ class PacmanRepo:
         signer.binarySignExternal(tarpath, tarsigpath)
         (destDir / (stem + '.sig')).symlink_to(tarsigpath.name)
 
-    def __copyFiles(self, destDir: Path, signer: PgpSigner, packages: Sequence[PacmanPackage]):
+    @staticmethod
+    def __copyFiles(destDir: Path, signer: PgpSigner, packages: Sequence[PacmanPackage]):
 
         for existingFile in destDir.glob('*.pkg.tar.zst'):
             existingFile.unlink()
