@@ -278,10 +278,13 @@ class PacmanRepo:
                         packageDir = Path(f'{package.name}-{package.versionStr}')
                         for filename in filenames:
                             archive.add(srcDir / packageDir / filename, arcname=(packageDir / filename).as_posix(), filter=norm)
+        PacmanRepo.__removeExisting(destDir / stem)
         (destDir / stem).symlink_to(tarpath.name)
 
         tarsigpath = tarpath.parent / (tarpath.name + '.sig')
+        PacmanRepo.__removeExisting(tarsigpath)
         signer.binarySignExternal(tarpath, tarsigpath)
+        PacmanRepo.__removeExisting(destDir / (stem + '.sig'))
         (destDir / (stem + '.sig')).symlink_to(tarsigpath.name)
 
     @staticmethod
@@ -299,6 +302,14 @@ class PacmanRepo:
                 shutil.copy2(sigPath, destSigPath)
             else:
                 signer.binarySignExternal(destPath, destSigPath)
+
+    @staticmethod
+    def __removeExisting(path: Path):
+        if path.exists():
+            if path.is_dir():
+                shutil.rmtree(path)
+            else:
+                path.unlink()
 
 
 
