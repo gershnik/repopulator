@@ -7,7 +7,7 @@
 [![python](https://img.shields.io/badge/python->=3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 [![pypi](https://img.shields.io/pypi/v/repopulator)](https://pypi.org/project/repopulator)
 
-A portable Python library to generate binary software repositories (APT, YUM/DNF etc.) 
+A portable Python library to generate binary software repositories (APT, YUM/DNF, Pacman etc.) 
 
 ## Purpose
 
@@ -24,6 +24,7 @@ All binary package repositories have their own tools that usually range from bei
 
 * APT
 * RPM
+* Pacman
 * FreeBSD pkg
 
 ## Installing
@@ -80,6 +81,23 @@ from pathlib import Path
 repo = RpmRepo()
 repo.addPackage(Path('/path/to/awesome-3.14-1.el9.x86_64.rpm'))
 repo.addPackage(Path('/path/to/awesome-3.14-1.el9.aarch64.rpm'))
+
+signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
+
+repo.export(Path('/path/of/new/repo'), signer)
+
+```
+
+#### Pacman
+
+```python
+from repopulator import PacmanRepo, PgpSigner
+from pathlib import Path
+
+repo = PacmanRepo('myrepo')
+# if .sig file is present next to the .zst file it will be used for signature
+# otherwise new signature will be generated at export time
+repo.addPackage(Path('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst'))
 
 signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
 

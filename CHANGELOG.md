@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+- Pacman repositories are now supported
+
 ## [0.2] - 2024-06-01
 
 ### Added
