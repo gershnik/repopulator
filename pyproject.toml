@@ -21,11 +21,13 @@ authors= [
 requires-python = ">=3.8"
 dependencies = [
     "arpy==2.3.0",
-    "cryptography==42.0.7"
+    "cryptography==42.0.7",
+    "zstandard[cffi]==0.22.0"
 ]
 keywords = [
     "cross-platform", "apt-repository", "yum-repositories", 
-    "freebsd-packages", "rpm-repositories", "apt-repo", "yum-repos"
+    "freebsd-packages", "rpm-repositories", "apt-repo", "yum-repos",
+    "pacman-repo"
 ]
 license = {text = "BSD-3-Clause"}
 classifiers = [

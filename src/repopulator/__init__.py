@@ -16,6 +16,7 @@ from .util import VersionKey
 from .apt import AptPackage, AptDistribution, AptRepo
 from .rpm import RpmPackage, RpmRepo, RpmVersion
 from .freebsd import FreeBSDPackage, FreeBSDRepo
+from .pacman import PacmanPackage, PacmanRepo
 
 __all__ = [
     'PgpSigner', 
@@ -28,6 +29,8 @@ __all__ = [
     'RpmRepo',
     'RpmVersion',
     'FreeBSDPackage',
-    'FreeBSDRepo'
+    'FreeBSDRepo',
+    'PacmanPackage',
+    'PacmanRepo'
 ]
 

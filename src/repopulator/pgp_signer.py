@@ -15,7 +15,17 @@ class PgpSigner:
         
     def signExternal(self, path: Path, sigPath: Path):
         subprocess.run(['gpg', '--batch', '--quiet', '--pinentry-mode=loopback',
-                        '--default-key', self.keyName, '-abs',  
+                        '--armor', '--detach-sign', '--sign',
+                        '--default-key', self.keyName,  
+                        '--passphrase', self.keyPwd,
+                        '--digest-algo', 'sha512',
+                        '-o', sigPath, path
+                        ], check=True)
+        
+    def binarySignExternal(self, path: Path, sigPath: Path):
+        subprocess.run(['gpg', '--batch', '--quiet', '--pinentry-mode=loopback',
+                        '--detach-sign', '--sign', 
+                        '--default-key', self.keyName, 
                         '--passphrase', self.keyPwd,
                         '--digest-algo', 'sha512',
                         '-o', sigPath, path
@@ -23,7 +33,8 @@ class PgpSigner:
         
     def signInline(self, path: Path, outPath: Path):
         subprocess.run(['gpg', '--batch', '--quiet', '--pinentry-mode=loopback', 
-                        '--default-key', self.keyName, '-abs', '--clearsign', 
+                        '--armor', '--detach-sign', '--sign', '--clearsign', 
+                        '--default-key', self.keyName,
                         '--passphrase', self.keyPwd,
                         '--digest-algo', 'sha512',
                         '-o', outPath, path
