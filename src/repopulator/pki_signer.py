@@ -26,32 +26,40 @@ class PkiSigner:
         with open(privKeyPath, 'rb') as keyFile:
             key = keyFile.read()
             pwd = privKeyPasswd.encode() if privKeyPasswd is not None else None
-            self.key = crypto_serialization.load_pem_private_key(key, pwd, openssl_backend)
+            self.__key = crypto_serialization.load_pem_private_key(key, pwd, openssl_backend)
             
         
-        
-    def signBSD(self, path: Path, sigPath: Path):
+    def getFreeBSDSignature(self, path: Path):
         with open(path, 'rb') as dataFile:
-            if isinstance(self.key, rsa.RSAPrivateKey):
+            if isinstance(self.__key, rsa.RSAPrivateKey):
                 digest = file_digest(dataFile, hashlib.sha256).hexdigest()
             else:
                 digest = file_digest(dataFile, hashlib.blake2b).hexdigest()
 
-        if isinstance(self.key, rsa.RSAPrivateKey):
+        if isinstance(self.__key, rsa.RSAPrivateKey):
             padding = crypto_padding.PKCS1v15()
             hashVal = crypto_hashes.SHA256()
-            signature = self.key.sign(digest.encode(), padding, hashVal)
-        elif isinstance(self.key, ec.EllipticCurvePrivateKey):
+            signature = self.__key.sign(digest.encode(), padding, hashVal)
+        elif isinstance(self.__key, ec.EllipticCurvePrivateKey):
             algo = ec.ECDSA(crypto_hashes.SHA256())
-            signature = self.key.sign(digest.encode(), algo)
+            signature = self.__key.sign(digest.encode(), algo)
             signature = b'$PKGSIGN:ecdsa' + signature
-        elif isinstance(self.key, ed25519.Ed25519PrivateKey):
-            signature = self.key.sign(digest.encode())
+        elif isinstance(self.__key, ed25519.Ed25519PrivateKey):
+            signature = self.__key.sign(digest.encode())
             signature = b'$PKGSIGN:eddsa' + signature
         else:
             raise ValueError('The private key type is not currently supported for BSD signatures')
         
-        
-        with open(sigPath, 'wb') as sigFile:
-            sigFile.write(signature)
-    
+        return signature
+
+    def getAlpineSignature(self, path: Path):
+        if not isinstance(self.__key, rsa.RSAPrivateKey):
+            raise Exception('The private key type is not currently supported for Alpine signatures')
+
+        data = path.read_bytes()
+
+        padding = crypto_padding.PKCS1v15()
+        hashVal = crypto_hashes.SHA1()
+        signature = self.__key.sign(data, padding, hashVal)
+        return signature
+                    

@@ -184,7 +184,9 @@ class FreeBSDRepo:
 
     @staticmethod
     def __archive(directory: Path, filename: str, signer: PkiSigner, now: datetime):
-        signer.signBSD(directory / filename, directory / 'signature')
+        signature = signer.getFreeBSDSignature(directory / filename)
+        with open(directory / 'signature', 'wb') as sigFile:
+            sigFile.write(signature)
 
 
         def norm(info: tarfile.TarInfo):
