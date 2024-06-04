@@ -25,6 +25,7 @@ All binary package repositories have their own tools that usually range from bei
 * APT
 * RPM
 * Pacman
+* Alpine apk
 * FreeBSD pkg
 
 ## Installing
@@ -102,6 +103,24 @@ repo.addPackage(Path('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst'))
 signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
 
 repo.export(Path('/path/of/new/repo'), signer)
+
+```
+
+#### Alpine apk
+
+```python
+from repopulator import PacmanRepo, PkiSigner
+from pathlib import Path
+
+repo = PacmanRepo('my repo description')
+epo.addPackage(Path('/path/to/awesome-3.14-r0.apk'))
+
+signer = PkiSigner(Path('/path/to/private/key'), 'password_or_None')
+
+# The last argument is the 'name' of the signer to use
+# Unlike `pkg` tool we do not parse it out of private key filename
+# and do not require you to name key files in certain way
+repo.export(Path('/path/of/new/repo'), signer, 'mymail@mydomain.com-1234abcd')
 
 ```
 

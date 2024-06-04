@@ -27,7 +27,7 @@ dependencies = [
 keywords = [
     "cross-platform", "apt-repository", "yum-repositories", 
     "freebsd-packages", "rpm-repositories", "apt-repo", "yum-repos",
-    "pacman-repo"
+    "pacman-repo", "alpine-repository"
 ]
 license = {text = "BSD-3-Clause"}
 classifiers = [
