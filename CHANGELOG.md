@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [0.4] - 2024-06-04
+
 ### Added
 - Alpine apk repositories are now supported
 
@@ -20,3 +22,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 [0.2]: https://github.com/gershnik/repopulator/releases/0.2
 [0.3]: https://github.com/gershnik/repopulator/releases/0.3
+[0.4]: https://github.com/gershnik/repopulator/releases/0.4
