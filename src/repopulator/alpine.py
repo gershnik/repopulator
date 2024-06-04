@@ -29,7 +29,7 @@ from typing import IO, Any, KeysView, Mapping, Optional, Sequence
 
 class AlpinePackage(metaclass=NoPublicConstructor):
     @classmethod
-    def _load(cls, srcPath: Path, forceArch:Optional[str]) -> AlpinePackage:
+    def _load(cls, srcPath: Path, forceArch: Optional[str]) -> AlpinePackage:
 
         st = srcPath.stat()
 
@@ -181,7 +181,7 @@ class AlpineRepo:
         self.__desc = desc
         self.__packages: dict[str, list[AlpinePackage]] = {}
 
-    def addPackage(self, path: Path, forceArch: Optional[str]=None) -> AlpinePackage:
+    def addPackage(self, path: Path, forceArch: Optional[str] = None) -> AlpinePackage:
         package = AlpinePackage._load(path, forceArch)
         if package.arch == 'noarch':
             raise Exception('package has "noarch" architecture, you must use forceArch parameter to specify which repo architecture to assign it to')
