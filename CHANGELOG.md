@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.6] - 2024-06-05
 
+### Added
+- Documentation for all of public API
+
+### Changed
+- Naming convention changed to conform to PEP standards
+
 ## [0.5] - 2024-06-05
 
 ### Fixed
