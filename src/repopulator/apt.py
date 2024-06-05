@@ -278,7 +278,7 @@ class AptDistribution:
         with open(Packages_path, 'rb') as f_in:
             with open(Packages_gz_path, 'wb') as f_out:
                 with gzip.GzipFile(filename=Packages_path.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
-                    shutil.copyfileobj(f_in, f_out)
+                    shutil.copyfileobj(f_in, f_zip)
         os.utime(Packages_gz_path, (now.timestamp(), now.timestamp()))
 
         return (Packages_path, Packages_gz_path)

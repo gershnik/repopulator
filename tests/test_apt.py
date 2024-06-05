@@ -39,6 +39,7 @@ def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     compare_files(output_path / 'pool/wget_1.10-2ubuntu0.1_sparc.deb', binaries_path / 'wget_1.10-2ubuntu0.1_sparc.deb')
     compare_files(output_path / 'dists/blah/Release', expected_path / 'dists/blah/Release', should_populate)
     compare_files(output_path / 'dists/blah/main/binary-sparc/Packages', expected_path / 'dists/blah/main/binary-sparc/Packages', should_populate)
+    compare_files(output_path / 'dists/blah/main/binary-sparc/Packages.gz', expected_path / 'dists/blah/main/binary-sparc/Packages.gz', should_populate)
 
 
     
