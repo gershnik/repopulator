@@ -1,0 +1,34 @@
+site_name: repopulator
+repo_url: https://github.com/gershnik/repopulator
+site_description: A portable Python library to generate binary software repositories
+copyright: Copyright (c) 2024, Eugene Gershnik
+
+theme:
+  name: readthedocs
+
+#readthedocs
+#material
+#cosmo
+
+watch:
+  - src/repopulator
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            paths: [src]
+            docstring_style: google
+            docstring_section_style: list
+            show_source: false
+            show_docstring_classes: true
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            line_length: 60
+
+markdown_extensions:
+  - toc
+  - pymdownx.magiclink
