@@ -119,7 +119,11 @@ class PacmanPackage(metaclass=NoPublicConstructor):
     
     @property
     def fields(self) -> Mapping[str, Any]:
-        """Information about package stored in the repository index"""
+        """Information about package stored in the repository index
+
+        See https://repod.archlinux.page/repositories/sync_database.html#desc-v2
+        for information about available fields
+        """
         return self.__desc
     
     @property

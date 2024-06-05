@@ -35,6 +35,10 @@ All binary package repositories have their own tools that usually range from bei
 pip install repopulator
 ```
 
+### Documentation
+
+Reference for public API is available at https://gershnik.github.io/repopulator/
+
 ### Sample Usage
 
 The basic outline of the usage is the same for all repository types:
