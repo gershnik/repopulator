@@ -19,19 +19,20 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, VersionKey, file_digest, lowerBound
+from .util import NoPublicConstructor, VersionKey, file_digest, lower_bound
 
 from typing import IO, Any, BinaryIO, KeysView, Mapping, Optional, Sequence
 
 class PacmanPackage(metaclass=NoPublicConstructor):
+    """A package in PacmanRepo"""
     @classmethod
-    def _load(cls, srcPath: Path, repoFilename: str) -> PacmanPackage:
-        sigPath = srcPath.parent / (srcPath.name + '.sig')
-        if not sigPath.exists():
-            sigPath = None
+    def _load(cls, src_path: Path, repo_filename: str) -> PacmanPackage:
+        sig_path = src_path.parent / (src_path.name + '.sig')
+        if not sig_path.exists():
+            sig_path = None
         
-        st = srcPath.stat()
-        with open(srcPath, mode='rb') as pkg:
+        st = src_path.stat()
+        with open(src_path, mode='rb') as pkg:
             digest = file_digest(pkg, hashlib.sha256).hexdigest()
             pkg.seek(0, 0)
             decomp = zstandard.ZstdDecompressor()
@@ -51,10 +52,10 @@ class PacmanPackage(metaclass=NoPublicConstructor):
                                 files.append(member.name)
 
             if info is None:
-                raise Exception(f'{srcPath} is not a valid Pacman package: no .PKGINFO file')
+                raise Exception(f'{src_path} is not a valid Pacman package: no .PKGINFO file')
 
         desc = {
-            'FILENAME': repoFilename,
+            'FILENAME': repo_filename,
             'NAME': info['pkgname'],
             'BASE': info['pkgbase'],
             'VERSION': info['pkgver'],
@@ -84,14 +85,14 @@ class PacmanPackage(metaclass=NoPublicConstructor):
             desc['CHECKDEPENDS'] = checkdepend
         
 
-        return cls._create(srcPath, sigPath, desc, files)
+        return cls._create(src_path, sig_path, desc, files)
     
-    def __init__(self, srcPath: Path, sigPath: Optional[Path], desc: dict[str, Any], files: list[str]):
+    def __init__(self, src_path: Path, sig_path: Optional[Path], desc: dict[str, Any], files: list[str]):
         """Internal do not use.
-        Use PacmanRepo.addPackage to create instances of this class
+        Use [add_package][repopulator.PacmanRepo.add_package] to create instances of this class
         """
-        self.__srcPath = srcPath
-        self.__sigPath = sigPath
+        self.__srcPath = src_path
+        self.__sigPath = sig_path
         self.__desc = desc
         self.__files = files
         self.__versionKey = VersionKey.parse(self.__desc['VERSION'])
@@ -102,35 +103,42 @@ class PacmanPackage(metaclass=NoPublicConstructor):
         return self.__desc['NAME']
     
     @property 
-    def versionStr(self) -> str:
+    def version_str(self) -> str:
+        """Version of the package as a string"""
         return self.__desc['VERSION']
     
     @property
-    def versionKey(self) -> VersionKey:
+    def version_key(self) -> VersionKey:
+        """Version of the package as a properly comparable key"""
         return self.__versionKey
     
     @property
     def arch(self) -> str:
+        """Architecture of the package"""
         return self.__desc['ARCH']
     
     @property
     def fields(self) -> Mapping[str, Any]:
+        """Information about package stored in the repository index"""
         return self.__desc
     
     @property
-    def repoFilename(self) -> str:
+    def repo_filename(self) -> str:
+        """Filename of the package when stored inside the repository"""
         return self.__desc['FILENAME']
     
     @property
-    def srcPath(self) -> Path:
+    def src_path(self) -> Path:
+        """Path to the original package file"""
         return self.__srcPath
     
     @property
-    def sigPath(self) -> Optional[Path]:
+    def sig_path(self) -> Optional[Path]:
+        """Path to the package signature file, if present"""
         return self.__sigPath
     
 
-    def _exportDesc(self, fp: BinaryIO):
+    def _export_desc(self, fp: BinaryIO):
         for key, value in self.__desc.items():
             fp.write(f'%{key}%\n'.encode())
             if isinstance(value, str):
@@ -141,7 +149,7 @@ class PacmanPackage(metaclass=NoPublicConstructor):
                 fp.write(f'{val}\n'.encode())
             fp.write(b'\n')
 
-    def _exportFiles(self, fp: BinaryIO):
+    def _export_files(self, fp: BinaryIO):
         fp.write(b'%FILES%\n')
         for file in self.__files:
             fp.write(file.encode())
@@ -174,42 +182,75 @@ class PacmanPackage(metaclass=NoPublicConstructor):
         return headers
 
 
-
-
-
 class PacmanRepo:
+    """Generates Pacman repositories"""
+
     def __init__(self, name: str):
+        """Constructor for AlpineRepo class
+
+        Args:
+            name: repository name.
+        """
         self.__name = name
         self.__packages: dict[str, list[PacmanPackage]] = {}
 
-    def addPackage(self, path: Path) -> PacmanPackage:
+    def add_package(self, path: Path) -> PacmanPackage:
+        """Adds a package to the repository
+
+        Args:
+            path: the path to `.zst` file for the package. If a matching `.zst.sig` file exists alongside it,
+                it will be used as a signature file.
+        Returns:
+            a PacmanPackage object for the added package
+        """
         package = PacmanPackage._load(path, path.name)
-        archPackages = self.__packages.setdefault(package.arch, [])
-        for idx, existing in enumerate(archPackages):
-            if existing.repoFilename == package.repoFilename:
+        arch_packages = self.__packages.setdefault(package.arch, [])
+        for idx, existing in enumerate(arch_packages):
+            if existing.repo_filename == package.repo_filename:
                 raise ValueError("duplicate package filename")
-        idx = lowerBound(archPackages, package, lambda x, y: x.name < y.name) 
-        if idx < len(archPackages) and (existing := archPackages[idx]).name == package.name:
-            if existing.versionKey == package.versionKey:
+        idx = lower_bound(arch_packages, package, lambda x, y: x.name < y.name)
+        if idx < len(arch_packages) and (existing := arch_packages[idx]).name == package.name:
+            if existing.version_key == package.version_key:
                 raise ValueError('Duplicate package')
-            if existing.versionKey < package.versionKey:
-                archPackages[idx] = package
+            if existing.version_key < package.version_key:
+                arch_packages[idx] = package
         else:
-            archPackages.insert(idx, package)
+            arch_packages.insert(idx, package)
         return package
     
     @property
     def name(self):
+        """Repository name"""
         return self.__name
     
     @property
     def architectures(self) -> KeysView[str]:
+        """Architectures in this repository"""
         return self.__packages.keys() 
     
     def packages(self, arch: str) -> Sequence[PacmanPackage]:
+        """Packages for a given architecture"""
         return self.__packages[arch]
     
-    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None, keepExpanded=False):
+    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
+        """Export the repository into a given folder
+
+        This actually creates an on-disk repository suitable to serve to `pacman` clients. If the directory to export to
+        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
+
+        Specifically any existing <arch>/.pkg.tar.zst and <arch>/.pkg.tar.zst.sig files will be removed and
+        replaced with the ones from the repository for the architectures in the repository.
+
+        Args:
+            root: the root path to export to. The directory will be created if it does not exist
+            signer: A PgpSigner instance to use for signing the repository. It is used to sign the
+                repository itself and any packages that do not have pre-existing signatures.
+            now: optional timestamp to use when generating files (including various timestamp fields *inside* files).
+                Specifying this argument allows for reproducible repository creation.
+            keep_expanded: keep intermediate uncompressed files on disk. This is useful for testing and
+                troubleshooting only
+        """
         if now is None:
             now = datetime.now(timezone.utc)
 
@@ -218,48 +259,48 @@ class PacmanRepo:
             shutil.rmtree(expanded)
         expanded.mkdir(parents=True)
 
-        dbPart = f'{self.__name}.db'
-        filesPart = f'{self.__name}.files'
+        db_part = f'{self.__name}.db'
+        files_part = f'{self.__name}.files'
         
-        for arch, archPackages in self.__packages.items():
-            expandedArchDir = expanded / arch
-            expandedDbDir = expandedArchDir / dbPart
-            expandedDbDir.mkdir(parents=True)
-            expandedFilesDir = expandedArchDir / filesPart
-            expandedFilesDir.mkdir(parents=True)
+        for arch, arch_packages in self.__packages.items():
+            expanded_arch_dir = expanded / arch
+            expanded_db_dir = expanded_arch_dir / db_part
+            expanded_db_dir.mkdir(parents=True)
+            expanded_files_dir = expanded_arch_dir / files_part
+            expanded_files_dir.mkdir(parents=True)
 
-            for package in archPackages:
-                packageDir = expandedDbDir / f'{package.name}-{package.versionStr}'
-                packageDir.mkdir(parents=True)
-                with open(packageDir / 'desc', 'wb') as descFile:
-                    package._exportDesc(descFile)
+            for package in arch_packages:
+                package_dir = expanded_db_dir / f'{package.name}-{package.version_str}'
+                package_dir.mkdir(parents=True)
+                with open(package_dir / 'desc', 'wb') as desc_file:
+                    package._export_desc(desc_file)
                 
-                packageFilesDir = expandedFilesDir / f'{package.name}-{package.versionStr}'
-                packageFilesDir.mkdir(parents=True)
-                shutil.copy2(packageDir / 'desc', packageFilesDir / 'desc')
-                with open(packageFilesDir / 'files', 'wb') as filesFile:
-                    package._exportFiles(filesFile)
+                package_files_dir = expanded_files_dir / f'{package.name}-{package.version_str}'
+                package_files_dir.mkdir(parents=True)
+                shutil.copy2(package_dir / 'desc', package_files_dir / 'desc')
+                with open(package_files_dir / 'files', 'wb') as files_file:
+                    package._export_files(files_file)
 
-            archDir = root / arch
-            archDir.mkdir(parents=True, exist_ok=True)
+            arch_dir = root / arch
+            arch_dir.mkdir(parents=True, exist_ok=True)
 
             
-            self.__collectArchive(expandedDbDir, archDir, signer, now,
-                                  dbPart, archPackages, ['desc'])
+            self.__collect_archive(expanded_db_dir, arch_dir, signer, now,
+                                   db_part, arch_packages, ['desc'])
             
-            self.__collectArchive(expandedFilesDir, archDir, signer, now,
-                                  filesPart, archPackages, ['desc', 'files'])
+            self.__collect_archive(expanded_files_dir, arch_dir, signer, now,
+                                   files_part, arch_packages, ['desc', 'files'])
             
             
-            self.__copyFiles(archDir, signer, archPackages)
+            self.__copy_files(arch_dir, signer, arch_packages)
             
         
-        if not keepExpanded:
+        if not keep_expanded:
             shutil.rmtree(expanded)
 
     @staticmethod
-    def __collectArchive(srcDir: Path, destDir: Path, signer: PgpSigner, now: datetime,
-                         stem: str, packages: Sequence[PacmanPackage], filenames: Sequence[str]):
+    def __collect_archive(src_dir: Path, dest_dir: Path, signer: PgpSigner, now: datetime,
+                          stem: str, packages: Sequence[PacmanPackage], filenames: Sequence[str]):
         def norm(info: tarfile.TarInfo):
             info.uid = 0
             info.gid = 0
@@ -269,42 +310,44 @@ class PacmanRepo:
             info.mtime = int(now.timestamp())
             return info
         
-        tarpath = destDir / (stem + '.tar.gz')
+        tarpath = dest_dir / (stem + '.tar.gz')
         with open(tarpath, 'wb') as f_out:
             with gzip.GzipFile(filename=tarpath.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
-                pythonTypingIsDumb: Any = f_zip
-                with tarfile.open(mode="w:", fileobj=pythonTypingIsDumb) as archive:
+                python_typing_is_dumb: Any = f_zip
+                with tarfile.open(mode="w:", fileobj=python_typing_is_dumb) as archive:
                     for package in packages:
-                        packageDir = Path(f'{package.name}-{package.versionStr}')
+                        package_dir = Path(f'{package.name}-{package.version_str}')
                         for filename in filenames:
-                            archive.add(srcDir / packageDir / filename, arcname=(packageDir / filename).as_posix(), filter=norm)
-        PacmanRepo.__removeExisting(destDir / stem)
-        (destDir / stem).symlink_to(tarpath.name)
+                            archive.add(src_dir / package_dir / filename, arcname=(package_dir / filename).as_posix(), filter=norm)
+        PacmanRepo.__remove_existing(dest_dir / stem)
+        (dest_dir / stem).symlink_to(tarpath.name)
 
         tarsigpath = tarpath.parent / (tarpath.name + '.sig')
-        PacmanRepo.__removeExisting(tarsigpath)
-        signer.binarySignExternal(tarpath, tarsigpath)
-        PacmanRepo.__removeExisting(destDir / (stem + '.sig'))
-        (destDir / (stem + '.sig')).symlink_to(tarsigpath.name)
+        PacmanRepo.__remove_existing(tarsigpath)
+        signer.binary_sign_external(tarpath, tarsigpath)
+        PacmanRepo.__remove_existing(dest_dir / (stem + '.sig'))
+        (dest_dir / (stem + '.sig')).symlink_to(tarsigpath.name)
 
     @staticmethod
-    def __copyFiles(destDir: Path, signer: PgpSigner, packages: Sequence[PacmanPackage]):
+    def __copy_files(dest_dir: Path, signer: PgpSigner, packages: Sequence[PacmanPackage]):
 
-        for existingFile in destDir.glob('*.pkg.tar.zst'):
-            existingFile.unlink()
+        for existing_file in dest_dir.glob('*.pkg.tar.zst'):
+            existing_file.unlink()
+        for existing_file in dest_dir.glob('*.pkg.tar.zst.sig'):
+            existing_file.unlink()
 
         for package in packages:
-            destPath = destDir / package.repoFilename
-            destSigPath = destDir / (package.repoFilename + '.sig')
+            dest_path = dest_dir / package.repo_filename
+            dest_sig_path = dest_dir / (package.repo_filename + '.sig')
 
-            shutil.copy2(package.srcPath, destPath)
-            if (sigPath := package.sigPath) is not None:
-                shutil.copy2(sigPath, destSigPath)
+            shutil.copy2(package.src_path, dest_path)
+            if (sig_path := package.sig_path) is not None:
+                shutil.copy2(sig_path, dest_sig_path)
             else:
-                signer.binarySignExternal(destPath, destSigPath)
+                signer.binary_sign_external(dest_path, dest_sig_path)
 
     @staticmethod
-    def __removeExisting(path: Path):
+    def __remove_existing(path: Path):
         if path.exists():
             if path.is_dir():
                 shutil.rmtree(path)

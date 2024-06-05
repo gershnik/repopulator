@@ -54,18 +54,18 @@ from pathlib import Path
 
 repo = AptRepo()
 
-package1 = repo.addPackage(Path('/path/to/awesome_3.14_amd64.deb'))
-package2 = repo.addPackage(Path('/path/to/awesome_3.14_arm64.deb'))
+package1 = repo.add_package(Path('/path/to/awesome_3.14_amd64.deb'))
+package2 = repo.add_package(Path('/path/to/awesome_3.14_arm64.deb'))
 
-dist = repo.addDistribution('jammy', 
-                            origin='my packages', 
-                            label='my apt repo', 
-                            suite='jammy', 
-                            version='1.2', 
-                            description='my awesome repo')
+dist = repo.add_distribution('jammy', 
+                             origin='my packages', 
+                             label='my apt repo', 
+                             suite='jammy', 
+                             version='1.2', 
+                             description='my awesome repo')
 
-dist.addPackage(component='main', package=package1)
-dist.addPackage(component='main', package=package2)
+dist.add_package(component='main', package=package1)
+dist.add_package(component='main', package=package2)
 
 signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
 
@@ -80,8 +80,8 @@ from repopulator import RpmRepo, PgpSigner
 from pathlib import Path
 
 repo = RpmRepo()
-repo.addPackage(Path('/path/to/awesome-3.14-1.el9.x86_64.rpm'))
-repo.addPackage(Path('/path/to/awesome-3.14-1.el9.aarch64.rpm'))
+repo.add_package(Path('/path/to/awesome-3.14-1.el9.x86_64.rpm'))
+repo.add_package(Path('/path/to/awesome-3.14-1.el9.aarch64.rpm'))
 
 signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
 
@@ -98,7 +98,7 @@ from pathlib import Path
 repo = PacmanRepo('myrepo')
 # if .sig file is present next to the .zst file it will be used for signature
 # otherwise new signature will be generated at export time
-repo.addPackage(Path('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst'))
+repo.add_package(Path('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst'))
 
 signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
 
@@ -113,7 +113,8 @@ from repopulator import PacmanRepo, PkiSigner
 from pathlib import Path
 
 repo = PacmanRepo('my repo description')
-epo.addPackage(Path('/path/to/awesome-3.14-r0.apk'))
+repo.add_package(Path('/path/to/awesome-3.14-r0.apk'))
+repo.add_package(Path('/path/to/another-1.23-r0.apk'))
 
 signer = PkiSigner(Path('/path/to/private/key'), 'password_or_None')
 
@@ -131,8 +132,8 @@ from repopulator import FreeBSDRepo, PkiSigner
 from pathlib import Path
 
 repo = FreeBSDRepo()
-repo.addPackage(Path('/path/to/awesome-3.14.pkg'))
-repo.addPackage(Path('/path/to/another-1.2.pkg'))
+repo.add_package(Path('/path/to/awesome-3.14.pkg'))
+repo.add_package(Path('/path/to/another-1.2.pkg'))
 
 signer = PkiSigner(Path('/path/to/private/key'), 'password_or_None')
 

@@ -4,7 +4,7 @@
 # license that can be found in the LICENSE.txt file or at
 # https://opensource.org/licenses/BSD-3-Clause
 
-"""Generating Dnf/Yum RPM repositories"""
+"""Generating DNF/YUM RPM repositories"""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from typing import Any, Callable, Optional, Sequence, Tuple
 from .rpmfile import open as rpmfile_open
 
 from .pgp_signer import PgpSigner
-from .util import ImmutableDict, NoPublicConstructor, findIf, lowerBound, VersionKey, file_digest, indentTree
+from .util import ImmutableDict, NoPublicConstructor, find_if, lower_bound, VersionKey, file_digest, indent_tree
 
 _RPMSENSE_ANY           = 0
 _RPMSENSE_LESS          = (1 << 1)
@@ -69,7 +69,7 @@ _RPMFILE_ARTIFACT   = (1 << 12)     # from %%artifact
 
 _ABI_VERSION_PATTERN = re.compile(r'([^(]+)\(([^)]*)\)')
 
-def _compareAbiVersion(dep1: str, dep2: str):
+def _compare_abi_version(dep1: str, dep2: str):
     """
     Compares two library dependencies with ABI part by ABI version
 
@@ -104,16 +104,27 @@ def _compareAbiVersion(dep1: str, dep2: str):
 
 @total_ordering
 class RpmVersion:
+    """Representation of RPM package version
+
+    Instances of this class are properly comparable (`==`, `!=`, `<`, `<=`, `>`, `>=`) and hashable.
+
+    The string representation of an RpmVersion object is the properly formatted version string
+    """
     def __init__(self, version: str | Sequence[str]) -> None:
+        """Constructor for RpmVersion class
+
+        Args:
+            version: either the full RPM version in string form or a tuple of (epoch, version, release)
+        """
         if isinstance(version, str):
             if (colonPos := version.find(':')) != -1:
                 self.epoch = str(int(version[:colonPos]))
                 version = version[colonPos+1:]
             else:
                 self.epoch = "0"
-            verParts = version.split('-', 2)
-            self.ver = verParts[0]
-            self.rel = verParts[1] if len(verParts) == 2 else None
+            ver_parts = version.split('-', 2)
+            self.ver = ver_parts[0]
+            self.rel = ver_parts[1] if len(ver_parts) == 2 else None
         elif isinstance(version, collections.abc.Sequence):
             if len(version) not in (2, 3):
                 raise ValueError('version sequence must have 2 or 3 elements')
@@ -129,7 +140,7 @@ class RpmVersion:
         )
 
     def __eq__(self, other):
-        if isinstance(other, RpmVersion): 
+        if isinstance(other, RpmVersion):
             return self.__keys == other.__keys
         return NotImplemented
     
@@ -137,7 +148,7 @@ class RpmVersion:
         return hash(self.__keys)
     
     def __lt__(self, other):
-        if isinstance(other, RpmVersion): 
+        if isinstance(other, RpmVersion):
             return self.__keys < other.__keys
         return NotImplemented
     
@@ -165,7 +176,7 @@ class _RpmFile:
             return "ghost"
         return None
     
-    def isPrimary(self):
+    def is_primary(self):
         if self.dirname.startswith("/etc/"):
             return True
         if self.dirname.startswith("/usr/lib/sendmail"):
@@ -222,22 +233,23 @@ class _RpmDependency:
 
 
 class RpmPackage(metaclass=NoPublicConstructor):
+    """A package in RpmRepo"""
     @classmethod
-    def _load(cls, srcPath: Path, filename: str) -> RpmPackage:
-        st = srcPath.stat()
-        with open(srcPath, "rb") as f:
+    def _load(cls, src_path: Path, filename: str) -> RpmPackage:
+        st = src_path.stat()
+        with open(src_path, "rb") as f:
             pkgid = file_digest(f, hashlib.sha256).hexdigest()
-        with rpmfile_open(srcPath) as rpm:
+        with rpmfile_open(src_path) as rpm:
             headers = rpm.headers
-            headerRange = rpm.header_range
-        return cls._create(srcPath, filename, pkgid, st.st_size, int(st.st_mtime), headers, headerRange)
+            header_range = rpm.header_range
+        return cls._create(src_path, filename, pkgid, st.st_size, int(st.st_mtime), headers, header_range)
 
-    def __init__(self, srcPath: Path, filename: str, pkgid: str, size: int, mtime: int,
-                 headers: dict[str, Any], headerRange: tuple[int, int]):
+    def __init__(self, src_path: Path, filename: str, pkgid: str, size: int, mtime: int,
+                 headers: dict[str, Any], header_range: tuple[int, int]):
         """Internal, do not use
         Use RpmRepo.addPackage to create instances of this class
         """
-        self.__srcPath = srcPath
+        self.__srcPath = src_path
         self.__filename = filename
         self.__pkgid = pkgid
         self.__headers = headers
@@ -247,9 +259,9 @@ class RpmPackage(metaclass=NoPublicConstructor):
                                      self.__headers['version'].decode(),
                                      self.__headers['release'].decode()))
         
-        primaryFiles = self.__fillFiles()
-        self.__fillPrimary(filename, size, mtime, primaryFiles, headerRange)
-        self.__fillChangelog()
+        primary_files = self.__fill_files()
+        self.__fill_primary(filename, size, mtime, primary_files, header_range)
+        self.__fill_changelog()
 
     @property
     def name(self) -> str:
@@ -257,41 +269,48 @@ class RpmPackage(metaclass=NoPublicConstructor):
         return self.__name
     
     @property
-    def versionStr(self) -> str:
+    def version_str(self) -> str:
+        """Version of the package as a string"""
         return str(self.__version)
     
     @property
-    def versionKey(self) -> RpmVersion:
+    def version_key(self) -> RpmVersion:
+        """Version of the package as a properly comparable key"""
         return self.__version
     
     @property
     def arch(self) -> str:
+        """Architecture of the package"""
         return self.__arch
     
     @property
     def pkgid(self) -> str:
+        """Unique identifier of the package in the repository"""
         return self.__pkgid
     
     @property
     def fields(self) -> ImmutableDict:
+        """Information about package stored in the repository index"""
         return ImmutableDict(self.__headers)
     
     @property
-    def filename(self) -> str:
+    def repo_filename(self) -> str:
+        """Filename of the package when stored inside the repository"""
         return self.__filename
     
     @property
-    def srcPath(self) -> Path:
+    def src_path(self) -> Path:
+        """Path to the original package file"""
         return self.__srcPath
     
-    def _appendFilelist(self, parent: ET.Element):
+    def _append_filelist(self, parent: ET.Element):
         parent.append(self.__filelist) #should we clone it?
 
-    def _appendChangelog(self, parent: ET.Element):
+    def _append_changelog(self, parent: ET.Element):
         parent.append(self.__changelog) #should we clone it?
 
         
-    def __fillFiles(self) -> list[_RpmFile]:
+    def __fill_files(self) -> list[_RpmFile]:
         headers = self.__headers
 
         self.__filelist = ET.Element('package')
@@ -299,25 +318,25 @@ class RpmPackage(metaclass=NoPublicConstructor):
         self.__filelist.set('name', self.name)
         self.__filelist.set('arch', self.arch)
         version = ET.SubElement(self.__filelist, 'version')
-        version.set('epoch', self.versionKey.epoch)
-        version.set('ver', self.versionKey.ver)
-        assert self.versionKey.rel is not None
-        version.set('rel', self.versionKey.rel)
+        version.set('epoch', self.version_key.epoch)
+        version.set('ver', self.version_key.ver)
+        assert self.version_key.rel is not None
+        version.set('rel', self.version_key.rel)
 
-        primaryFiles: list[_RpmFile] = []
-        dirnames = self.__readList(headers, 'dirnames')
-        for basename, dirindex, flags, mode in zip(self.__readList(headers, 'basenames'), 
-                                                   self.__readList(headers, 'dirindexes'),
-                                                   self.__readList(headers, 'fileflags'),
-                                                   self.__readList(headers, 'filemodes')):
+        primary_files: list[_RpmFile] = []
+        dirnames = self.__read_list(headers, 'dirnames')
+        for basename, dirindex, flags, mode in zip(self.__read_list(headers, 'basenames'),
+                                                   self.__read_list(headers, 'dirindexes'),
+                                                   self.__read_list(headers, 'fileflags'),
+                                                   self.__read_list(headers, 'filemodes')):
             file = _RpmFile(basename.decode(), dirnames[dirindex].decode(), flags, mode)
             self.__filelist.append(file.export())
-            if file.isPrimary():
-                primaryFiles.append(file)
+            if file.is_primary():
+                primary_files.append(file)
 
-        return primaryFiles
+        return primary_files
 
-    def __fillPrimary(self, filename: str, size: int, mtime: int, primaryFiles: Sequence[_RpmFile], headerRange: Tuple[int, int]):
+    def __fill_primary(self, filename: str, size: int, mtime: int, primary_files: Sequence[_RpmFile], header_range: Tuple[int, int]):
         headers = self.__headers
 
         self.primary = ET.Element('package')
@@ -325,10 +344,10 @@ class RpmPackage(metaclass=NoPublicConstructor):
         ET.SubElement(self.primary, 'name').text = headers['name'].decode()
         ET.SubElement(self.primary, 'arch').text = headers['arch'].decode()
         version = ET.SubElement(self.primary, 'version')
-        version.set('epoch', self.versionKey.epoch)
-        version.set('ver', self.versionKey.ver)
-        assert self.versionKey.rel is not None
-        version.set('rel', self.versionKey.rel)
+        version.set('epoch', self.version_key.epoch)
+        version.set('ver', self.version_key.ver)
+        assert self.version_key.rel is not None
+        version.set('rel', self.version_key.rel)
         checksum = ET.SubElement(self.primary, 'checksum')
         checksum.set('type', 'sha256')
         checksum.set('pkgid', 'YES')
@@ -341,10 +360,10 @@ class RpmPackage(metaclass=NoPublicConstructor):
         time.set('file', str(mtime))
         if (buildtime := headers.get('buildtime')) is not None:
             time.set('build', str(buildtime))
-        sizeEl = ET.SubElement(self.primary, 'size')
-        sizeEl.set('package', str(size))
-        sizeEl.set('installed', str(headers.get('longsize', headers['size'])))
-        sizeEl.set('archive', str(headers.get('longarchivesize', 
+        size_el = ET.SubElement(self.primary, 'size')
+        size_el.set('package', str(size))
+        size_el.set('installed', str(headers.get('longsize', headers['size'])))
+        size_el.set('archive', str(headers.get('longarchivesize',
                                             headers.get('archivesize', headers['payloadsize']))))
         ET.SubElement(self.primary, 'location').set('href', filename)
         fmt = ET.SubElement(self.primary, 'format')
@@ -358,24 +377,24 @@ class RpmPackage(metaclass=NoPublicConstructor):
             ET.SubElement(fmt, 'rpm:buildhost').text = buildhost.decode()
         if (sourcerpm := headers.get('sourcerpm')) is not None:
             ET.SubElement(fmt, 'rpm:sourcerpm').text = sourcerpm.decode()
-        header_range = ET.SubElement(fmt, 'rpm:header-range')
-        headerStart, headerEnd = headerRange
-        header_range.set('start', str(headerStart))
-        header_range.set('end', str(headerEnd))
+        header_range_el = ET.SubElement(fmt, 'rpm:header-range')
+        header_start, header_end = header_range
+        header_range_el.set('start', str(header_start))
+        header_range_el.set('end', str(header_end))
 
-        provided = self.__collectDependencies(headers, ('provides', 'provideflags', 'provideversion'))
-        self.__writeDependencies(fmt, 'rpm:provides', provided)
+        provided = self.__collect_dependencies(headers, ('provides', 'provideflags', 'provideversion'))
+        self.__write_dependencies(fmt, 'rpm:provides', provided)
         
-        requiredFilter = self.__RequiredFilter(provided, primaryFiles)
-        required = self.__collectDependencies(headers, ('requirename', 'requireflags', 'requireversion'),
-                                              filterFunc=requiredFilter)
-        if requiredFilter.latestLibc is not None:
-            required.append(requiredFilter.latestLibc)
+        required_filter = self.__RequiredFilter(provided, primary_files)
+        required = self.__collect_dependencies(headers, ('requirename', 'requireflags', 'requireversion'),
+                                               filter_func=required_filter)
+        if required_filter.latestLibc is not None:
+            required.append(required_filter.latestLibc)
         
-        self.__writeDependencies(fmt, 'rpm:requires', required)
+        self.__write_dependencies(fmt, 'rpm:requires', required)
             
 
-        simpleRefs = [
+        simple_refs = [
             ('rpm:conflicts',   ('conflictname',    'conflictflags',    'conflictversion')),
             ('rpm:obsoletes',   ('obsoletes',       'obsoleteflags',    'obsoleteversion')),
             ('rpm:suggests',    ('suggestname',     'suggestflags',     'suggestversion')),
@@ -384,29 +403,29 @@ class RpmPackage(metaclass=NoPublicConstructor):
             ('rpm:recommends',  ('recommendname',   'recommendflags',   'recommendversion'))
         ]
 
-        for refs in simpleRefs:
-            deps = self.__collectDependencies(headers, refs[1])
-            self.__writeDependencies(fmt, refs[0], deps)
+        for refs in simple_refs:
+            deps = self.__collect_dependencies(headers, refs[1])
+            self.__write_dependencies(fmt, refs[0], deps)
             
-        for file in primaryFiles:
+        for file in primary_files:
             self.primary.append(file.export())
 
 
     class __RequiredFilter:
-        def __init__(self, provided: Sequence[_RpmDependency], primaryFiles: Sequence[_RpmFile]):
+        def __init__(self, provided: Sequence[_RpmDependency], primary_files: Sequence[_RpmFile]):
             self.provided = provided
-            self.primaryFiles = primaryFiles
+            self.primaryFiles = primary_files
             self.latestLibc: Optional[_RpmDependency] = None
 
-        def __call__(self, allDeps: Sequence[_RpmDependency], dep: _RpmDependency) -> bool:
+        def __call__(self, all_deps: Sequence[_RpmDependency], dep: _RpmDependency) -> bool:
             if dep.name.startswith('rpmlib('):
                 return False
-            if findIf(self.provided, dep, lambda x, y: x.name == y.name):
+            if find_if(self.provided, dep, lambda x, y: x.name == y.name):
                 return False
             if (dep.name.startswith('/') and 
-                    findIf(self.primaryFiles, dep, lambda f, n: f.isPrimary() and f.path() == n.name) is not None):
+                    find_if(self.primaryFiles, dep, lambda f, n: f.isPrimary() and f.path() == n.name) is not None):
                 return False
-            if findIf(allDeps, dep, lambda x, y: (
+            if find_if(all_deps, dep, lambda x, y: (
                                             x.name == y.name and 
                                             x.version == y.version and
                                             x.comparison() == y.comparison() and
@@ -414,32 +433,32 @@ class RpmPackage(metaclass=NoPublicConstructor):
                 return False
             if dep.name.startswith('libc.so.6'):
                 if (self.latestLibc is None or 
-                        _compareAbiVersion(dep.name, self.latestLibc.name) == 1):
+                        _compare_abi_version(dep.name, self.latestLibc.name) == 1):
                     self.latestLibc = dep
                 return False
             return True
 
 
-    def __collectDependencies(self, headers, desc: Tuple[str, str, str], 
-                              filterFunc: Optional[Callable[[Sequence[_RpmDependency], _RpmDependency], bool]] = None):
+    def __collect_dependencies(self, headers, desc: Tuple[str, str, str],
+                               filter_func: Optional[Callable[[Sequence[_RpmDependency], _RpmDependency], bool]] = None):
         deps: list[_RpmDependency] = []
-        for name, flags, version in zip(self.__readList(headers, desc[0]), 
-                                        self.__readList(headers, desc[1]),
-                                        self.__readList(headers, desc[2])):
+        for name, flags, version in zip(self.__read_list(headers, desc[0]),
+                                        self.__read_list(headers, desc[1]),
+                                        self.__read_list(headers, desc[2])):
             dep = _RpmDependency(name.decode(), flags, version.decode())
-            if filterFunc is not None and not filterFunc(deps, dep):
+            if filter_func is not None and not filter_func(deps, dep):
                 continue
             deps.append(dep)
         return deps
 
     @staticmethod
-    def __writeDependencies(parent: ET.Element, name: str, deps: Sequence[_RpmDependency]):
+    def __write_dependencies(parent: ET.Element, name: str, deps: Sequence[_RpmDependency]):
         if len(deps) > 0:
             ret = ET.SubElement(parent, name)
             for dep in deps:
                 ret.append(dep.export())
 
-    def __fillChangelog(self):
+    def __fill_changelog(self):
         headers = self.__headers
 
         self.__changelog = ET.Element('package')
@@ -447,15 +466,15 @@ class RpmPackage(metaclass=NoPublicConstructor):
         self.__changelog.set('name', self.name)
         self.__changelog.set('arch', self.arch)
         version = ET.SubElement(self.__changelog, 'version')
-        version.set('epoch', self.versionKey.epoch)
-        version.set('ver', self.versionKey.ver)
-        assert self.versionKey.rel is not None
-        version.set('rel', self.versionKey.rel)
+        version.set('epoch', self.version_key.epoch)
+        version.set('ver', self.version_key.ver)
+        assert self.version_key.rel is not None
+        version.set('rel', self.version_key.rel)
 
         entries = []
-        for time, author, comment in zip(self.__readList(headers, 'changelogtime'), 
-                                         self.__readList(headers, 'authors'),
-                                         self.__readList(headers, 'comments')):
+        for time, author, comment in zip(self.__read_list(headers, 'changelogtime'),
+                                         self.__read_list(headers, 'authors'),
+                                         self.__read_list(headers, 'comments')):
             entry = ET.Element('changelog')
             entry.text = comment.decode()
             entry.set('author', author.decode())
@@ -470,7 +489,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
 
     
     @staticmethod
-    def __readList(headers: dict[str, Any], name: str):
+    def __read_list(headers: dict[str, Any], name: str):
         ret = headers.get(name)
         if ret is None: return []
         if not isinstance(ret, list) and not isinstance(ret, tuple): return [ret]
@@ -479,26 +498,54 @@ class RpmPackage(metaclass=NoPublicConstructor):
 
 
 class RpmRepo:
+    """Generates RPM repositories"""
+
     def __init__(self):
+        """Constructor for RpmRepo class"""
         self.__packages: list[RpmPackage] = []
 
-    def addPackage(self, path: Path) -> RpmPackage:
+    def add_package(self, path: Path) -> RpmPackage:
+        """Adds a package to the repository
+
+        Args:
+            path: the path to `.rpm` file for the package.
+        Returns:
+            an RpmPackage object for the added package
+        """
         package = RpmPackage._load(path, path.name)
         for existing in self.__packages:
             if existing.pkgid == package.pkgid:
                 raise ValueError("duplicate package id")
-        def packageKey(p: RpmPackage): return (p.name, p.versionKey, p.arch)
-        idx = lowerBound(self.__packages, package, lambda x, y: packageKey(x) < packageKey(y)) 
-        if idx < len(self.__packages) and packageKey(self.__packages[idx]) == packageKey(package):
+        def package_key(p: RpmPackage): return (p.name, p.version_key, p.arch)
+        idx = lower_bound(self.__packages, package, lambda x, y: package_key(x) < package_key(y))
+        if idx < len(self.__packages) and package_key(self.__packages[idx]) == package_key(package):
             raise ValueError('Duplicate package')
         self.__packages.insert(idx, package)
         return package
     
     @property
     def packages(self) -> Sequence[RpmPackage]:
+        """Packages in the repository"""
         return self.__packages
 
-    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None, keepUnzipped=False):
+    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
+        """Export the repository into a given folder
+
+        This actually creates an on-disk repository suitable to serve to `pacman` clients. If the directory to export to
+        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
+
+        Specifically any existing *.rpm files will be removed and replaced with the ones from the repository.
+
+        Args:
+            root: the root path to export to. The directory will be created if it does not exist
+            signer: A PgpSigner instance to use for signing the repository.
+            now: optional timestamp to use when generating files (including various timestamp fields *inside* files).
+                Specifying this argument allows for reproducible repository creation.
+            keep_expanded: keep intermediate uncompressed files on disk. This is useful for testing and
+                troubleshooting only
+        """
+
         if now is None:
             now = datetime.now(timezone.utc)
         
@@ -514,34 +561,34 @@ class RpmRepo:
         
         primary = ET.SubElement(repomd, 'data')
         primary.set('type', 'primary')
-        primaryPath = self.__exportPrimary(repodata)
-        os.utime(primaryPath, (now.timestamp(), now.timestamp()))
-        self.__summarizeFile(root, primaryPath, primary, now, keepUnzipped)
+        primary_path = self.__export_primary(repodata)
+        os.utime(primary_path, (now.timestamp(), now.timestamp()))
+        self.__summarize_file(root, primary_path, primary, now, keep_expanded)
 
         filelists = ET.SubElement(repomd, 'data')
         filelists.set('type', 'filelists')
-        filelistsPath = self.__exportFilelists(repodata)
-        os.utime(filelistsPath, (now.timestamp(), now.timestamp()))
-        self.__summarizeFile(root, filelistsPath, filelists, now, keepUnzipped)
+        filelists_path = self.__export_filelists(repodata)
+        os.utime(filelists_path, (now.timestamp(), now.timestamp()))
+        self.__summarize_file(root, filelists_path, filelists, now, keep_expanded)
 
         other = ET.SubElement(repomd, 'other')
-        otherPath = self.__exportOther(repodata)
-        os.utime(otherPath, (now.timestamp(), now.timestamp()))
-        self.__summarizeFile(root, otherPath, other, now, keepUnzipped)
+        other_path = self.__export_other(repodata)
+        os.utime(other_path, (now.timestamp(), now.timestamp()))
+        self.__summarize_file(root, other_path, other, now, keep_expanded)
         
         tree = ET.ElementTree(repomd)
-        indentTree(tree)
-        repomdPath = repodata / 'repomd.xml'
-        with open(repomdPath, 'wb') as f:
+        indent_tree(tree)
+        repomd_path = repodata / 'repomd.xml'
+        with open(repomd_path, 'wb') as f:
             tree.write(f, encoding="utf-8", xml_declaration=True)
-        os.utime(repomdPath, (now.timestamp(), now.timestamp()))
+        os.utime(repomd_path, (now.timestamp(), now.timestamp()))
 
-        signer.signExternal(repomdPath, repomdPath.parent / (repomdPath.name + '.asc'))
+        signer.sign_external(repomd_path, repomd_path.parent / (repomd_path.name + '.asc'))
 
-        self.__exportFiles(root)
+        self.__export_files(root)
 
 
-    def __exportPrimary(self, repodata: Path) -> Path:
+    def __export_primary(self, repodata: Path) -> Path:
 
         metadata = ET.Element('metadata')
         metadata.set('xmlns', 'http://linux.duke.edu/metadata/common')
@@ -551,35 +598,35 @@ class RpmRepo:
             metadata.append(package.primary) #should we clone it?
         
         tree = ET.ElementTree(metadata)
-        indentTree(tree)
+        indent_tree(tree)
         path = repodata / 'primary.xml'
         with open(path, 'wb') as f:
             tree.write(f, encoding="utf-8", xml_declaration=True)
         return path
     
-    def __exportFilelists(self, repodata: Path) -> Path:
+    def __export_filelists(self, repodata: Path) -> Path:
         filelists = ET.Element('filelists')
         filelists.set('xmlns', 'http://linux.duke.edu/metadata/filelists')
         filelists.set('packages', str(len(self.__packages)))
         for package in self.__packages:
-            package._appendFilelist(filelists)
+            package._append_filelist(filelists)
 
         tree = ET.ElementTree(filelists)
-        indentTree(tree)
+        indent_tree(tree)
         path = repodata / 'filelists.xml'
         with open(path, 'wb') as f:
             tree.write(f, encoding="utf-8", xml_declaration=True)
         return path
     
-    def __exportOther(self, repodata: Path) -> Path:
+    def __export_other(self, repodata: Path) -> Path:
         other = ET.Element('otherdata')
         other.set('xmlns', 'http://linux.duke.edu/metadata/other')
         other.set('packages', str(len(self.__packages)))
         for package in self.__packages:
-            package._appendChangelog(other)
+            package._append_changelog(other)
 
         tree = ET.ElementTree(other)
-        indentTree(tree)
+        indent_tree(tree)
         path = repodata / 'other.xml'
         with open(path, 'wb') as f:
             tree.write(f, encoding="utf-8", xml_declaration=True)
@@ -587,20 +634,20 @@ class RpmRepo:
 
     
     @staticmethod
-    def __summarizeFile(root: Path, path: Path, parent: ET.Element, now: datetime, keepUnzipped: bool):
-        gzPath = path.parent / (path.name + '.gz')
+    def __summarize_file(root: Path, path: Path, parent: ET.Element, now: datetime, keep_expanded: bool):
+        gz_path = path.parent / (path.name + '.gz')
 
         open_st = path.stat()
         with open(path, 'rb') as f_in:
             open_digest = file_digest(f_in, hashlib.sha256)
             f_in.seek(0, 0)
-            with open(gzPath, 'wb') as f_out:
+            with open(gz_path, 'wb') as f_out:
                 with gzip.GzipFile(filename=path.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
                     shutil.copyfileobj(f_in, f_zip)
             
-        os.utime(gzPath, (now.timestamp(), now.timestamp()))
-        st = gzPath.stat()
-        with open(gzPath, "rb") as f:
+        os.utime(gz_path, (now.timestamp(), now.timestamp()))
+        st = gz_path.stat()
+        with open(gz_path, "rb") as f:
             digest = file_digest(f, hashlib.sha256)
         
         checksum = ET.SubElement(parent, 'checksum')
@@ -610,20 +657,20 @@ class RpmRepo:
         open_checksum.set('type', 'sha256')
         open_checksum.text = open_digest.hexdigest()
         location = ET.SubElement(parent, 'location')
-        location.set('href', gzPath.relative_to(root).as_posix())
+        location.set('href', gz_path.relative_to(root).as_posix())
         ET.SubElement(parent, 'timestamp').text = str(int(st.st_mtime))
         ET.SubElement(parent, 'size').text = str(st.st_size)
         ET.SubElement(parent, 'open-size').text = str(open_st.st_size)
-        if not keepUnzipped:
+        if not keep_expanded:
             path.unlink()
 
 
-    def __exportFiles(self, root: Path):
+    def __export_files(self, root: Path):
         for existing in root.glob('*.rpm'):
             existing.unlink()
         for package in self.__packages:
-            dest = root / package.filename
-            shutil.copy2(package.srcPath, dest)
+            dest = root / package.repo_filename
+            shutil.copy2(package.src_path, dest)
 
 
 

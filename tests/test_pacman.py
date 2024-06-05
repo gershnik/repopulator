@@ -15,15 +15,15 @@ from .utils import compare_files
 )
 def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = PacmanRepo('fancyrepo')
-    package = repo.addPackage(binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst')
+    package = repo.add_package(binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst')
     assert package.name == 'makedumpfile'
     assert package.arch == 'x86_64'
-    assert package.versionStr == '1.7.1-1'
-    assert package.versionKey == VersionKey(1, 7, 1, 1)
-    assert package.srcPath == binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst'
-    assert package.sigPath == binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig'
-    assert package.repoFilename == 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst'
-    repo.export(output_path, pgp_signer, fixed_datetime, keepExpanded=True)
+    assert package.version_str == '1.7.1-1'
+    assert package.version_key == VersionKey(1, 7, 1, 1)
+    assert package.src_path == binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst'
+    assert package.sig_path == binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig'
+    assert package.repo_filename == 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst'
+    repo.export(output_path, pgp_signer, fixed_datetime, keep_expanded=True)
     compare_files(output_path / 'x86_64/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst', binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst')
     compare_files(output_path / 'x86_64/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig', binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig')
     if sys.version_info >= (3, 9):

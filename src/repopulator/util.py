@@ -16,20 +16,20 @@ Key = TypeVar('Key')
 Val = TypeVar('Val')
 T = TypeVar('T')
 
-def findIf(seq: Sequence[Any], obj: Any, cond: Callable[[Any, Any], bool]):
+def find_if(seq: Sequence[Any], obj: Any, cond: Callable[[Any, Any], bool]):
     return next((item for item in seq if cond(item, obj)), None)
 
-def lowerBound(seq: Sequence[Any], obj: Any, comp: Callable[[Any, Any], bool] = lambda x, y: x < y):
+def lower_bound(seq: Sequence[Any], obj: Any, comp: Callable[[Any, Any], bool] = lambda x, y: x < y):
     first = 0
     size = len(seq)
     while size != 0:
-        halfWay = size // 2
-        if comp(seq[first + halfWay], obj):
-            halfWay += 1
-            first += halfWay
-            size -= halfWay
+        half_way = size // 2
+        if comp(seq[first + half_way], obj):
+            half_way += 1
+            first += half_way
+            size -= half_way
         else:
-            size = halfWay
+            size = half_way
     return first
 
 # def mismatch(seq1: Sequence[Any], seq2: Sequence[Any], cond: Callable[[Any, Any], bool] = lambda x, y: x == y):
@@ -43,7 +43,26 @@ def lowerBound(seq: Sequence[Any], obj: Any, comp: Callable[[Any, Any], bool] = 
 #     return idx
 
 class VersionKey:
+    """Representation of a package version
+
+    Package versions cannot be compared as simple strings. For example "1.10" should be bigger than
+     "1.2". This class allows correct sematic comparisons for versions.
+
+    Instances of this class are properly comparable (`==`, `!=`, `<`, `<=`, `>`, `>=`) and hashable.
+
+    Logically a version key is a heterogeneous tuple of `str` and `int` elements.
+    """
+
     def __init__(self, *args):
+        """
+        Constructor for VersionKey class
+
+        Arguments are any number of version parts. Each part can be:
+        
+        * a single `int` for a numeric part
+        * an `str` or `bytes` object for a string part
+
+        """
         self.__parts = []
         for arg in args:
             if isinstance(arg, int):
@@ -61,7 +80,7 @@ class VersionKey:
         def isalpha(c): return ('a' <= c <= 'z') or ('A' <= c <= 'Z')
         def isdigit(c): return '0' <= c <= '9'
 
-        startIdx = 0
+        start_idx = 0
         prev: Optional[Callable[[str], bool]] = None
         for idx in range(0, len(version)):
             c = version[idx]
@@ -69,7 +88,7 @@ class VersionKey:
             if prev is not None:
                 if prev(c):
                     continue
-                substr = version[startIdx: idx]
+                substr = version[start_idx: idx]
                 ret.__parts.append(substr if prev is isalpha else int(substr))
                 prev = None
             
@@ -77,10 +96,10 @@ class VersionKey:
                 prev = isalpha
             elif isdigit(c):
                 prev = isdigit
-            startIdx = idx
+            start_idx = idx
         
         if prev is not None:
-            substr = version[startIdx:]
+            substr = version[start_idx:]
             ret.__parts.append(substr if prev is isalpha else int(substr))
         return ret
 
@@ -178,7 +197,7 @@ def file_digest(fileobj, digest, /, *, _bufsize=2**18):
     return digestobj
 
 # Copy of ET.indent added in Python 3.9
-def indentTree(tree, space="  ", level=0):
+def indent_tree(tree, space="  ", level=0):
     """Indent an XML document by inserting newlines and indentation space
     after elements.
 

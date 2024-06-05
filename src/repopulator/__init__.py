@@ -4,7 +4,7 @@
 # license that can be found in the LICENSE.txt file or at
 # https://opensource.org/licenses/BSD-3-Clause
 
-"""repopulator package"""
+"""A portable library to generate binary software repositories (APT, YUM/DNF, Pacman etc.)"""
 
 from .version import VERSION as __version__
 

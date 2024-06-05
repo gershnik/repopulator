@@ -19,17 +19,40 @@ from .util import file_digest
 
 
 class PkiSigner:
-    def __init__(self, privKeyPath: Path, privKeyPasswd: Optional[str]):
+    """Implementation of private key based signing
+
+    Many repository formats rely on private key signing and use this class for it.
+
+    The supplied key needs to be in PEM format. Its cryptographic type needs to be appropriate for the repository
+    that it will be used for.
+    """
+
+    def __init__(self, priv_key_path: Path, priv_key_passwd: Optional[str]):
+        """Constructor for PkiSigner class
+
+        The private key file is read once during the construction and not used again
+        Args:
+            priv_key_path: path to the private key file. The file must be in PEM format.
+            priv_key_passwd: password for the key if it requires one.
+        """
         ver = openssl_backend.openssl_version_number()
         if ver < 0x30000000:
             raise Exception(f'Unsupported OpenSSL version: 0x{ver:08x}, must be above 0x30000000')
-        with open(privKeyPath, 'rb') as keyFile:
+        with open(priv_key_path, 'rb') as keyFile:
             key = keyFile.read()
-            pwd = privKeyPasswd.encode() if privKeyPasswd is not None else None
+            pwd = priv_key_passwd.encode() if priv_key_passwd is not None else None
             self.__key = crypto_serialization.load_pem_private_key(key, pwd, openssl_backend)
             
         
-    def getFreeBSDSignature(self, path: Path):
+    def get_free_bsd_signature(self, path: Path):
+        """Generate file signature in a format required by FreeBSD repositories
+
+        Private key type must be one of: rsa, ecdsa or eddsa
+        Args:
+            path: path of the file to sign
+        Returns:
+            Signature as a `bytes` object
+        """
         with open(path, 'rb') as dataFile:
             if isinstance(self.__key, rsa.RSAPrivateKey):
                 digest = file_digest(dataFile, hashlib.sha256).hexdigest()
@@ -38,8 +61,8 @@ class PkiSigner:
 
         if isinstance(self.__key, rsa.RSAPrivateKey):
             padding = crypto_padding.PKCS1v15()
-            hashVal = crypto_hashes.SHA256()
-            signature = self.__key.sign(digest.encode(), padding, hashVal)
+            hash_algo = crypto_hashes.SHA256()
+            signature = self.__key.sign(digest.encode(), padding, hash_algo)
         elif isinstance(self.__key, ec.EllipticCurvePrivateKey):
             algo = ec.ECDSA(crypto_hashes.SHA256())
             signature = self.__key.sign(digest.encode(), algo)
@@ -52,7 +75,16 @@ class PkiSigner:
         
         return signature
 
-    def getAlpineSignature(self, path: Path):
+    def get_alpine_signature(self, path: Path):
+        """Generate file signature in a format required by Alpine apk repositories
+
+        Only rsa keys are currently supported
+
+        Args:
+            path: path of the file to sign
+        Returns:
+            Signature as a `bytes` object
+        """
         if not isinstance(self.__key, rsa.RSAPrivateKey):
             raise Exception('The private key type is not currently supported for Alpine signatures')
 
