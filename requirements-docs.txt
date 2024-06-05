@@ -1,0 +1,7 @@
+#requirements to build the docs
+
+mkdocs
+mkdocstrings[python]
+black
+#mkdocs-bootswatch
+#mkdocs-material
