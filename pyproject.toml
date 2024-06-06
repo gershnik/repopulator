@@ -31,7 +31,7 @@ keywords = [
 ]
 license = {text = "BSD-3-Clause"}
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     
     "License :: OSI Approved :: BSD License",
     
@@ -61,6 +61,6 @@ classifiers = [
 
 [project.urls]
 Homepage = 'https://github.com/gershnik/repopulator'
-
-
-
+Documentation = 'https://gershnik.github.io/repopulator'
+Issues = 'https://github.com/gershnik/repopulator/issues'
+Changelog = 'https://github.com/gershnik/repopulator/blob/master/CHANGELOG.md'
