@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<filelists xmlns="http://linux.duke.edu/metadata/filelists" packages="2">
+  <package pkgid="68aa84af88f89fc89bdaf7f3f0cc47c5775a56461dea624dcb7f4aec708ad89e" name="dhcp-dev" arch="x86_64">
+    <version epoch="0" ver="4.3.3" rel="10" />
+    <file>/usr/include/dhcpctl/dhcpctl.h</file>
+    <file>/usr/include/isc-dhcp/dst.h</file>
+    <file>/usr/include/omapip/alloc.h</file>
+    <file>/usr/include/omapip/buffer.h</file>
+    <file>/usr/include/omapip/convert.h</file>
+    <file>/usr/include/omapip/hash.h</file>
+    <file>/usr/include/omapip/isclib.h</file>
+    <file>/usr/include/omapip/omapip.h</file>
+    <file>/usr/include/omapip/omapip_p.h</file>
+    <file>/usr/include/omapip/result.h</file>
+    <file>/usr/include/omapip/trace.h</file>
+    <file>/usr/lib64/libdhcpctl.so</file>
+    <file>/usr/lib64/libomapi.so</file>
+  </package>
+  <package pkgid="9268854320030a2b27654325b585ff85551386d8d11ba68336bbf982d80ce201" name="sudo-setuid" arch="x86_64">
+    <version epoch="0" ver="1.8.17p1" rel="34" />
+    <file>/usr/bin/sudo</file>
+  </package>
+</filelists>

@@ -33,3 +33,23 @@ def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     compare_files(output_path / 'repodata/primary.xml', expected_path / 'primary.xml', should_populate)
     compare_files(output_path / 'repodata/filelists.xml', expected_path / 'filelists.xml', should_populate)
     compare_files(output_path / 'repodata/other.xml', expected_path / 'other.xml', should_populate)
+
+@pytest.mark.download(
+    "https://download.clearlinux.org/releases/10540/clear/x86_64/os/Packages/sudo-setuid-1.8.17p1-34.x86_64.rpm",
+    "https://download.clearlinux.org/releases/10540/clear/x86_64/os/Packages/dhcp-dev-4.3.3-10.x86_64.rpm"
+)
+def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
+    repo = RpmRepo()
+    repo.add_package(binaries_path / 'sudo-setuid-1.8.17p1-34.x86_64.rpm')
+    package = repo.add_package(binaries_path / 'dhcp-dev-4.3.3-10.x86_64.rpm')
+    assert package.name == 'dhcp-dev'
+    assert package.arch == 'x86_64'
+    assert package.version_str == '4.3.3-10'
+    assert package.version_key == RpmVersion(('0', '4.3.3', '10'))
+    repo.export(output_path, pgp_signer, now=fixed_datetime, keep_expanded=True)
+    compare_files(output_path / 'sudo-setuid-1.8.17p1-34.x86_64.rpm', binaries_path / 'sudo-setuid-1.8.17p1-34.x86_64.rpm')
+    compare_files(output_path / 'dhcp-dev-4.3.3-10.x86_64.rpm', binaries_path / 'dhcp-dev-4.3.3-10.x86_64.rpm')
+    compare_files(output_path / 'repodata/repomd.xml', expected_path / 'repomd.xml', should_populate)
+    compare_files(output_path / 'repodata/primary.xml', expected_path / 'primary.xml', should_populate)
+    compare_files(output_path / 'repodata/filelists.xml', expected_path / 'filelists.xml', should_populate)
+    compare_files(output_path / 'repodata/other.xml', expected_path / 'other.xml', should_populate)
