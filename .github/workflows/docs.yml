@@ -25,5 +25,5 @@ jobs:
     - name: Build and deploy docs
       run: |
         . .venv/bin/activate
-        mkdocs gh-deploy -s
+        mkdocs gh-deploy -s --force
 
