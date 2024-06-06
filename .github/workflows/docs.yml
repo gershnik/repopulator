@@ -17,10 +17,13 @@ jobs:
 
     - name: Setup Python environment
       run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
         pip3 install -r requirements-docs.txt
         pip3 install .
 
     - name: Build and deploy docs
       run: |
+        . .venv/bin/activate
         mkdocs gh-deploy -s
 

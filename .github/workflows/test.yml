@@ -11,6 +11,7 @@ on:
       - 'LICENSE.txt'
       - 'CHANGELOG.md'
       - '.github/workflows/release.yml'
+      - '.github/workflows/docs.yml'
 
 jobs:
   matrix:
