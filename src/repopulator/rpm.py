@@ -423,7 +423,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
             if find_if(self.provided, dep, lambda x, y: x.name == y.name):
                 return False
             if (dep.name.startswith('/') and 
-                    find_if(self.primaryFiles, dep, lambda f, n: f.isPrimary() and f.path() == n.name) is not None):
+                    find_if(self.primaryFiles, dep, lambda f, n: f.is_primary() and f.path() == n.name) is not None):
                 return False
             if find_if(all_deps, dep, lambda x, y: (
                                             x.name == y.name and 
