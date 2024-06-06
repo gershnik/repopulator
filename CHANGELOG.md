@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [0.7] - 2024-06-05
+
 ### Changed
 - First beta version
 
@@ -41,3 +43,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.4]: https://github.com/gershnik/repopulator/releases/0.4
 [0.5]: https://github.com/gershnik/repopulator/releases/0.5
 [0.6]: https://github.com/gershnik/repopulator/releases/0.6
+[0.7]: https://github.com/gershnik/repopulator/releases/0.7
