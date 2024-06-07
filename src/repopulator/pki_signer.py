@@ -86,7 +86,7 @@ class PkiSigner:
             Signature as a `bytes` object
         """
         if not isinstance(self.__key, rsa.RSAPrivateKey):
-            raise Exception('The private key type is not currently supported for Alpine signatures')
+            raise ValueError('The private key type is not currently supported for Alpine signatures')
 
         data = path.read_bytes()
 

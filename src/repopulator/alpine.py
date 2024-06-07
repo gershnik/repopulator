@@ -212,12 +212,12 @@ class AlpineRepo:
 
         package = AlpinePackage._load(path, force_arch)
         if package.arch == 'noarch':
-            raise Exception('package has "noarch" architecture, you must use force_arch parameter to specify which repo architecture to assign it to')
+            raise ValueError('package has "noarch" architecture, you must use force_arch parameter to specify which repo architecture to assign it to')
         arch_packages = self.__packages.setdefault(package.arch, [])
         def package_key(x: AlpinePackage): return (x.name, x.version_key)
         idx = lower_bound(arch_packages, package, lambda x, y: package_key(x) < package_key(y))
         if idx < len(arch_packages) and package_key(arch_packages[idx]) == package_key(package):
-            raise Exception(f'Duplicate package {path}, existing: {arch_packages[idx].src_path}')
+            raise ValueError(f'Duplicate package {path}, existing: {arch_packages[idx].src_path}')
         arch_packages.insert(idx, package)
         return package
     
