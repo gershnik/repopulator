@@ -251,7 +251,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
         """Internal, do not use
         Use RpmRepo.addPackage to create instances of this class
         """
-        self.__srcPath = src_path
+        self.__src_path = src_path
         self.__filename = filename
         self.__pkgid = pkgid
         self.__headers = headers
@@ -303,7 +303,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
     
     def _append_filelist(self, parent: ET.Element):
         parent.append(self.__filelist) #should we clone it?

@@ -66,10 +66,10 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
         """Internal do not use.
         Use FreeBSDRepo.add_package to create instances of this class
         """
-        self.__srcPath = src_path
+        self.__src_path = src_path
         self.__manifest = manifest
         self.__fields = fields
-        self.__versionKey = VersionKey.parse(self.__fields['version'])
+        self.__version_key = VersionKey.parse(self.__fields['version'])
 
     @property
     def name(self) -> str:
@@ -84,7 +84,7 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
     @property
     def version_key(self) -> VersionKey:
         """Version of the package as a properly comparable key"""
-        return self.__versionKey
+        return self.__version_key
     
     @property
     def arch(self) -> str:
@@ -104,7 +104,7 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
         
 
     def _export_to_site(self, fp: BinaryIO):

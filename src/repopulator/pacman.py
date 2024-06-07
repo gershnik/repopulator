@@ -91,11 +91,11 @@ class PacmanPackage(metaclass=NoPublicConstructor):
         """Internal do not use.
         Use [add_package][repopulator.PacmanRepo.add_package] to create instances of this class
         """
-        self.__srcPath = src_path
-        self.__sigPath = sig_path
+        self.__src_path = src_path
+        self.__sig_path = sig_path
         self.__desc = desc
         self.__files = files
-        self.__versionKey = VersionKey.parse(self.__desc['VERSION'])
+        self.__version_key = VersionKey.parse(self.__desc['VERSION'])
 
     @property
     def name(self) -> str:
@@ -110,7 +110,7 @@ class PacmanPackage(metaclass=NoPublicConstructor):
     @property
     def version_key(self) -> VersionKey:
         """Version of the package as a properly comparable key"""
-        return self.__versionKey
+        return self.__version_key
     
     @property
     def arch(self) -> str:
@@ -134,12 +134,12 @@ class PacmanPackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
     
     @property
     def sig_path(self) -> Optional[Path]:
         """Path to the package signature file, if present"""
-        return self.__sigPath
+        return self.__sig_path
     
 
     def _export_desc(self, fp: BinaryIO):

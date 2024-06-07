@@ -100,9 +100,9 @@ class AptPackage(metaclass=NoPublicConstructor):
         """Internal, do not use.
         Use AptRepo.add_package to create instances of this class
         """
-        self.__srcPath = src_path
+        self.__src_path = src_path
         self.__fields = fields
-        self.__versionKey = VersionKey.parse(fields['Version']) # type: ignore
+        self.__version_key = VersionKey.parse(fields['Version']) # type: ignore
         
 
     @property
@@ -118,7 +118,7 @@ class AptPackage(metaclass=NoPublicConstructor):
     @property
     def version_key(self) -> VersionKey:
         """Version of the package as a properly comparable key"""
-        return self.__versionKey
+        return self.__version_key
     
     @property
     def arch(self) -> str:
@@ -138,7 +138,7 @@ class AptPackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
 
 
 
