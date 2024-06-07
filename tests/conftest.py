@@ -3,6 +3,7 @@
 import os
 import pytest
 import shutil
+import subprocess
 
 
 from pathlib import Path, PurePosixPath
@@ -83,9 +84,12 @@ def should_populate(request) -> bool:
     should_populate: bool = request.config.option.populate_expected
     return should_populate
 
+def find_gpg_home():
+    return subprocess.run(['gpgconf', '-L', 'homedir'], check=True, capture_output=True).stdout.decode().strip()
+
 @pytest.fixture
 def pgp_signer():
-    return PgpSigner(Path(os.environ.get('GNUPGHOME', Path.home() / '.gnupg')), 
+    return PgpSigner(Path(os.environ.get('GNUPGHOME', find_gpg_home())), 
                      os.environ['PGP_KEY_NAME'], 
                      os.environ['PGP_KEY_PASSWD'])
 
