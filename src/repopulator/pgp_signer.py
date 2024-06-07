@@ -6,6 +6,8 @@
 
 """All things related to PGP signing"""
 
+from __future__ import annotations
+
 import subprocess
 from pathlib import Path
 from typing import Optional

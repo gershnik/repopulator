@@ -49,6 +49,5 @@ jobs:
         run: pip install Nox
 
       - name: Test
-        shell: bash
         run: nox --sessions test --force-python ${{ steps.setup-python.outputs.python-path }}
 
