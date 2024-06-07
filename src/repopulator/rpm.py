@@ -173,7 +173,7 @@ class _RpmFile:
     def type(self) -> Optional[str]:
         if stat.S_ISDIR(self.mode & 0xFFFF):
             return "dir"
-        elif self.flags & _RPMFILE_GHOST != 0:
+        if self.flags & _RPMFILE_GHOST != 0:
             return "ghost"
         return None
     

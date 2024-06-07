@@ -246,7 +246,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
 
     def _remove_package(self, package: AptPackage, component: Optional[str] = None):
         if component is None:
-            components = [x for x in self.__packages]
+            components = list(self.__packages)
         else:
             components = [component]
         for current_component in components:
@@ -288,7 +288,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
                 pack, pack_gz = self.__export_packages(dist_dir, comp, arch, now)
                 package_indices += [pack, pack_gz]
 
-        Release_path = dist_dir / 'Release'
+        Release_path = dist_dir / 'Release' # pylint: disable=invalid-name
         with open(Release_path, "wb") as f:
             f.write(f'Origin: {self.origin}\n'.encode())
             f.write(f'Label: {self.label}\n'.encode())
@@ -315,10 +315,10 @@ class AptDistribution(metaclass=NoPublicConstructor):
         
         os.utime(Release_path, (now.timestamp(), now.timestamp()))
 
-        InRelease_path = dist_dir / 'InRelease'
+        InRelease_path = dist_dir / 'InRelease' # pylint: disable=invalid-name
         signer.sign_inline(Release_path, InRelease_path)
         os.utime(InRelease_path, (now.timestamp(), now.timestamp()))
-        Release_pgp_path = Release_path.with_suffix('.pgp')
+        Release_pgp_path = Release_path.with_suffix('.pgp') # pylint: disable=invalid-name
         signer.sign_external(Release_path, Release_pgp_path)
         os.utime(Release_pgp_path, (now.timestamp(), now.timestamp()))
         
@@ -330,7 +330,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
             shutil.rmtree(packages_dir)
         packages_dir.mkdir(parents=True)
 
-        Packages_path = packages_dir / 'Packages'
+        Packages_path = packages_dir / 'Packages' # pylint: disable=invalid-name
         with open(Packages_path, "wb") as f:
             packages = self.__packages.get(component, {}).get(arch, [])
             if len(packages) > 0:
@@ -340,7 +340,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
                 package._write_index_entry(f)
         os.utime(Packages_path, (now.timestamp(), now.timestamp()))
 
-        Packages_gz_path = Packages_path.with_suffix('.gz')
+        Packages_gz_path = Packages_path.with_suffix('.gz') # pylint: disable=invalid-name
         with open(Packages_path, 'rb') as f_in:
             with open(Packages_gz_path, 'wb') as f_out:
                 with gzip.GzipFile(filename=Packages_path.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
