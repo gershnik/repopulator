@@ -84,14 +84,11 @@ def should_populate(request) -> bool:
     should_populate: bool = request.config.option.populate_expected
     return should_populate
 
-def find_gpg_home():
-    return subprocess.run(['gpgconf', '--list-dirs', 'homedir'], check=True, capture_output=True).stdout.decode().strip()
-
 @pytest.fixture
 def pgp_signer():
-    return PgpSigner(Path(os.environ.get('GNUPGHOME', find_gpg_home())), 
-                     os.environ['PGP_KEY_NAME'], 
-                     os.environ['PGP_KEY_PASSWD'])
+    return PgpSigner(key_name=os.environ['PGP_KEY_NAME'], 
+                     key_pwd = os.environ['PGP_KEY_PASSWD'],
+                     homedir=os.environ.get('GNUPGHOME'))
 
 @pytest.fixture
 def pki_signer():

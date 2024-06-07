@@ -72,7 +72,7 @@ dist = repo.add_distribution('jammy',
 repo.assign_package(package1, dist, component='main')
 repo.assign_package(package2, dist, component='main')
 
-signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
+signer = PgpSigner('name_of_key_to_use', 'password_of_that_key')
 
 repo.export(Path('/path/of/new/repo'), signer)
 
@@ -88,7 +88,7 @@ repo = RpmRepo()
 repo.add_package(Path('/path/to/awesome-3.14-1.el9.x86_64.rpm'))
 repo.add_package(Path('/path/to/awesome-3.14-1.el9.aarch64.rpm'))
 
-signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
+signer = PgpSigner('name_of_key_to_use', 'password_of_that_key')
 
 repo.export(Path('/path/of/new/repo'), signer)
 
@@ -105,7 +105,7 @@ repo = PacmanRepo('myrepo')
 # otherwise new signature will be generated at export time
 repo.add_package(Path('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst'))
 
-signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
+signer = PgpSigner('name_of_key_to_use', 'password_of_that_key')
 
 repo.export(Path('/path/of/new/repo'), signer)
 
