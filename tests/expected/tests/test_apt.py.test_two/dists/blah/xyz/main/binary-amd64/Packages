@@ -1,0 +1,25 @@
+Package: nano-udeb
+Version: 1.3.10-1
+Section: debian-installer
+Priority: standard
+Architecture: amd64
+Depends: libc-udeb, libslang2-udeb
+Provides: editor
+Installed-Size: 84
+Maintainer: Jordi Mallach <jordi@debian.org>
+Source: nano
+Description: free Pico clone with some new features - tiny build
+ GNU nano is a free replacement for Pico, the default Pine editor. Pine is
+ copyrighted under a restrictive licence, that makes it unsuitable for
+ Debian's main section. GNU nano is an effort to provide a Pico-like
+ editor, but also includes some features that were missing in the original,
+ such as 'search and replace', 'goto line' or internationalization support.
+ .
+ This package contains a minimal build of GNU nano, aimed for use in
+ debian-installer. Thus, many features are disabled in this version.
+Filename: nano-udeb_1.3.10-1_amd64.udeb
+Size: 33560
+MD5sum: 191e33984bfa643ae8b9ae68f327a768
+SHA1: 450db28b335812219a2e8a8d25df40b8284ea7b1
+SHA256: 171d097360f7430d7b0b91963c5ecb13618fb82bee44c5dcc13a4141b1a01ab5
+SHA512: ec0599c3d34ff50174acdf63196987eebb86689e742bb8d34b3d6d39b1181bf4c8b838e5f423d02219b5ece18e9822e8dde1db7330f13cc7552b663660b8d4f7

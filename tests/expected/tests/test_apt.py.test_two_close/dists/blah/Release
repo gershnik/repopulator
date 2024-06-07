@@ -1,0 +1,21 @@
+Origin: some origin
+Label: some label
+Suite: hello
+Codename: blah
+Version: 3.5
+Architectures: sparc
+Components: main
+Description: hohohoho
+Date: Fri, 31 May 2024 01:45:07 +0000
+MD5Sum:
+ e4cadc02e37f48bdecbf89cec91875ca             3216 main/binary-sparc/Packages
+ 5a902dd9e9fa1e336e57893d8a032c36             1241 main/binary-sparc/Packages.gz
+SHA1:
+ ad5835a47593cfbcb4fc45e331ce6615719e9695             3216 main/binary-sparc/Packages
+ 5d3f5aa3076634e4d4b3c4936eadcc177154d92b             1241 main/binary-sparc/Packages.gz
+SHA256:
+ 71b06c61bd77eafe10e7467b67a3b0400f368bc0f1d64ad11a2613238b114406             3216 main/binary-sparc/Packages
+ 76437e6f11984e17d1545d540da0888c9812723f4e38da3918dc92ab8f36f326             1241 main/binary-sparc/Packages.gz
+SHA512:
+ f8f4b273434439eddda55900eee22e170412e4e878d7515f638b7d4fb51206c7900b7cbf8dddf76e8942348eea05533bdaf3e4dc13980c3ca02a3581f69d26f6             3216 main/binary-sparc/Packages
+ cb6c0a2ae43c56f24fff6ca74b5f43f8d1544bf6e5a175c14dfb0ee3afc559a89f4e1b71d085c2e298ede6ea0453de9a4872f67124e3117ae13d9f1eb78c4cd7             1241 main/binary-sparc/Packages.gz

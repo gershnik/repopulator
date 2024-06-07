@@ -69,8 +69,8 @@ dist = repo.add_distribution('jammy',
                              version='1.2', 
                              description='my awesome repo')
 
-dist.add_package(component='main', package=package1)
-dist.add_package(component='main', package=package2)
+repo.assign_package(package1, dist, component='main')
+repo.assign_package(package2, dist, component='main')
 
 signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
 

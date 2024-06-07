@@ -154,7 +154,15 @@ class AptPackage(metaclass=NoPublicConstructor):
 
 @total_ordering
 class AptDistribution(metaclass=NoPublicConstructor):
-    """A distribution in AptRepo"""
+    """A distribution in AptRepo
+    
+    Attributes:
+        origin (str): Origin of the distribution
+        label (str): Label of the distribution
+        suite (str): Suite of the distribution
+        version (str): Version of the distribution
+        description (str): Description of the distribution
+    """
 
     @classmethod
     def _new(cls,
@@ -180,7 +188,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
         path = path if isinstance(path, PurePosixPath) else PurePosixPath(path)
         if path.is_absolute():
             raise ValueError('path value must be a relative path')
-        self.path = path
+        self.__path = path
 
         self.origin = origin
         self.label = label
@@ -191,15 +199,20 @@ class AptDistribution(metaclass=NoPublicConstructor):
         self.__packages: Dict[str, Dict[str, list[AptPackage]]] = {}
 
     def __hash__(self):
-        return hash(self.path)
+        return hash(self.__path)
     
     def __eq__(self, other: object):
         if isinstance(other, AptDistribution):
-            return self.path == other.path
+            return self.__path == other.__path
         return NotImplemented
     
     def __lt__(self, other):
-        return self.path < other.path
+        return self.__path < other.__path
+    
+    @property
+    def path(self) -> PurePosixPath:
+        """Path of the distribution"""
+        return self.__path
     
     @property
     def components(self) -> KeysView[str]:
@@ -213,28 +226,49 @@ class AptDistribution(metaclass=NoPublicConstructor):
     def packages(self, component: str, arch: str) -> Sequence[AptPackage]:
         """Architectures for a given component and architecture"""
         return self.__packages[component][arch]
+    
+    def __repr__(self):
+        return f"{self.__path} distribution)"
+    
+    @staticmethod
+    def _package_key(p: AptPackage): 
+        return (p.name, p.version_str) # apt tools seem to sort by string
 
-    def add_package(self, component: str, package: AptPackage):
-        """Adds a repository package to this distribution
-
-        Args:
-            component: the component to add the package to
-            package: the package to add. It must have been created via AptRepo.add_package call
-        """
+    def _add_package(self, package: AptPackage, component: str):
         arch = package.arch
         archs = self.__packages.setdefault(component, {})
         packages = archs.setdefault(arch, [])
-        def package_key(p: AptPackage): return (p.name, p.version_str) # apt tools seem to sort by string
-        idx = lower_bound(packages, package, lambda x, y: package_key(x) < package_key(y))
-        if idx < len(packages) and package_key(packages[idx]) == package_key(package):
-            raise ValueError('Duplicate package')
+        
+        idx = lower_bound(packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(packages) and self._package_key(packages[idx]) == self._package_key(package):
+            raise ValueError(f'Duplicate package for {self.__path}, {component}, {arch}')
         packages.insert(idx, package)
+
+    def _remove_package(self, package: AptPackage, component: Optional[str] = None):
+        if component is None:
+            components = [x for x in self.__packages.keys()]
+        else:
+            components = [component]
+        for current_component in components:
+            archs = self.__packages.get(current_component)
+            if archs is None:
+                continue
+            packages = archs.get(package.arch)
+            if packages is None:
+                continue
+            idx = lower_bound(packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+            if idx < len(packages) and packages[idx] is package:
+                del packages[idx]
+                if len(packages) == 0:
+                    del archs[package.arch]
+                    if len(archs) == 0:
+                        del self.__packages[current_component]
 
     def _export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None):
         if now is None:
             now = datetime.now(timezone.utc)
         
-        dist_dir = root / self.path
+        dist_dir = root / self.__path
         if dist_dir.exists():
             shutil.rmtree(dist_dir)
         dist_dir.mkdir(parents=True)
@@ -259,7 +293,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
             f.write(f'Origin: {self.origin}\n'.encode())
             f.write(f'Label: {self.label}\n'.encode())
             f.write(f'Suite: {self.suite}\n'.encode())
-            f.write(f'Codename: {self.path.name}\n'.encode())
+            f.write(f'Codename: {self.__path.name}\n'.encode())
             f.write(f'Version: {self.version}\n'.encode())
             f.write(f'Architectures: {",".join(archs)}\n'.encode())
             f.write(f'Components: {",".join(components)}\n'.encode())
@@ -335,7 +369,7 @@ class AptRepo:
 
         Args:
             path: distribution "name" inside the repo (e.g. 'jammy' or 'focal'), which is also its path.
-                This value is also automatically used as the distribution 'Codename'
+                The last component of this path is also automatically used as the distribution 'Codename'
             origin: 'Origin' field. See https://wiki.debian.org/DebianRepository/Format#Origin
             label: 'Label' field. See https://wiki.debian.org/DebianRepository/Format#Label
             suite: 'Suite' field. See https://wiki.debian.org/DebianRepository/Format#Suite
@@ -351,6 +385,19 @@ class AptRepo:
             raise ValueError('Duplicate distribution')
         self.__distributions.add(dist)
         return dist
+    
+    def del_distribution(self, dist: AptDistribution):
+        """Removes a distribution from the repository.
+
+        If the distribution is not in this repo the function ignores it and succeeds
+
+        Params:
+            dist: the distribution to remove
+        """
+        try:
+            self.__distributions.remove(dist)
+        except KeyError:
+            pass
 
     def add_package(self, path: Path) -> AptPackage:
         """Adds a package to the repository
@@ -366,11 +413,59 @@ class AptRepo:
         """
 
         package = AptPackage._load(path, path.name)
-        for existing in self.__packages:
-            if existing.repo_filename == package.repo_filename:
-                raise ValueError("duplicate package name")
-        self.__packages.append(package)
+        idx = lower_bound(self.__packages, package, lambda x, y: x.repo_filename < y.repo_filename)
+        if idx < len(self.__packages) and self.__packages[idx].repo_filename == package.repo_filename:
+            raise ValueError('Duplicate package')
+        self.__packages.insert(idx, package)
         return package
+    
+    def del_package(self, package: AptPackage):
+        """Removes a package from this repository
+
+        The package is removed from the repository and all distributions in it. 
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        idx = lower_bound(self.__packages, package, lambda x, y: x.repo_filename < y.repo_filename)
+        if idx < len(self.__packages) and self.__packages[idx] is package:
+            for dist in self.__distributions:
+                dist._remove_package(package)
+            del self.__packages[idx]
+    
+    def assign_package(self, package: AptPackage, dist: AptDistribution, component: str):
+        """Assigns a repository package to a distribution's component
+
+        Args:
+            package: the package to assign. 
+            dist: the distribution to assign to
+            component: the distribution's component to assign the package to
+        """
+        if not package in self.__packages:
+            raise ValueError('package is not in repository')
+        if not dist in self.__distributions:
+            raise ValueError('distribution is not in repository')
+        dist._add_package(package, component)
+
+    def unassign_package(self, package: AptPackage, dist: AptDistribution, component: Optional[str] = None):
+        """Removes a repository package from a distribution's component
+
+        If the package or distribution are not in this repository or the package is not 
+        assigned to the distribution's component the call is silently ignored.
+
+        Args:
+            package: the package to remove. 
+            dist: the distribution to remove from
+            component: if specified remove the package only from this component. Otherwise remove it from all
+        """
+
+        if not package in self.__packages:
+            return
+        if not dist in self.__distributions:
+            return
+        dist._remove_package(package, component)
     
 
     @property
