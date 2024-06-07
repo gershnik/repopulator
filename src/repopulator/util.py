@@ -4,6 +4,8 @@
 # license that can be found in the LICENSE.txt file or at
 # https://opensource.org/licenses/BSD-3-Clause
 
+"""Internal utilities"""
+
 from __future__ import annotations
 
 import hashlib
@@ -17,9 +19,11 @@ Val = TypeVar('Val')
 T = TypeVar('T')
 
 def find_if(seq: Sequence[Any], obj: Any, cond: Callable[[Any, Any], bool]):
+    """like C++ std::find_if"""
     return next((item for item in seq if cond(item, obj)), None)
 
 def lower_bound(seq: Sequence[Any], obj: Any, comp: Callable[[Any, Any], bool] = lambda x, y: x < y):
+    """like C++ std::lower_bound"""
     first = 0
     size = len(seq)
     while size != 0:
@@ -32,15 +36,9 @@ def lower_bound(seq: Sequence[Any], obj: Any, comp: Callable[[Any, Any], bool] =
             size = half_way
     return first
 
-# def mismatch(seq1: Sequence[Any], seq2: Sequence[Any], cond: Callable[[Any, Any], bool] = lambda x, y: x == y):
-#     idx = 0
-#     len1 = len(seq1)
-#     len2 = len(seq2)
+class PackageParsingException(Exception):
+    """Raised when package parsing fails"""
 
-#     while idx != len1 and idx != len2 and cond(seq1[idx], seq2[idx]):
-#         idx += 1
- 
-#     return idx
 
 class VersionKey:
     """Representation of a package version
@@ -58,7 +56,7 @@ class VersionKey:
         Constructor for VersionKey class
 
         Arguments are any number of version parts. Each part can be:
-        
+
         * a single `int` for a numeric part
         * an `str` or `bytes` object for a string part
 
@@ -76,6 +74,14 @@ class VersionKey:
 
     @staticmethod
     def parse(version: str) -> VersionKey:
+        """Parses the version key from a string
+
+        Parsing is always well defined for any string and never fails
+
+        Args:
+            version: a version string
+        Returns: parsed key
+        """
         ret = VersionKey()
         def isalpha(c): return ('a' <= c <= 'z') or ('A' <= c <= 'Z')
         def isdigit(c): return '0' <= c <= '9'
@@ -216,7 +222,7 @@ def indent_tree(tree, space="  ", level=0):
         tree = tree.getroot()
     if level < 0:
         raise ValueError(f"Initial indentation level must be >= 0, got {level}")
-    if not len(tree):
+    if not len(tree): # pylint: disable=use-implicit-booleaness-not-len
         return
 
     # Reduce the memory consumption by reusing indentation strings.
@@ -248,6 +254,7 @@ def indent_tree(tree, space="  ", level=0):
     _indent_children(tree, 0)
 
 class ImmutableDict(Mapping[Key, Val]):
+    """A dictionary that cannot be modified"""
 
     def __init__(self, data: Dict[Key, Val]):
         self._data = data

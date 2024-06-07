@@ -1,0 +1,10 @@
+[MESSAGES CONTROL]
+
+disable=protected-access, 
+        wrong-import-order, 
+        trailing-whitespace, 
+        trailing-newlines, 
+        line-too-long, 
+        multiple-statements,
+        consider-using-enumerate,
+        too-few-public-methods

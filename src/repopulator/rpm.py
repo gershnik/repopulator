@@ -28,43 +28,43 @@ from .pgp_signer import PgpSigner
 from .util import ImmutableDict, NoPublicConstructor, find_if, lower_bound, VersionKey, file_digest, indent_tree
 
 _RPMSENSE_ANY           = 0
-_RPMSENSE_LESS          = (1 << 1)
-_RPMSENSE_GREATER       = (1 << 2)
-_RPMSENSE_EQUAL         = (1 << 3)
-_RPMSENSE_PROVIDES      = (1 << 4)
-_RPMSENSE_POSTTRANS     = (1 << 5)
-_RPMSENSE_PREREQ        = (1 << 6)
-_RPMSENSE_PRETRANS      = (1 << 7)
-_RPMSENSE_INTERP        = (1 << 8)
-_RPMSENSE_SCRIPT_PRE    = (1 << 9)
-_RPMSENSE_SCRIPT_POST   = (1 << 10)
-_RPMSENSE_SCRIPT_PREUN  = (1 << 11)
-_RPMSENSE_SCRIPT_POSTUN = (1 << 12)
-_RPMSENSE_SCRIPT_VERIFY = (1 << 13)
-_RPMSENSE_FIND_REQUIRES = (1 << 14) 
-_RPMSENSE_FIND_PROVIDES = (1 << 15) 
-_RPMSENSE_TRIGGERIN     = (1 << 16)
-_RPMSENSE_TRIGGERUN     = (1 << 17)
-_RPMSENSE_TRIGGERPOSTUN = (1 << 18)
-_RPMSENSE_MISSINGOK     = (1 << 19)
-_RPMSENSE_RPMLIB        = (1 << 24)
-_RPMSENSE_TRIGGERPREIN  = (1 << 25)
-_RPMSENSE_KEYRING       = (1 << 26)
-_RPMSENSE_CONFIG        = (1 << 28)
+_RPMSENSE_LESS          = 1 << 1
+_RPMSENSE_GREATER       = 1 << 2
+_RPMSENSE_EQUAL         = 1 << 3
+_RPMSENSE_PROVIDES      = 1 << 4
+_RPMSENSE_POSTTRANS     = 1 << 5
+_RPMSENSE_PREREQ        = 1 << 6
+_RPMSENSE_PRETRANS      = 1 << 7
+_RPMSENSE_INTERP        = 1 << 8
+_RPMSENSE_SCRIPT_PRE    = 1 << 9
+_RPMSENSE_SCRIPT_POST   = 1 << 10
+_RPMSENSE_SCRIPT_PREUN  = 1 << 11
+_RPMSENSE_SCRIPT_POSTUN = 1 << 12
+_RPMSENSE_SCRIPT_VERIFY = 1 << 13
+_RPMSENSE_FIND_REQUIRES = 1 << 14
+_RPMSENSE_FIND_PROVIDES = 1 << 15
+_RPMSENSE_TRIGGERIN     = 1 << 16
+_RPMSENSE_TRIGGERUN     = 1 << 17
+_RPMSENSE_TRIGGERPOSTUN = 1 << 18
+_RPMSENSE_MISSINGOK     = 1 << 19
+_RPMSENSE_RPMLIB        = 1 << 24
+_RPMSENSE_TRIGGERPREIN  = 1 << 25
+_RPMSENSE_KEYRING       = 1 << 26
+_RPMSENSE_CONFIG        = 1 << 28
 
 _RPMFILE_NONE       = 0
-_RPMFILE_CONFIG     = (1 <<  0)	    # from %%config
-_RPMFILE_DOC        = (1 <<  1)     # from %%doc
-_RPMFILE_ICON       = (1 <<  2)     # from %%donotuse
-_RPMFILE_MISSINGOK  = (1 <<  3)     # from %%config(missingok)
-_RPMFILE_NOREPLACE  = (1 <<  4)     # from %%config(noreplace)
-_RPMFILE_SPECFILE   = (1 <<  5)     # @todo (unnecessary) marks 1st file in srpm.
-_RPMFILE_GHOST      = (1 <<  6)     # from %%ghost
-_RPMFILE_LICENSE    = (1 <<  7)     # from %%license
-_RPMFILE_README     = (1 <<  8)     # from %%readme
+_RPMFILE_CONFIG     = 1 <<  0	    # from %%config
+_RPMFILE_DOC        = 1 <<  1     # from %%doc
+_RPMFILE_ICON       = 1 <<  2     # from %%donotuse
+_RPMFILE_MISSINGOK  = 1 <<  3     # from %%config(missingok)
+_RPMFILE_NOREPLACE  = 1 <<  4     # from %%config(noreplace)
+_RPMFILE_SPECFILE   = 1 <<  5     # @todo (unnecessary) marks 1st file in srpm.
+_RPMFILE_GHOST      = 1 <<  6     # from %%ghost
+_RPMFILE_LICENSE    = 1 <<  7     # from %%license
+_RPMFILE_README     = 1 <<  8     # from %%readme
 # bits 9-10 unused
-_RPMFILE_PUBKEY     = (1 << 11)     # from %%pubkey
-_RPMFILE_ARTIFACT   = (1 << 12)     # from %%artifact
+_RPMFILE_PUBKEY     = 1 << 11     # from %%pubkey
+_RPMFILE_ARTIFACT   = 1 << 12     # from %%artifact
 
 
 _ABI_VERSION_PATTERN = re.compile(r'([^(]+)\(([^)]*)\)')
@@ -117,9 +117,9 @@ class RpmVersion:
             version: either the full RPM version in string form or a tuple of (epoch, version, release)
         """
         if isinstance(version, str):
-            if (colonPos := version.find(':')) != -1:
-                self.epoch = str(int(version[:colonPos]))
-                version = version[colonPos+1:]
+            if (colon_pos := version.find(':')) != -1:
+                self.epoch = str(int(version[:colon_pos]))
+                version = version[colon_pos+1:]
             else:
                 self.epoch = "0"
             ver_parts = version.split('-', 2)
@@ -160,6 +160,7 @@ class RpmVersion:
         return ret
     
 class _RpmFile:
+    # pylint: disable=missing-function-docstring
     def __init__(self, basename: str, dirname: str, flags: int, mode: int):
         self.basename = basename
         self.dirname = dirname
@@ -194,6 +195,7 @@ class _RpmFile:
     
 
 class _RpmDependency:
+    # pylint: disable=missing-function-docstring
     def __init__(self, name: str, flags: int, version: str) -> None:
         self.name = name
         self.flags = flags
@@ -203,11 +205,11 @@ class _RpmDependency:
     def comparison(self):
         flags = self.flags & 0xf
 
-        if flags == _RPMSENSE_LESS:                             return "LT"
-        elif flags == _RPMSENSE_GREATER:                        return "GT"
-        elif flags == _RPMSENSE_EQUAL:                          return "EQ"
-        elif flags == (_RPMSENSE_LESS | _RPMSENSE_EQUAL):       return "LE"
-        elif flags == (_RPMSENSE_GREATER | _RPMSENSE_EQUAL):    return "GE"
+        if flags == _RPMSENSE_LESS:                           return "LT"
+        if flags == _RPMSENSE_GREATER:                        return "GT"
+        if flags == _RPMSENSE_EQUAL:                          return "EQ"
+        if flags == (_RPMSENSE_LESS | _RPMSENSE_EQUAL):       return "LE"
+        if flags == (_RPMSENSE_GREATER | _RPMSENSE_EQUAL):    return "GE"
         
         return None
     
@@ -385,11 +387,11 @@ class RpmPackage(metaclass=NoPublicConstructor):
         provided = self.__collect_dependencies(headers, ('provides', 'provideflags', 'provideversion'))
         self.__write_dependencies(fmt, 'rpm:provides', provided)
         
-        required_filter = self.__RequiredFilter(provided, primary_files)
+        required_filter = self._RequiredFilter(provided, primary_files)
         required = self.__collect_dependencies(headers, ('requirename', 'requireflags', 'requireversion'),
                                                filter_func=required_filter)
-        if required_filter.latestLibc is not None:
-            required.append(required_filter.latestLibc)
+        if required_filter.latest_libc is not None:
+            required.append(required_filter.latest_libc)
         
         self.__write_dependencies(fmt, 'rpm:requires', required)
             
@@ -411,11 +413,11 @@ class RpmPackage(metaclass=NoPublicConstructor):
             self.primary.append(file.export())
 
 
-    class __RequiredFilter:
+    class _RequiredFilter:
         def __init__(self, provided: Sequence[_RpmDependency], primary_files: Sequence[_RpmFile]):
             self.provided = provided
-            self.primaryFiles = primary_files
-            self.latestLibc: Optional[_RpmDependency] = None
+            self.primary_files = primary_files
+            self.latest_libc: Optional[_RpmDependency] = None
 
         def __call__(self, all_deps: Sequence[_RpmDependency], dep: _RpmDependency) -> bool:
             if dep.name.startswith('rpmlib('):
@@ -423,7 +425,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
             if find_if(self.provided, dep, lambda x, y: x.name == y.name):
                 return False
             if (dep.name.startswith('/') and 
-                    find_if(self.primaryFiles, dep, lambda f, n: f.is_primary() and f.path() == n.name) is not None):
+                    find_if(self.primary_files, dep, lambda f, n: f.is_primary() and f.path() == n.name) is not None):
                 return False
             if find_if(all_deps, dep, lambda x, y: (
                                             x.name == y.name and 
@@ -432,9 +434,9 @@ class RpmPackage(metaclass=NoPublicConstructor):
                                             x.pre() == y.pre())) is not None:
                 return False
             if dep.name.startswith('libc.so.6'):
-                if (self.latestLibc is None or 
-                        _compare_abi_version(dep.name, self.latestLibc.name) == 1):
-                    self.latestLibc = dep
+                if (self.latest_libc is None or 
+                        _compare_abi_version(dep.name, self.latest_libc.name) == 1):
+                    self.latest_libc = dep
                 return False
             return True
 

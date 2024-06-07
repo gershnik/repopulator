@@ -22,7 +22,7 @@ from io import BytesIO
 
 from repopulator.pki_signer import PkiSigner
 
-from .util import NoPublicConstructor, VersionKey, lower_bound
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, lower_bound
 
 from typing import IO, Any, KeysView, Mapping, Optional, Sequence
 
@@ -41,7 +41,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
             while True:
                 count = apk.readinto(buf)
                 if count == 0:
-                    raise Exception(f'{src_path} is not a valid apk package: no control segment')
+                    raise PackageParsingException(f'{src_path} is not a valid apk package: no control segment')
                 decomp.decompress(memoryview(buf)[:count])
                 if len(decomp.unused_data):
                     apk.seek(-len(decomp.unused_data), 1)
@@ -62,8 +62,8 @@ class AlpinePackage(metaclass=NoPublicConstructor):
                     used_len = count - len(decomp.unused_data)
                     digester.update(memoryview(buf)[:used_len])
                     break
-                else:
-                    digester.update(memoryview(buf)[:count])
+                
+                digester.update(memoryview(buf)[:count])
             
 
             digest = base64.encodebytes(digester.digest()).decode().rstrip()
@@ -74,7 +74,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
                 except KeyError:
                     pass
                 if pkginfo is None:
-                    raise Exception(f'{src_path} is not a valid apk package: no .PKGINFO file')
+                    raise PackageParsingException(f'{src_path} is not a valid apk package: no .PKGINFO file')
                 info = AlpinePackage.__read_pkginfo(pkginfo)
 
         index = {
@@ -214,12 +214,35 @@ class AlpineRepo:
         if package.arch == 'noarch':
             raise ValueError('package has "noarch" architecture, you must use force_arch parameter to specify which repo architecture to assign it to')
         arch_packages = self.__packages.setdefault(package.arch, [])
-        def package_key(x: AlpinePackage): return (x.name, x.version_key)
-        idx = lower_bound(arch_packages, package, lambda x, y: package_key(x) < package_key(y))
-        if idx < len(arch_packages) and package_key(arch_packages[idx]) == package_key(package):
+        idx = lower_bound(arch_packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(arch_packages) and self._package_key(arch_packages[idx]) == self._package_key(package):
             raise ValueError(f'Duplicate package {path}, existing: {arch_packages[idx].src_path}')
         arch_packages.insert(idx, package)
         return package
+    
+    def del_package(self, package: AlpinePackage):
+        """Removes a package from this repository
+
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        archs_to_delete = []
+        for arch, arch_packages in self.__packages.items():
+            idx = lower_bound(arch_packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+            if idx < len(arch_packages) and arch_packages[idx] is package:
+                del arch_packages[idx]
+                if not arch_packages:
+                    archs_to_delete.append(arch)
+        for arch in archs_to_delete:
+            del self.__packages[arch]
+        
+
+    @staticmethod
+    def _package_key(package: AlpinePackage): 
+        return (package.name, package.version_key)
     
     @property 
     def description(self):
@@ -279,13 +302,13 @@ class AlpineRepo:
             info.mtime = int(now.timestamp())
             return info
 
-        for arch, archPackages in self.__packages.items():
+        for arch, arch_packages in self.__packages.items():
             expanded_arch_dir = expanded / arch
             expanded_arch_dir.mkdir()
 
             apkindex = expanded_arch_dir / 'APKINDEX'
             with open(apkindex, 'wb') as f:
-                for package in archPackages:
+                for package in arch_packages:
                     package._export_index(f)
 
             
@@ -308,9 +331,9 @@ class AlpineRepo:
                 with open(index_tgz, 'rb') as f:
                     shutil.copyfileobj(f, dest)
 
-            for existingFile in arch_dir.glob('*.apk'):
-                existingFile.unlink()
-            for package in archPackages:
+            for existing_file in arch_dir.glob('*.apk'):
+                existing_file.unlink()
+            for package in arch_packages:
                 shutil.copy2(package.src_path, arch_dir / package.repo_filename)
 
         if not keep_expanded:
@@ -339,6 +362,3 @@ class AlpineRepo:
                     def do_nothing(): pass
                     archive.close = do_nothing
 
-
-
-            

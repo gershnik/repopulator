@@ -12,8 +12,8 @@ import os
 import shutil
 import gzip
 import hashlib
-import arpy
 import tarfile
+import arpy
 
 from functools import total_ordering
 from datetime import datetime, timezone
@@ -21,7 +21,7 @@ from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, BinaryIO, Dict, KeysView, Mapping, Optional, Sequence
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, VersionKey, lower_bound, file_digest
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, lower_bound, file_digest
 
 
 class AptPackage(metaclass=NoPublicConstructor):
@@ -31,21 +31,21 @@ class AptPackage(metaclass=NoPublicConstructor):
     def _load(cls, src_path: Path, repo_filename: str) -> AptPackage:
         fields: Dict[str, str | list[str]] = {}
         with arpy.Archive(str(src_path)) as ar:
-            it = ar.__iter__()
+            it = iter(ar)
             first_file = next(it)
             if first_file.header.name != b'debian-binary':
-                raise Exception(f'{src_path} is not a valid Debian archive: debian-binary missing')
+                raise PackageParsingException(f'{src_path} is not a valid Debian archive: debian-binary missing')
             second_file = next(it)
             if not second_file.header.name.startswith(b'control.'): # type: ignore
-                raise Exception(f'{src_path} is not a valid Debian archive: no control archive')
-            with tarfile.open(name=second_file.header.name, fileobj=second_file, mode="r") as controlArchive: # type: ignore
+                raise PackageParsingException(f'{src_path} is not a valid Debian archive: no control archive')
+            with tarfile.open(name=second_file.header.name, fileobj=second_file, mode="r") as control_archive: # type: ignore
                 control_file = None
                 try:
-                    control_file = controlArchive.extractfile('./control')
+                    control_file = control_archive.extractfile('./control')
                 except KeyError:
                     pass
                 if control_file is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: no control file')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: no control file')
                 last_key = None
                 for line in control_file: # type: ignore
                     line = line.decode().rstrip()
@@ -60,25 +60,25 @@ class AptPackage(metaclass=NoPublicConstructor):
                     else:
                         sep_idx = line.find(':')
                         if sep_idx < 1:
-                            raise Exception(f'{src_path} is not a valid Debian archive: line `{line}` in control file is invalid')
+                            raise PackageParsingException(f'{src_path} is not a valid Debian archive: line `{line}` in control file is invalid')
                         key = line[0:sep_idx]
                         value = line[sep_idx + 1:].strip()
                         fields[key] = value
                         last_key = key
                 if (name := fields.get('Package')) is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: Package field is missing')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Package field is missing')
                 if not isinstance(name, str):
-                    raise Exception(f'{src_path} is not a valid Debian archive: Package field has invalid value')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Package field has invalid value')
 
                 if (arch := fields.get('Architecture')) is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: Architecture field is missing')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Architecture field is missing')
                 if not isinstance(arch, str):
-                    raise Exception(f'{src_path} is not a valid Debian archive: Architecture field has invalid value')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Architecture field has invalid value')
 
                 if (ver := fields.get('Version')) is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: Version field is missing')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Version field is missing')
                 if not isinstance(ver, str):
-                    raise Exception(f'{src_path} is not a valid Debian archive: Version field has invalid value')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Version field has invalid value')
             
             
             fields['Filename'] = repo_filename
@@ -90,8 +90,8 @@ class AptPackage(metaclass=NoPublicConstructor):
                 (hashlib.sha512, 'SHA512'),
             ]
             for hash_func, name in hashes:
-                with open(src_path, "rb") as packFile:
-                    digest = file_digest(packFile, hash_func)
+                with open(src_path, "rb") as pack_file:
+                    digest = file_digest(pack_file, hash_func)
                 fields[name] = digest.hexdigest()
 
         return cls._create(src_path, fields)
@@ -246,7 +246,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
 
     def _remove_package(self, package: AptPackage, component: Optional[str] = None):
         if component is None:
-            components = [x for x in self.__packages.keys()]
+            components = [x for x in self.__packages]
         else:
             components = [component]
         for current_component in components:
@@ -275,9 +275,9 @@ class AptDistribution(metaclass=NoPublicConstructor):
 
         components = []
         archs = []
-        for comp, compArchs in self.__packages.items():
+        for comp, comp_archs in self.__packages.items():
             components.append(comp)
-            for arch in compArchs:
+            for arch in comp_archs:
                 archs.append(arch)
         components.sort()
         archs.sort()
@@ -309,8 +309,8 @@ class AptDistribution(metaclass=NoPublicConstructor):
             for hashFunc, name in hashes:
                 f.write(f'{name}:\n'.encode())
                 for package_index in package_indices:
-                    with open(package_index, "rb") as packFile:
-                        digest = file_digest(packFile, hashFunc)
+                    with open(package_index, "rb") as pack_file:
+                        digest = file_digest(pack_file, hashFunc)
                     f.write(f' {digest.hexdigest()} {package_index.stat().st_size: >16} {package_index.relative_to(dist_dir).as_posix()}\n'.encode())
         
         os.utime(Release_path, (now.timestamp(), now.timestamp()))
@@ -443,9 +443,9 @@ class AptRepo:
             dist: the distribution to assign to
             component: the distribution's component to assign the package to
         """
-        if not package in self.__packages:
+        if package not in self.__packages:
             raise ValueError('package is not in repository')
-        if not dist in self.__distributions:
+        if dist not in self.__distributions:
             raise ValueError('distribution is not in repository')
         dist._add_package(package, component)
 
@@ -458,12 +458,12 @@ class AptRepo:
         Args:
             package: the package to remove. 
             dist: the distribution to remove from
-            component: if specified remove the package only from this component. Otherwise remove it from all
+            component: if specified remove the package only from this component. Otherwise, remove it from all
         """
 
-        if not package in self.__packages:
+        if package not in self.__packages:
             return
-        if not dist in self.__distributions:
+        if dist not in self.__distributions:
             return
         dist._remove_package(package, component)
     

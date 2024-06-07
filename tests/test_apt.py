@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 import pytest
 
 from pathlib import PurePosixPath
@@ -114,7 +116,7 @@ def test_two_close(binaries_path, output_path, expected_path, pgp_signer, fixed_
     'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10.2-1ubuntu1.2_sparc.deb',
     'https://old-releases.ubuntu.com/ubuntu/pool/main/n/nano/nano-udeb_1.3.10-1_amd64.udeb'
 )
-def test_crud(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
+def test_crud(binaries_path):
     repo = AptRepo()
     dist = repo.add_distribution('blah', origin='some origin', label='some label', suite='hello', 
                                 version='3.5', description='hohohoho')
@@ -156,5 +158,3 @@ def test_crud(binaries_path, output_path, expected_path, pgp_signer, fixed_datet
     assert [x for x in dist2.architectures('hello')] == ['sparc']
 
 
-
-    

@@ -4,6 +4,8 @@
 # license that can be found in the LICENSE.txt file or at
 # https://opensource.org/licenses/BSD-3-Clause
 
+"""All things related to PKI signing"""
+
 import hashlib
 
 from pathlib import Path
@@ -37,9 +39,9 @@ class PkiSigner:
         """
         ver = openssl_backend.openssl_version_number()
         if ver < 0x30000000:
-            raise Exception(f'Unsupported OpenSSL version: 0x{ver:08x}, must be above 0x30000000')
-        with open(priv_key_path, 'rb') as keyFile:
-            key = keyFile.read()
+            raise RuntimeError(f'Unsupported OpenSSL version: 0x{ver:08x}, must be above 0x30000000')
+        with open(priv_key_path, 'rb') as key_file:
+            key = key_file.read()
             pwd = priv_key_passwd.encode() if priv_key_passwd is not None else None
             self.__key = crypto_serialization.load_pem_private_key(key, pwd, openssl_backend)
             
@@ -53,11 +55,11 @@ class PkiSigner:
         Returns:
             Signature as a `bytes` object
         """
-        with open(path, 'rb') as dataFile:
+        with open(path, 'rb') as data_file:
             if isinstance(self.__key, rsa.RSAPrivateKey):
-                digest = file_digest(dataFile, hashlib.sha256).hexdigest()
+                digest = file_digest(data_file, hashlib.sha256).hexdigest()
             else:
-                digest = file_digest(dataFile, hashlib.blake2b).hexdigest()
+                digest = file_digest(data_file, hashlib.blake2b).hexdigest()
 
         if isinstance(self.__key, rsa.RSAPrivateKey):
             padding = crypto_padding.PKCS1v15()
@@ -91,7 +93,6 @@ class PkiSigner:
         data = path.read_bytes()
 
         padding = crypto_padding.PKCS1v15()
-        hashVal = crypto_hashes.SHA1()
-        signature = self.__key.sign(data, padding, hashVal)
+        hash_algo = crypto_hashes.SHA1()
+        signature = self.__key.sign(data, padding, hash_algo)
         return signature
-                    

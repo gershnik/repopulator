@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from typing import Any, BinaryIO, Mapping, Optional, Sequence
 
 from .pki_signer import PkiSigner
-from .util import NoPublicConstructor, lower_bound, VersionKey, file_digest
+from .util import NoPublicConstructor, PackageParsingException, lower_bound, VersionKey, file_digest
 
 
 class FreeBSDPackage(metaclass=NoPublicConstructor):
@@ -39,7 +39,7 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
             except KeyError:
                 pass
             if manifest is None:
-                raise Exception(f'{src_path} is not a valid FreeBSD package: no +COMPACT_MANIFEST file')
+                raise PackageParsingException(f'{src_path} is not a valid FreeBSD package: no +COMPACT_MANIFEST file')
             manifest_bytes = manifest.readline() # the whole thing should be 1 line
         raw_data = json.loads(manifest_bytes)
         fields = {
@@ -185,7 +185,7 @@ class FreeBSDRepo:
         if data.exists():
             shutil.rmtree(data)
         data.mkdir(parents=True)
-        with open(data / 'data', 'w') as datafile:
+        with open(data / 'data', 'w', encoding='utf-8') as datafile:
             content = {'groups': [], 'packages': []}
             for package in self.__packages:
                 package._export_to_data(content['packages'])
@@ -221,8 +221,8 @@ class FreeBSDRepo:
     @staticmethod
     def __archive(directory: Path, filename: str, signer: PkiSigner, now: datetime):
         signature = signer.get_free_bsd_signature(directory / filename)
-        with open(directory / 'signature', 'wb') as sigFile:
-            sigFile.write(signature)
+        with open(directory / 'signature', 'wb') as sig_file:
+            sig_file.write(signature)
 
 
         def norm(info: tarfile.TarInfo):

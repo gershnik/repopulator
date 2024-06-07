@@ -19,7 +19,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, VersionKey, file_digest, lower_bound
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, file_digest, lower_bound
 
 from typing import IO, Any, BinaryIO, KeysView, Mapping, Optional, Sequence
 
@@ -52,7 +52,7 @@ class PacmanPackage(metaclass=NoPublicConstructor):
                                 files.append(member.name)
 
             if info is None:
-                raise Exception(f'{src_path} is not a valid Pacman package: no .PKGINFO file')
+                raise PackageParsingException(f'{src_path} is not a valid Pacman package: no .PKGINFO file')
 
         desc = {
             'FILENAME': repo_filename,

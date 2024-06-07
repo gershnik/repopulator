@@ -4,6 +4,8 @@
 # license that can be found in the LICENSE.txt file or at
 # https://opensource.org/licenses/BSD-3-Clause
 
+"""All things related to PGP signing"""
+
 import subprocess
 from pathlib import Path
 
@@ -39,6 +41,7 @@ class PgpSigner:
             sig_path: path to write the signature to
         """
         subprocess.run(['gpg', '--batch', '--quiet', '--pinentry-mode=loopback',
+                        '--homedir', self.__homedir,
                         '--armor', '--detach-sign', '--sign',
                         '--default-key', self.__keyName,
                         '--passphrase', self.__keyPwd,
@@ -54,6 +57,7 @@ class PgpSigner:
             sig_path: path to write the signature to
         """
         subprocess.run(['gpg', '--batch', '--quiet', '--pinentry-mode=loopback',
+                        '--homedir', self.__homedir,
                         '--detach-sign', '--sign', 
                         '--default-key', self.__keyName,
                         '--passphrase', self.__keyPwd,
@@ -68,7 +72,8 @@ class PgpSigner:
             path: file to sign
             out_path: path to write the signed content to
         """
-        subprocess.run(['gpg', '--batch', '--quiet', '--pinentry-mode=loopback', 
+        subprocess.run(['gpg', '--batch', '--quiet', '--pinentry-mode=loopback',
+                        '--homedir', self.__homedir,
                         '--armor', '--detach-sign', '--sign', '--clearsign', 
                         '--default-key', self.__keyName,
                         '--passphrase', self.__keyPwd,
@@ -81,8 +86,9 @@ class PgpSigner:
         Args:
             path: path of the file to write the public key to
         """
-        subprocess.run(['gpg', '--batch', '--quiet', '--output', path, 
+        subprocess.run(['gpg', '--batch', '--quiet', 
+                        '--homedir', self.__homedir,
+                        '--output', path, 
                         '--armor', '--export', self.__keyName
                         ], check=True)
 
-    
