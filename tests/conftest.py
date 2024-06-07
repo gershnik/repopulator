@@ -85,7 +85,7 @@ def should_populate(request) -> bool:
     return should_populate
 
 def find_gpg_home():
-    return subprocess.run(['gpgconf', '-L', 'homedir'], check=True, capture_output=True).stdout.decode().strip()
+    return subprocess.run(['gpgconf', '--list-dirs', 'homedir'], check=True, capture_output=True).stdout.decode().strip()
 
 @pytest.fixture
 def pgp_signer():
