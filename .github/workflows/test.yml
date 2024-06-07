@@ -37,9 +37,9 @@ jobs:
       - name: Preprare Keys
         shell: bash
         run: |
+          mkdir -p $GITHUB_WORKSPACE/.gpg
           echo -n "${{ secrets.PGP_KEY }}" | base64 --decode | gpg --import --batch --pinentry-mode=loopback
           echo -n "${{ secrets.BSD_KEY }}" > $GITHUB_WORKSPACE/bsd-key
-          mkdir -p $GITHUB_WORKSPACE/.gpg
 
       - name: Set up Python
         uses: actions/setup-python@v5
