@@ -26,7 +26,6 @@ jobs:
             python-version: "pypy-3.8" #no cryptography available there
 
     env:
-      GNUPGHOME: ${{ github.workspace }}/.gpg
       PGP_KEY_NAME: ${{ secrets.PGP_KEY_NAME }}
       PGP_KEY_PASSWD: ${{ secrets.PGP_KEY_PASSWD }}
       BSD_KEY: ${{ github.workspace }}/bsd-key
@@ -37,7 +36,8 @@ jobs:
       - name: Preprare Keys
         shell: bash
         run: |
-          mkdir -p $GITHUB_WORKSPACE/.gpg
+          export GNUPGHOME=$GITHUB_WORKSPACE/.gpg
+          mkdir -p $GNUPGHOME
           echo -n "${{ secrets.PGP_KEY }}" | base64 --decode | gpg --import --batch --pinentry-mode=loopback
           echo -n "${{ secrets.BSD_KEY }}" > $GITHUB_WORKSPACE/bsd-key
 
@@ -51,5 +51,8 @@ jobs:
         run: pip install Nox
 
       - name: Test
-        run: nox --sessions test --force-python ${{ steps.setup-python.outputs.python-path }}
+        shell: bash
+        run: |
+          export GNUPGHOME=$GITHUB_WORKSPACE/.gpg
+          nox --sessions test --force-python ${{ steps.setup-python.outputs.python-path }}
 
