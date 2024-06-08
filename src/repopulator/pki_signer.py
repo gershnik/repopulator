@@ -6,6 +6,8 @@
 
 """All things related to PKI signing"""
 
+from __future__ import annotations
+
 import hashlib
 
 from pathlib import Path
