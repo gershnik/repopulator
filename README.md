@@ -77,7 +77,7 @@ repo.export('/path/of/new/repo', signer)
 
 ```
 
-#### YUM/DNF
+#### RPM
 
 ```python
 from repopulator import RpmRepo, PgpSigner
@@ -112,9 +112,9 @@ repo.export('/path/of/new/repo', signer)
 #### Alpine apk
 
 ```python
-from repopulator import PacmanRepo, PkiSigner
+from repopulator import AlpineRepo, PkiSigner
 
-repo = PacmanRepo('my repo description')
+repo = AlpineRepo('my repo description')
 repo.add_package('/path/to/awesome-3.14-r0.apk')
 repo.add_package('/path/to/another-1.23-r0.apk')
 
