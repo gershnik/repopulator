@@ -21,7 +21,7 @@ from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, BinaryIO, Dict, KeysView, Mapping, Optional, Sequence
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, PackageParsingException, VersionKey, lower_bound, file_digest
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, lower_bound, file_digest, path_from_pathlike
 
 
 class AptPackage(metaclass=NoPublicConstructor):
@@ -166,7 +166,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
 
     @classmethod
     def _new(cls,
-             path: PurePosixPath | str,
+             path: PurePosixPath,
              origin: str,
              label: str,
              suite: str,
@@ -175,7 +175,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
         return cls._create(path, origin, label, suite, version, description)
 
     def __init__(self, 
-                 path: PurePosixPath | str,
+                 path: PurePosixPath,
                  origin: str,
                  label: str,
                  suite: str, 
@@ -185,11 +185,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
         Use AptRepo.add_distribution to create instances of this class
         """
 
-        path = path if isinstance(path, PurePosixPath) else PurePosixPath(path)
-        if path.is_absolute():
-            raise ValueError('path value must be a relative path')
         self.__path = path
-
         self.origin = origin
         self.label = label
         self.suite = suite
@@ -380,6 +376,14 @@ class AptRepo:
             a new AptDistribution object
 
         """
+        path = path if isinstance(path, PurePosixPath) else PurePosixPath(path)
+        if path.is_absolute():
+            raise ValueError('path value must be a relative path')
+        origin = ensure_one_line_str(origin, 'origin')
+        label = ensure_one_line_str(label, 'label')
+        suite = ensure_one_line_str(suite, 'sutie')
+        version = ensure_one_line_str(version, 'version')
+        description = ensure_one_line_str(description, 'description')
         dist = AptDistribution._new(path, origin=origin, label=label, suite=suite, version=version, description=description)
         if dist in self.__distributions:
             raise ValueError('Duplicate distribution')
@@ -399,7 +403,7 @@ class AptRepo:
         except KeyError:
             pass
 
-    def add_package(self, path: Path) -> AptPackage:
+    def add_package(self, path: str | os.PathLike[str]) -> AptPackage:
         """Adds a package to the repository
 
         Adding a package to the repository simply adds it to the pool of available packages.
@@ -412,6 +416,7 @@ class AptRepo:
             an AptPackage object for the added package
         """
 
+        path = path_from_pathlike(path)
         package = AptPackage._load(path, path.name)
         idx = lower_bound(self.__packages, package, lambda x, y: x.repo_filename < y.repo_filename)
         if idx < len(self.__packages) and self.__packages[idx].repo_filename == package.repo_filename:
@@ -478,7 +483,7 @@ class AptRepo:
         """Packages in this repository"""
         return self.__packages
     
-    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None):
+    def export(self, root: str | os.PathLike[str], signer: PgpSigner, now: Optional[datetime] = None):
         """Export the repository into a given folder.
 
         This actually creates an on-disk repository suitable to serve to APT clients. If the directory to export to
@@ -499,7 +504,7 @@ class AptRepo:
         if now is None:
             now = datetime.now(timezone.utc)
         
-        
+        root = path_from_pathlike(root)
         dists = root / 'dists'
         if dists.exists():
             shutil.rmtree(dists)

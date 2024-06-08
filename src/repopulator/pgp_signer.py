@@ -10,7 +10,10 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
+from os import PathLike
 from typing import Optional
+
+from .util import path_from_pathlike
 
 class PgpSigner:
     """Implementation of PGP signing
@@ -23,16 +26,16 @@ class PgpSigner:
     You are required to supply key name and password for signing. Signing is done non-interactively without any
     user prompts.
     """
-    def __init__(self, *, key_name: str, key_pwd: str, homedir: Optional[str | Path] = None):
+    def __init__(self, *, key_name: str, key_pwd: str, homedir: Optional[str | PathLike[str]] = None):
         """Constructor for PgpSigner class
 
         Args:
             key_name: name or identifier of the key to use
             key_pwd: password of the key
             homedir: GPG home directory. If not specified the gpg defaults are used (including
-            honoring GNUPGHOME environment variable)
+                honoring GNUPGHOME environment variable)
         """
-        self.__homedir = homedir
+        self.__homedir = path_from_pathlike(homedir) if homedir is not None else None
         self.__key_name = key_name
         self.__key_pwd = key_pwd
         

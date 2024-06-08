@@ -12,6 +12,9 @@ import hashlib
 
 import xml.etree.ElementTree as ET
 
+from os import PathLike
+from pathlib import Path
+
 from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Type, TypeVar
 
 Key = TypeVar('Key')
@@ -38,6 +41,23 @@ def lower_bound(seq: Sequence[Any], obj: Any, comp: Callable[[Any, Any], bool] =
 
 class PackageParsingException(Exception):
     """Raised when package parsing fails"""
+
+def path_from_pathlike(arg: str | PathLike[str]):
+    """Coerces a pathlike argument to a Path"""
+    return Path(arg)
+
+def ensure_str(arg: Any, arg_name: str) -> str:
+    """ensures that the arg is str"""
+    if isinstance(arg, str):
+        return arg
+    raise TypeError(f'{arg_name} must be str')
+
+def ensure_one_line_str(arg: Any, arg_name: str) -> str:
+    """ensures that the arg is str and has no line breaks"""
+    arg = ensure_str(arg, arg_name)
+    if arg.find('\n') != -1:
+        raise ValueError(f'{arg_name} must not contain line breaks')
+    return arg
 
 
 class VersionKey:

@@ -9,6 +9,7 @@
 import hashlib
 
 from pathlib import Path
+from os import PathLike
 
 from cryptography.hazmat.backends.openssl.backend import backend as openssl_backend
 from cryptography.hazmat.primitives import hashes as crypto_hashes
@@ -29,7 +30,7 @@ class PkiSigner:
     that it will be used for.
     """
 
-    def __init__(self, priv_key_path: Path, priv_key_passwd: Optional[str]):
+    def __init__(self, priv_key_path: str | PathLike[str], priv_key_passwd: Optional[str]):
         """Constructor for PkiSigner class
 
         The private key file is read once during the construction and not used again

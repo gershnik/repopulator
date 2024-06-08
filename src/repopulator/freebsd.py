@@ -17,11 +17,12 @@ import hashlib
 
 from pathlib import Path
 from datetime import datetime, timezone
+from os import PathLike
 
 from typing import Any, BinaryIO, Mapping, Optional, Sequence
 
 from .pki_signer import PkiSigner
-from .util import NoPublicConstructor, PackageParsingException, lower_bound, VersionKey, file_digest
+from .util import NoPublicConstructor, PackageParsingException, lower_bound, VersionKey, file_digest, path_from_pathlike
 
 
 class FreeBSDPackage(metaclass=NoPublicConstructor):
@@ -122,7 +123,7 @@ class FreeBSDRepo:
         """Constructor for FreeBSDRepo class"""
         self.__packages: list[FreeBSDPackage] = []
 
-    def add_package(self, path: Path) -> FreeBSDPackage:
+    def add_package(self, path: str | PathLike[str]) -> FreeBSDPackage:
         """Adds a package to the repository
 
         Args:
@@ -130,6 +131,7 @@ class FreeBSDRepo:
         Returns:
             a FreeBSDPackage object for the added package
         """
+        path = path_from_pathlike(path)
         package = FreeBSDPackage._load(path, path.name)
         for existing in self.__packages:
             if existing.repo_filename == package.repo_filename:
@@ -164,7 +166,7 @@ class FreeBSDRepo:
         return self.__packages
 
     
-    def export(self, root: Path, signer: PkiSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
+    def export(self, root: str | PathLike[str], signer: PkiSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
 
         This actually creates an on-disk repository suitable to serve to `pkg` clients. If the directory to export to
@@ -185,6 +187,7 @@ class FreeBSDRepo:
         if now is None:
             now = datetime.now(timezone.utc)
         
+        root = path_from_pathlike(root)
         packagesite = root / 'packagesite'
         if packagesite.exists():
             shutil.rmtree(packagesite)

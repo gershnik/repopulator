@@ -17,9 +17,10 @@ import zstandard
 
 from pathlib import Path
 from datetime import datetime, timezone
+from os import PathLike
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, PackageParsingException, VersionKey, file_digest, lower_bound
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, file_digest, lower_bound, path_from_pathlike
 
 from typing import IO, Any, BinaryIO, KeysView, Mapping, Optional, Sequence
 
@@ -195,10 +196,10 @@ class PacmanRepo:
         Args:
             name: repository name.
         """
-        self.__name = name
+        self.__name = ensure_one_line_str(name, 'name')
         self.__packages: dict[str, list[PacmanPackage]] = {}
 
-    def add_package(self, path: Path) -> PacmanPackage:
+    def add_package(self, path: str | PathLike[str]) -> PacmanPackage:
         """Adds a package to the repository
 
         Args:
@@ -207,6 +208,7 @@ class PacmanRepo:
         Returns:
             a PacmanPackage object for the added package
         """
+        path = path_from_pathlike(path)
         package = PacmanPackage._load(path, path.name)
         arch_packages = self.__packages.setdefault(package.arch, [])
         for idx, existing in enumerate(arch_packages):

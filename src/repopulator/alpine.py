@@ -19,10 +19,11 @@ import gzip
 from pathlib import Path
 from datetime import datetime, timezone
 from io import BytesIO
+from os import PathLike
 
 from repopulator.pki_signer import PkiSigner
 
-from .util import NoPublicConstructor, PackageParsingException, VersionKey, lower_bound
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, lower_bound, path_from_pathlike
 
 from typing import IO, Any, KeysView, Mapping, Optional, Sequence
 
@@ -195,10 +196,10 @@ class AlpineRepo:
                 when performing `apk update`
         """
 
-        self.__desc = desc
+        self.__desc = ensure_one_line_str(desc, 'desc')
         self.__packages: dict[str, list[AlpinePackage]] = {}
 
-    def add_package(self, path: Path, force_arch: Optional[str] = None) -> AlpinePackage:
+    def add_package(self, path: str | PathLike[str], force_arch: Optional[str] = None) -> AlpinePackage:
         """Adds a package to the repository
         
         Args:
@@ -210,6 +211,7 @@ class AlpineRepo:
             an AlpinePackage object for the added package
         """
 
+        path = path_from_pathlike(path)
         package = AlpinePackage._load(path, force_arch)
         if package.arch == 'noarch':
             raise ValueError('package has "noarch" architecture, you must use force_arch parameter to specify which repo architecture to assign it to')
@@ -258,7 +260,7 @@ class AlpineRepo:
         """Packages for a given architecture"""
         return self.__packages[arch]
     
-    def export(self, root: Path, signer: PkiSigner, key_name: str,
+    def export(self, root: str | PathLike[str], signer: PkiSigner, signer_name: str,
                now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
         
@@ -274,7 +276,7 @@ class AlpineRepo:
             signer: A PkiSigner instance to use for signing the repository. Note that this is used to only sign the
                 repository itself, not the packages in it. The packages need to be signed ahead of time which usually
                 happens automatically if you use `abuild` tool
-            key_name: The "name" of the signer to use. It is usually something like "mymail@mydomain.com-1234abcd" 
+            signer_name: The "name" of the signer to use. It is usually something like "mymail@mydomain.com-1234abcd" 
                 (see https://wiki.alpinelinux.org/wiki/Abuild_and_Helpers#Setting_up_the_build_environment for details).
                 Unlike what `pkg` tool does it is not parsed out of private key filename - you have to pass it here manually.
             now: optional timestamp to use when generating files (including various timestamp fields *inside* files).
@@ -285,6 +287,7 @@ class AlpineRepo:
         if now is None:
             now = datetime.now(timezone.utc)
 
+        root = path_from_pathlike(root)
         expanded = root / 'expanded'
         if expanded.exists():
             shutil.rmtree(expanded)
@@ -321,7 +324,7 @@ class AlpineRepo:
                         archive.add(apkindex, arcname=apkindex.name, filter=norm)
 
             sig_tgz = expanded_arch_dir / 'sig.tgz'
-            self.__create_index_signature(index_tgz, sig_tgz, signer, key_name, now)
+            self.__create_index_signature(index_tgz, sig_tgz, signer, signer_name, now)
             
             arch_dir = root / arch
             arch_dir.mkdir(parents=True, exist_ok=True)
@@ -340,13 +343,13 @@ class AlpineRepo:
             shutil.rmtree(expanded)
 
     @staticmethod
-    def __create_index_signature(path: Path, sig_path: Path, signer: PkiSigner, key_name: str, now: datetime):
+    def __create_index_signature(path: Path, sig_path: Path, signer: PkiSigner, signer_name: str, now: datetime):
         signature = signer.get_alpine_signature(path)
         with open(sig_path, 'wb') as f_out:
             with gzip.GzipFile(filename='', mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
                 python_typing_is_dumb: Any = f_zip
                 with tarfile.open(mode="w:", fileobj=python_typing_is_dumb) as archive:
-                    info = tarfile.TarInfo(f'.SIGN.RSA.{key_name}.rsa.pub')
+                    info = tarfile.TarInfo(f'.SIGN.RSA.{signer_name}.rsa.pub')
                     info.uid = 0
                     info.gid = 0
                     info.uname = ''

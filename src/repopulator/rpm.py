@@ -25,7 +25,7 @@ from typing import Any, Callable, Optional, Sequence, Tuple
 from .rpmfile import open as rpmfile_open
 
 from .pgp_signer import PgpSigner
-from .util import ImmutableDict, NoPublicConstructor, find_if, lower_bound, VersionKey, file_digest, indent_tree
+from .util import ImmutableDict, NoPublicConstructor, find_if, lower_bound, VersionKey, file_digest, indent_tree, path_from_pathlike
 
 _RPMSENSE_ANY           = 0
 _RPMSENSE_LESS          = 1 << 1
@@ -506,7 +506,7 @@ class RpmRepo:
         """Constructor for RpmRepo class"""
         self.__packages: list[RpmPackage] = []
 
-    def add_package(self, path: Path) -> RpmPackage:
+    def add_package(self, path: str | os.PathLike[str]) -> RpmPackage:
         """Adds a package to the repository
 
         Args:
@@ -514,6 +514,7 @@ class RpmRepo:
         Returns:
             an RpmPackage object for the added package
         """
+        path = path_from_pathlike(path)
         package = RpmPackage._load(path, path.name)
         for existing in self.__packages:
             if existing.pkgid == package.pkgid:
@@ -547,7 +548,7 @@ class RpmRepo:
         """Packages in the repository"""
         return self.__packages
 
-    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
+    def export(self, root: str | os.PathLike[str], signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
 
         This actually creates an on-disk repository suitable to serve to `pacman` clients. If the directory to export to
@@ -568,6 +569,7 @@ class RpmRepo:
         if now is None:
             now = datetime.now(timezone.utc)
         
+        root = path_from_pathlike(root)
         repodata = root / 'repodata'
         if repodata.exists():
             shutil.rmtree(repodata)
