@@ -1,0 +1,29 @@
+Origin: some origin
+Label: some label
+Suite: hello
+Codename: xyz
+Version: 3.5
+Architectures: amd64,sparc
+Components: main
+Description: hohohoho
+Date: Fri, 31 May 2024 01:45:07 +0000
+MD5Sum:
+ 1119477a10943a32f4086f132168bad7             1154 main/binary-amd64/Packages
+ d7ef5d1d8ac18e993a8c8e4643289edd              743 main/binary-amd64/Packages.gz
+ a84b08848c2cde223cb5f2063412ac77             1598 main/binary-sparc/Packages
+ c3a60ad3b3493d722c7b8f8611ebdb54              990 main/binary-sparc/Packages.gz
+SHA1:
+ e72c650f7ccc838c86a98e5bfed6efe7835dcd53             1154 main/binary-amd64/Packages
+ ec4ad420e66c3ea022778eedc78028c48ac185a4              743 main/binary-amd64/Packages.gz
+ 41a3b7b34aba796992bc13095659210c587d01ea             1598 main/binary-sparc/Packages
+ afcc1c5358e4870f912ce7f695d18e2c7008766d              990 main/binary-sparc/Packages.gz
+SHA256:
+ 101cd9016fd95f73e6b90571f8da25d64907ef3c9206b1955b0870b2881ab297             1154 main/binary-amd64/Packages
+ a673711495c69686a140b557033cdd7e2648289f472706fabdc4f2183fa35fa5              743 main/binary-amd64/Packages.gz
+ aae2dec448488edcdfbf4e5bfcc1a1fa24b8fc6721ad96af6d82e8bb9aec3029             1598 main/binary-sparc/Packages
+ 5a3882d7d080c01ce895bd5d5f76fc6d5f151daf508eaf8ab7cdae570c7e1a7b              990 main/binary-sparc/Packages.gz
+SHA512:
+ ba616032571dc83655b49cc3ff9ed0d14a1e07ddb0e1b2b4247bca863914600ef6df3e0c7795ba2e28832e5d09951a18f79724410bcfeac2721eb57d25e26125             1154 main/binary-amd64/Packages
+ b182a73c6117fde53b6644ea00255af829948f25432ab403bb0e528190533335fe9044eb78cc2a123b1840f273a322a7fcbe8b8410020b7b0cb4f121bd93ddd9              743 main/binary-amd64/Packages.gz
+ 88bd565e24276b4a072b2c24632fb631f6e2feaf650b214d7cf958de1c69003217fea21fce28ef576d489bcbbeff323f011a070c00720a43b9de4ab45eb72fe5             1598 main/binary-sparc/Packages
+ 2fd6f2ff89fc5d78640b4bb5fcbad3b7ea77b4d3be508e6c24d3056730f183c7221b5963f723e86e3a77acab9ec209de40ab2c0a3be6730deace6ae1be78597c              990 main/binary-sparc/Packages.gz

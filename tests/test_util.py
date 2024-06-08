@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 from repopulator.util import *
 
 def test_lowerBound():

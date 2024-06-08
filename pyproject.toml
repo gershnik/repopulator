@@ -13,7 +13,7 @@ where = ["src"]
 [project]
 name = "repopulator"
 dynamic = ["version"]
-description="Portably create software repositories for different operating systems"
+description="A portable library to generate binary software repositories"
 readme="README.md"
 authors= [
     { name = 'Eugene Gershnik', email='gershnik@hotmail.com'}
@@ -31,13 +31,11 @@ keywords = [
 ]
 license = {text = "BSD-3-Clause"}
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     
     "License :: OSI Approved :: BSD License",
     
     "Operating System :: OS Independent",
-
-    "Environment :: Console",
 
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",

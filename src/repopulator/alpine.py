@@ -19,10 +19,11 @@ import gzip
 from pathlib import Path
 from datetime import datetime, timezone
 from io import BytesIO
+from os import PathLike
 
 from repopulator.pki_signer import PkiSigner
 
-from .util import NoPublicConstructor, VersionKey, lower_bound
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, lower_bound, path_from_pathlike
 
 from typing import IO, Any, KeysView, Mapping, Optional, Sequence
 
@@ -41,7 +42,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
             while True:
                 count = apk.readinto(buf)
                 if count == 0:
-                    raise Exception(f'{src_path} is not a valid apk package: no control segment')
+                    raise PackageParsingException(f'{src_path} is not a valid apk package: no control segment')
                 decomp.decompress(memoryview(buf)[:count])
                 if len(decomp.unused_data):
                     apk.seek(-len(decomp.unused_data), 1)
@@ -62,8 +63,8 @@ class AlpinePackage(metaclass=NoPublicConstructor):
                     used_len = count - len(decomp.unused_data)
                     digester.update(memoryview(buf)[:used_len])
                     break
-                else:
-                    digester.update(memoryview(buf)[:count])
+                
+                digester.update(memoryview(buf)[:count])
             
 
             digest = base64.encodebytes(digester.digest()).decode().rstrip()
@@ -74,7 +75,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
                 except KeyError:
                     pass
                 if pkginfo is None:
-                    raise Exception(f'{src_path} is not a valid apk package: no .PKGINFO file')
+                    raise PackageParsingException(f'{src_path} is not a valid apk package: no .PKGINFO file')
                 info = AlpinePackage.__read_pkginfo(pkginfo)
 
         index = {
@@ -111,9 +112,9 @@ class AlpinePackage(metaclass=NoPublicConstructor):
         """Internal do not use.
         Use AlpineRepo.add_package to create instances of this class
         """
-        self.__srcPath = src_path
+        self.__src_path = src_path
         self.__index = index
-        self.__versionKey = VersionKey.parse(self.__index['V'])
+        self.__version_key = VersionKey.parse(self.__index['V'])
 
     @property
     def name(self) -> str:
@@ -128,7 +129,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
     @property
     def version_key(self) -> VersionKey:
         """Version of the package as a properly comparable key"""
-        return self.__versionKey
+        return self.__version_key
     
     @property
     def arch(self) -> str:
@@ -151,7 +152,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
     
     def _export_index(self, f: IO[bytes]):
         for key, value in self.__index.items():
@@ -195,10 +196,10 @@ class AlpineRepo:
                 when performing `apk update`
         """
 
-        self.__desc = desc
+        self.__desc = ensure_one_line_str(desc, 'desc')
         self.__packages: dict[str, list[AlpinePackage]] = {}
 
-    def add_package(self, path: Path, force_arch: Optional[str] = None) -> AlpinePackage:
+    def add_package(self, path: str | PathLike[str], force_arch: Optional[str] = None) -> AlpinePackage:
         """Adds a package to the repository
         
         Args:
@@ -210,16 +211,40 @@ class AlpineRepo:
             an AlpinePackage object for the added package
         """
 
+        path = path_from_pathlike(path)
         package = AlpinePackage._load(path, force_arch)
         if package.arch == 'noarch':
-            raise Exception('package has "noarch" architecture, you must use force_arch parameter to specify which repo architecture to assign it to')
+            raise ValueError('package has "noarch" architecture, you must use force_arch parameter to specify which repo architecture to assign it to')
         arch_packages = self.__packages.setdefault(package.arch, [])
-        def package_key(x: AlpinePackage): return (x.name, x.version_key)
-        idx = lower_bound(arch_packages, package, lambda x, y: package_key(x) < package_key(y))
-        if idx < len(arch_packages) and package_key(arch_packages[idx]) == package_key(package):
-            raise Exception(f'Duplicate package {path}, existing: {arch_packages[idx].src_path}')
+        idx = lower_bound(arch_packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(arch_packages) and self._package_key(arch_packages[idx]) == self._package_key(package):
+            raise ValueError(f'Duplicate package {path}, existing: {arch_packages[idx].src_path}')
         arch_packages.insert(idx, package)
         return package
+    
+    def del_package(self, package: AlpinePackage):
+        """Removes a package from this repository
+
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        archs_to_delete = []
+        for arch, arch_packages in self.__packages.items():
+            idx = lower_bound(arch_packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+            if idx < len(arch_packages) and arch_packages[idx] is package:
+                del arch_packages[idx]
+                if not arch_packages:
+                    archs_to_delete.append(arch)
+        for arch in archs_to_delete:
+            del self.__packages[arch]
+        
+
+    @staticmethod
+    def _package_key(package: AlpinePackage): 
+        return (package.name, package.version_key)
     
     @property 
     def description(self):
@@ -235,7 +260,7 @@ class AlpineRepo:
         """Packages for a given architecture"""
         return self.__packages[arch]
     
-    def export(self, root: Path, signer: PkiSigner, key_name: str,
+    def export(self, root: str | PathLike[str], signer: PkiSigner, signer_name: str,
                now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
         
@@ -251,7 +276,7 @@ class AlpineRepo:
             signer: A PkiSigner instance to use for signing the repository. Note that this is used to only sign the
                 repository itself, not the packages in it. The packages need to be signed ahead of time which usually
                 happens automatically if you use `abuild` tool
-            key_name: The "name" of the signer to use. It is usually something like "mymail@mydomain.com-1234abcd" 
+            signer_name: The "name" of the signer to use. It is usually something like "mymail@mydomain.com-1234abcd" 
                 (see https://wiki.alpinelinux.org/wiki/Abuild_and_Helpers#Setting_up_the_build_environment for details).
                 Unlike what `pkg` tool does it is not parsed out of private key filename - you have to pass it here manually.
             now: optional timestamp to use when generating files (including various timestamp fields *inside* files).
@@ -262,6 +287,7 @@ class AlpineRepo:
         if now is None:
             now = datetime.now(timezone.utc)
 
+        root = path_from_pathlike(root)
         expanded = root / 'expanded'
         if expanded.exists():
             shutil.rmtree(expanded)
@@ -279,13 +305,13 @@ class AlpineRepo:
             info.mtime = int(now.timestamp())
             return info
 
-        for arch, archPackages in self.__packages.items():
+        for arch, arch_packages in self.__packages.items():
             expanded_arch_dir = expanded / arch
             expanded_arch_dir.mkdir()
 
             apkindex = expanded_arch_dir / 'APKINDEX'
             with open(apkindex, 'wb') as f:
-                for package in archPackages:
+                for package in arch_packages:
                     package._export_index(f)
 
             
@@ -298,7 +324,7 @@ class AlpineRepo:
                         archive.add(apkindex, arcname=apkindex.name, filter=norm)
 
             sig_tgz = expanded_arch_dir / 'sig.tgz'
-            self.__create_index_signature(index_tgz, sig_tgz, signer, key_name, now)
+            self.__create_index_signature(index_tgz, sig_tgz, signer, signer_name, now)
             
             arch_dir = root / arch
             arch_dir.mkdir(parents=True, exist_ok=True)
@@ -308,22 +334,22 @@ class AlpineRepo:
                 with open(index_tgz, 'rb') as f:
                     shutil.copyfileobj(f, dest)
 
-            for existingFile in arch_dir.glob('*.apk'):
-                existingFile.unlink()
-            for package in archPackages:
+            for existing_file in arch_dir.glob('*.apk'):
+                existing_file.unlink()
+            for package in arch_packages:
                 shutil.copy2(package.src_path, arch_dir / package.repo_filename)
 
         if not keep_expanded:
             shutil.rmtree(expanded)
 
     @staticmethod
-    def __create_index_signature(path: Path, sig_path: Path, signer: PkiSigner, key_name: str, now: datetime):
+    def __create_index_signature(path: Path, sig_path: Path, signer: PkiSigner, signer_name: str, now: datetime):
         signature = signer.get_alpine_signature(path)
         with open(sig_path, 'wb') as f_out:
             with gzip.GzipFile(filename='', mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
                 python_typing_is_dumb: Any = f_zip
                 with tarfile.open(mode="w:", fileobj=python_typing_is_dumb) as archive:
-                    info = tarfile.TarInfo(f'.SIGN.RSA.{key_name}.rsa.pub')
+                    info = tarfile.TarInfo(f'.SIGN.RSA.{signer_name}.rsa.pub')
                     info.uid = 0
                     info.gid = 0
                     info.uname = ''
@@ -339,6 +365,3 @@ class AlpineRepo:
                     def do_nothing(): pass
                     archive.close = do_nothing
 
-
-
-            

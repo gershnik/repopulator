@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 import pytest
 import sys
 
@@ -48,3 +50,31 @@ def test_two(binaries_path, output_path, expected_path, pki_signer, fixed_dateti
         compare_files(output_path / 'x86_64/APKINDEX.tar.gz', expected_path / 'APKINDEX.tar.gz', should_populate)
     compare_files(output_path / 'expanded/DESCRIPTION', expected_path / 'DESCRIPTION', should_populate)
     compare_files(output_path / 'expanded/x86_64/APKINDEX', expected_path / 'APKINDEX', should_populate)
+
+@pytest.mark.download(
+    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/samba-client-4.19.6-r0.apk',
+    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/cgdb-0.8.0-r2.apk',
+    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/aarch64/7zip-23.01-r0.apk'
+)
+def test_crud(binaries_path):
+    repo = AlpineRepo('lol')
+    
+    package = repo.add_package(binaries_path / 'samba-client-4.19.6-r0.apk')
+    repo.del_package(package)
+    assert [x for x in repo.architectures] == []
+    repo.del_package(package) # should succeed
+    package1 = repo.add_package(binaries_path / 'samba-client-4.19.6-r0.apk')
+    package2 = repo.add_package(binaries_path / 'cgdb-0.8.0-r2.apk')
+    repo.del_package(package1)
+    assert [x for x in repo.packages('x86_64')] == [package2]
+
+    package1 = repo.add_package(binaries_path / 'samba-client-4.19.6-r0.apk')
+    package3 = repo.add_package(binaries_path / '7zip-23.01-r0.apk')
+    
+    repo.del_package(package3)
+    assert [x for x in repo.architectures] == ['x86_64']
+    assert [x for x in repo.packages('x86_64')] == [package2, package1]
+    
+    repo.del_package(package2)
+    assert [x for x in repo.packages('x86_64')] == [package1]
+

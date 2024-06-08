@@ -17,9 +17,10 @@ import zstandard
 
 from pathlib import Path
 from datetime import datetime, timezone
+from os import PathLike
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, VersionKey, file_digest, lower_bound
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, file_digest, lower_bound, path_from_pathlike
 
 from typing import IO, Any, BinaryIO, KeysView, Mapping, Optional, Sequence
 
@@ -52,7 +53,7 @@ class PacmanPackage(metaclass=NoPublicConstructor):
                                 files.append(member.name)
 
             if info is None:
-                raise Exception(f'{src_path} is not a valid Pacman package: no .PKGINFO file')
+                raise PackageParsingException(f'{src_path} is not a valid Pacman package: no .PKGINFO file')
 
         desc = {
             'FILENAME': repo_filename,
@@ -91,11 +92,11 @@ class PacmanPackage(metaclass=NoPublicConstructor):
         """Internal do not use.
         Use [add_package][repopulator.PacmanRepo.add_package] to create instances of this class
         """
-        self.__srcPath = src_path
-        self.__sigPath = sig_path
+        self.__src_path = src_path
+        self.__sig_path = sig_path
         self.__desc = desc
         self.__files = files
-        self.__versionKey = VersionKey.parse(self.__desc['VERSION'])
+        self.__version_key = VersionKey.parse(self.__desc['VERSION'])
 
     @property
     def name(self) -> str:
@@ -110,7 +111,7 @@ class PacmanPackage(metaclass=NoPublicConstructor):
     @property
     def version_key(self) -> VersionKey:
         """Version of the package as a properly comparable key"""
-        return self.__versionKey
+        return self.__version_key
     
     @property
     def arch(self) -> str:
@@ -134,12 +135,12 @@ class PacmanPackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
     
     @property
     def sig_path(self) -> Optional[Path]:
         """Path to the package signature file, if present"""
-        return self.__sigPath
+        return self.__sig_path
     
 
     def _export_desc(self, fp: BinaryIO):
@@ -195,10 +196,10 @@ class PacmanRepo:
         Args:
             name: repository name.
         """
-        self.__name = name
+        self.__name = ensure_one_line_str(name, 'name')
         self.__packages: dict[str, list[PacmanPackage]] = {}
 
-    def add_package(self, path: Path) -> PacmanPackage:
+    def add_package(self, path: str | PathLike[str]) -> PacmanPackage:
         """Adds a package to the repository
 
         Args:
@@ -207,6 +208,7 @@ class PacmanRepo:
         Returns:
             a PacmanPackage object for the added package
         """
+        path = path_from_pathlike(path)
         package = PacmanPackage._load(path, path.name)
         arch_packages = self.__packages.setdefault(package.arch, [])
         for idx, existing in enumerate(arch_packages):
@@ -221,6 +223,22 @@ class PacmanRepo:
         else:
             arch_packages.insert(idx, package)
         return package
+    
+    def del_package(self, package: PacmanPackage):
+        """Removes a package from this repository
+
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        arch_packages = self.__packages.get(package.arch, [])
+        idx = lower_bound(arch_packages, package, lambda x, y: x.name < y.name)
+        if idx < len(arch_packages) and arch_packages[idx] is package:
+            del arch_packages[idx]
+            if not arch_packages:
+                del self.__packages[package.arch]
     
     @property
     def name(self):

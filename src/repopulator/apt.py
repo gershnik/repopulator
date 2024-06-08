@@ -12,8 +12,8 @@ import os
 import shutil
 import gzip
 import hashlib
-import arpy
 import tarfile
+import arpy
 
 from functools import total_ordering
 from datetime import datetime, timezone
@@ -21,7 +21,7 @@ from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, BinaryIO, Dict, KeysView, Mapping, Optional, Sequence
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, VersionKey, lower_bound, file_digest
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, lower_bound, file_digest, path_from_pathlike
 
 
 class AptPackage(metaclass=NoPublicConstructor):
@@ -31,21 +31,21 @@ class AptPackage(metaclass=NoPublicConstructor):
     def _load(cls, src_path: Path, repo_filename: str) -> AptPackage:
         fields: Dict[str, str | list[str]] = {}
         with arpy.Archive(str(src_path)) as ar:
-            it = ar.__iter__()
+            it = iter(ar)
             first_file = next(it)
             if first_file.header.name != b'debian-binary':
-                raise Exception(f'{src_path} is not a valid Debian archive: debian-binary missing')
+                raise PackageParsingException(f'{src_path} is not a valid Debian archive: debian-binary missing')
             second_file = next(it)
             if not second_file.header.name.startswith(b'control.'): # type: ignore
-                raise Exception(f'{src_path} is not a valid Debian archive: no control archive')
-            with tarfile.open(name=second_file.header.name, fileobj=second_file, mode="r") as controlArchive: # type: ignore
+                raise PackageParsingException(f'{src_path} is not a valid Debian archive: no control archive')
+            with tarfile.open(name=second_file.header.name, fileobj=second_file, mode="r") as control_archive: # type: ignore
                 control_file = None
                 try:
-                    control_file = controlArchive.extractfile('./control')
+                    control_file = control_archive.extractfile('./control')
                 except KeyError:
                     pass
                 if control_file is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: no control file')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: no control file')
                 last_key = None
                 for line in control_file: # type: ignore
                     line = line.decode().rstrip()
@@ -60,25 +60,25 @@ class AptPackage(metaclass=NoPublicConstructor):
                     else:
                         sep_idx = line.find(':')
                         if sep_idx < 1:
-                            raise Exception(f'{src_path} is not a valid Debian archive: line `{line}` in control file is invalid')
+                            raise PackageParsingException(f'{src_path} is not a valid Debian archive: line `{line}` in control file is invalid')
                         key = line[0:sep_idx]
                         value = line[sep_idx + 1:].strip()
                         fields[key] = value
                         last_key = key
                 if (name := fields.get('Package')) is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: Package field is missing')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Package field is missing')
                 if not isinstance(name, str):
-                    raise Exception(f'{src_path} is not a valid Debian archive: Package field has invalid value')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Package field has invalid value')
 
                 if (arch := fields.get('Architecture')) is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: Architecture field is missing')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Architecture field is missing')
                 if not isinstance(arch, str):
-                    raise Exception(f'{src_path} is not a valid Debian archive: Architecture field has invalid value')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Architecture field has invalid value')
 
                 if (ver := fields.get('Version')) is None:
-                    raise Exception(f'{src_path} is not a valid Debian archive: Version field is missing')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Version field is missing')
                 if not isinstance(ver, str):
-                    raise Exception(f'{src_path} is not a valid Debian archive: Version field has invalid value')
+                    raise PackageParsingException(f'{src_path} is not a valid Debian archive: Version field has invalid value')
             
             
             fields['Filename'] = repo_filename
@@ -90,8 +90,8 @@ class AptPackage(metaclass=NoPublicConstructor):
                 (hashlib.sha512, 'SHA512'),
             ]
             for hash_func, name in hashes:
-                with open(src_path, "rb") as packFile:
-                    digest = file_digest(packFile, hash_func)
+                with open(src_path, "rb") as pack_file:
+                    digest = file_digest(pack_file, hash_func)
                 fields[name] = digest.hexdigest()
 
         return cls._create(src_path, fields)
@@ -100,9 +100,9 @@ class AptPackage(metaclass=NoPublicConstructor):
         """Internal, do not use.
         Use AptRepo.add_package to create instances of this class
         """
-        self.__srcPath = src_path
+        self.__src_path = src_path
         self.__fields = fields
-        self.__versionKey = VersionKey.parse(fields['Version']) # type: ignore
+        self.__version_key = VersionKey.parse(fields['Version']) # type: ignore
         
 
     @property
@@ -118,7 +118,7 @@ class AptPackage(metaclass=NoPublicConstructor):
     @property
     def version_key(self) -> VersionKey:
         """Version of the package as a properly comparable key"""
-        return self.__versionKey
+        return self.__version_key
     
     @property
     def arch(self) -> str:
@@ -138,7 +138,7 @@ class AptPackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
 
 
 
@@ -154,11 +154,19 @@ class AptPackage(metaclass=NoPublicConstructor):
 
 @total_ordering
 class AptDistribution(metaclass=NoPublicConstructor):
-    """A distribution in AptRepo"""
+    """A distribution in AptRepo
+    
+    Attributes:
+        origin (str): Origin of the distribution
+        label (str): Label of the distribution
+        suite (str): Suite of the distribution
+        version (str): Version of the distribution
+        description (str): Description of the distribution
+    """
 
     @classmethod
     def _new(cls,
-             path: PurePosixPath | str,
+             path: PurePosixPath,
              origin: str,
              label: str,
              suite: str,
@@ -167,7 +175,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
         return cls._create(path, origin, label, suite, version, description)
 
     def __init__(self, 
-                 path: PurePosixPath | str,
+                 path: PurePosixPath,
                  origin: str,
                  label: str,
                  suite: str, 
@@ -177,11 +185,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
         Use AptRepo.add_distribution to create instances of this class
         """
 
-        path = path if isinstance(path, PurePosixPath) else PurePosixPath(path)
-        if path.is_absolute():
-            raise ValueError('path value must be a relative path')
-        self.path = path
-
+        self.__path = path
         self.origin = origin
         self.label = label
         self.suite = suite
@@ -191,15 +195,20 @@ class AptDistribution(metaclass=NoPublicConstructor):
         self.__packages: Dict[str, Dict[str, list[AptPackage]]] = {}
 
     def __hash__(self):
-        return hash(self.path)
+        return hash(self.__path)
     
     def __eq__(self, other: object):
         if isinstance(other, AptDistribution):
-            return self.path == other.path
+            return self.__path == other.__path
         return NotImplemented
     
     def __lt__(self, other):
-        return self.path < other.path
+        return self.__path < other.__path
+    
+    @property
+    def path(self) -> PurePosixPath:
+        """Path of the distribution"""
+        return self.__path
     
     @property
     def components(self) -> KeysView[str]:
@@ -213,37 +222,58 @@ class AptDistribution(metaclass=NoPublicConstructor):
     def packages(self, component: str, arch: str) -> Sequence[AptPackage]:
         """Architectures for a given component and architecture"""
         return self.__packages[component][arch]
+    
+    def __repr__(self):
+        return f"{self.__path} distribution)"
+    
+    @staticmethod
+    def _package_key(p: AptPackage): 
+        return (p.name, p.version_str) # apt tools seem to sort by string
 
-    def add_package(self, component: str, package: AptPackage):
-        """Adds a repository package to this distribution
-
-        Args:
-            component: the component to add the package to
-            package: the package to add. It must have been created via AptRepo.add_package call
-        """
+    def _add_package(self, package: AptPackage, component: str):
         arch = package.arch
         archs = self.__packages.setdefault(component, {})
         packages = archs.setdefault(arch, [])
-        def package_key(p: AptPackage): return (p.name, p.version_str) # apt tools seem to sort by string
-        idx = lower_bound(packages, package, lambda x, y: package_key(x) < package_key(y))
-        if idx < len(packages) and package_key(packages[idx]) == package_key(package):
-            raise ValueError('Duplicate package')
+        
+        idx = lower_bound(packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(packages) and self._package_key(packages[idx]) == self._package_key(package):
+            raise ValueError(f'Duplicate package for {self.__path}, {component}, {arch}')
         packages.insert(idx, package)
+
+    def _remove_package(self, package: AptPackage, component: Optional[str] = None):
+        if component is None:
+            components = list(self.__packages)
+        else:
+            components = [component]
+        for current_component in components:
+            archs = self.__packages.get(current_component)
+            if archs is None:
+                continue
+            packages = archs.get(package.arch)
+            if packages is None:
+                continue
+            idx = lower_bound(packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+            if idx < len(packages) and packages[idx] is package:
+                del packages[idx]
+                if len(packages) == 0:
+                    del archs[package.arch]
+                    if len(archs) == 0:
+                        del self.__packages[current_component]
 
     def _export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None):
         if now is None:
             now = datetime.now(timezone.utc)
         
-        dist_dir = root / self.path
+        dist_dir = root / self.__path
         if dist_dir.exists():
             shutil.rmtree(dist_dir)
         dist_dir.mkdir(parents=True)
 
         components = []
         archs = []
-        for comp, compArchs in self.__packages.items():
+        for comp, comp_archs in self.__packages.items():
             components.append(comp)
-            for arch in compArchs:
+            for arch in comp_archs:
                 archs.append(arch)
         components.sort()
         archs.sort()
@@ -254,12 +284,12 @@ class AptDistribution(metaclass=NoPublicConstructor):
                 pack, pack_gz = self.__export_packages(dist_dir, comp, arch, now)
                 package_indices += [pack, pack_gz]
 
-        Release_path = dist_dir / 'Release'
+        Release_path = dist_dir / 'Release' # pylint: disable=invalid-name
         with open(Release_path, "wb") as f:
             f.write(f'Origin: {self.origin}\n'.encode())
             f.write(f'Label: {self.label}\n'.encode())
             f.write(f'Suite: {self.suite}\n'.encode())
-            f.write(f'Codename: {self.path.name}\n'.encode())
+            f.write(f'Codename: {self.__path.name}\n'.encode())
             f.write(f'Version: {self.version}\n'.encode())
             f.write(f'Architectures: {",".join(archs)}\n'.encode())
             f.write(f'Components: {",".join(components)}\n'.encode())
@@ -275,16 +305,16 @@ class AptDistribution(metaclass=NoPublicConstructor):
             for hashFunc, name in hashes:
                 f.write(f'{name}:\n'.encode())
                 for package_index in package_indices:
-                    with open(package_index, "rb") as packFile:
-                        digest = file_digest(packFile, hashFunc)
+                    with open(package_index, "rb") as pack_file:
+                        digest = file_digest(pack_file, hashFunc)
                     f.write(f' {digest.hexdigest()} {package_index.stat().st_size: >16} {package_index.relative_to(dist_dir).as_posix()}\n'.encode())
         
         os.utime(Release_path, (now.timestamp(), now.timestamp()))
 
-        InRelease_path = dist_dir / 'InRelease'
+        InRelease_path = dist_dir / 'InRelease' # pylint: disable=invalid-name
         signer.sign_inline(Release_path, InRelease_path)
         os.utime(InRelease_path, (now.timestamp(), now.timestamp()))
-        Release_pgp_path = Release_path.with_suffix('.pgp')
+        Release_pgp_path = Release_path.with_suffix('.pgp') # pylint: disable=invalid-name
         signer.sign_external(Release_path, Release_pgp_path)
         os.utime(Release_pgp_path, (now.timestamp(), now.timestamp()))
         
@@ -296,7 +326,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
             shutil.rmtree(packages_dir)
         packages_dir.mkdir(parents=True)
 
-        Packages_path = packages_dir / 'Packages'
+        Packages_path = packages_dir / 'Packages' # pylint: disable=invalid-name
         with open(Packages_path, "wb") as f:
             packages = self.__packages.get(component, {}).get(arch, [])
             if len(packages) > 0:
@@ -306,7 +336,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
                 package._write_index_entry(f)
         os.utime(Packages_path, (now.timestamp(), now.timestamp()))
 
-        Packages_gz_path = Packages_path.with_suffix('.gz')
+        Packages_gz_path = Packages_path.with_suffix('.gz') # pylint: disable=invalid-name
         with open(Packages_path, 'rb') as f_in:
             with open(Packages_gz_path, 'wb') as f_out:
                 with gzip.GzipFile(filename=Packages_path.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
@@ -335,7 +365,7 @@ class AptRepo:
 
         Args:
             path: distribution "name" inside the repo (e.g. 'jammy' or 'focal'), which is also its path.
-                This value is also automatically used as the distribution 'Codename'
+                The last component of this path is also automatically used as the distribution 'Codename'
             origin: 'Origin' field. See https://wiki.debian.org/DebianRepository/Format#Origin
             label: 'Label' field. See https://wiki.debian.org/DebianRepository/Format#Label
             suite: 'Suite' field. See https://wiki.debian.org/DebianRepository/Format#Suite
@@ -346,13 +376,34 @@ class AptRepo:
             a new AptDistribution object
 
         """
+        path = path if isinstance(path, PurePosixPath) else PurePosixPath(path)
+        if path.is_absolute():
+            raise ValueError('path value must be a relative path')
+        origin = ensure_one_line_str(origin, 'origin')
+        label = ensure_one_line_str(label, 'label')
+        suite = ensure_one_line_str(suite, 'sutie')
+        version = ensure_one_line_str(version, 'version')
+        description = ensure_one_line_str(description, 'description')
         dist = AptDistribution._new(path, origin=origin, label=label, suite=suite, version=version, description=description)
         if dist in self.__distributions:
             raise ValueError('Duplicate distribution')
         self.__distributions.add(dist)
         return dist
+    
+    def del_distribution(self, dist: AptDistribution):
+        """Removes a distribution from the repository.
 
-    def add_package(self, path: Path) -> AptPackage:
+        If the distribution is not in this repo the function ignores it and succeeds
+
+        Params:
+            dist: the distribution to remove
+        """
+        try:
+            self.__distributions.remove(dist)
+        except KeyError:
+            pass
+
+    def add_package(self, path: str | os.PathLike[str]) -> AptPackage:
         """Adds a package to the repository
 
         Adding a package to the repository simply adds it to the pool of available packages.
@@ -365,12 +416,61 @@ class AptRepo:
             an AptPackage object for the added package
         """
 
+        path = path_from_pathlike(path)
         package = AptPackage._load(path, path.name)
-        for existing in self.__packages:
-            if existing.repo_filename == package.repo_filename:
-                raise ValueError("duplicate package name")
-        self.__packages.append(package)
+        idx = lower_bound(self.__packages, package, lambda x, y: x.repo_filename < y.repo_filename)
+        if idx < len(self.__packages) and self.__packages[idx].repo_filename == package.repo_filename:
+            raise ValueError('Duplicate package')
+        self.__packages.insert(idx, package)
         return package
+    
+    def del_package(self, package: AptPackage):
+        """Removes a package from this repository
+
+        The package is removed from the repository and all distributions in it. 
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        idx = lower_bound(self.__packages, package, lambda x, y: x.repo_filename < y.repo_filename)
+        if idx < len(self.__packages) and self.__packages[idx] is package:
+            for dist in self.__distributions:
+                dist._remove_package(package)
+            del self.__packages[idx]
+    
+    def assign_package(self, package: AptPackage, dist: AptDistribution, component: str):
+        """Assigns a repository package to a distribution's component
+
+        Args:
+            package: the package to assign. 
+            dist: the distribution to assign to
+            component: the distribution's component to assign the package to
+        """
+        if package not in self.__packages:
+            raise ValueError('package is not in repository')
+        if dist not in self.__distributions:
+            raise ValueError('distribution is not in repository')
+        dist._add_package(package, component)
+
+    def unassign_package(self, package: AptPackage, dist: AptDistribution, component: Optional[str] = None):
+        """Removes a repository package from a distribution's component
+
+        If the package or distribution are not in this repository or the package is not 
+        assigned to the distribution's component the call is silently ignored.
+
+        Args:
+            package: the package to remove. 
+            dist: the distribution to remove from
+            component: if specified remove the package only from this component. Otherwise, remove it from all
+        """
+
+        if package not in self.__packages:
+            return
+        if dist not in self.__distributions:
+            return
+        dist._remove_package(package, component)
     
 
     @property
@@ -383,7 +483,7 @@ class AptRepo:
         """Packages in this repository"""
         return self.__packages
     
-    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None):
+    def export(self, root: str | os.PathLike[str], signer: PgpSigner, now: Optional[datetime] = None):
         """Export the repository into a given folder.
 
         This actually creates an on-disk repository suitable to serve to APT clients. If the directory to export to
@@ -404,7 +504,7 @@ class AptRepo:
         if now is None:
             now = datetime.now(timezone.utc)
         
-        
+        root = path_from_pathlike(root)
         dists = root / 'dists'
         if dists.exists():
             shutil.rmtree(dists)

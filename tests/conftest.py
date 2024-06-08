@@ -1,6 +1,9 @@
+# pylint: skip-file
+
 import os
 import pytest
 import shutil
+import subprocess
 
 
 from pathlib import Path, PurePosixPath
@@ -83,9 +86,9 @@ def should_populate(request) -> bool:
 
 @pytest.fixture
 def pgp_signer():
-    return PgpSigner(Path(os.environ.get('GNUPGHOME', Path.home() / '.gnupg')), 
-                     os.environ['PGP_KEY_NAME'], 
-                     os.environ['PGP_KEY_PASSWD'])
+    return PgpSigner(key_name=os.environ['PGP_KEY_NAME'], 
+                     key_pwd = os.environ['PGP_KEY_PASSWD'],
+                     homedir=os.environ.get('GNUPGHOME'))
 
 @pytest.fixture
 def pki_signer():

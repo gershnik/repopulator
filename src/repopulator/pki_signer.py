@@ -4,9 +4,14 @@
 # license that can be found in the LICENSE.txt file or at
 # https://opensource.org/licenses/BSD-3-Clause
 
+"""All things related to PKI signing"""
+
+from __future__ import annotations
+
 import hashlib
 
 from pathlib import Path
+from os import PathLike
 
 from cryptography.hazmat.backends.openssl.backend import backend as openssl_backend
 from cryptography.hazmat.primitives import hashes as crypto_hashes
@@ -27,7 +32,7 @@ class PkiSigner:
     that it will be used for.
     """
 
-    def __init__(self, priv_key_path: Path, priv_key_passwd: Optional[str]):
+    def __init__(self, priv_key_path: str | PathLike[str], priv_key_passwd: Optional[str]):
         """Constructor for PkiSigner class
 
         The private key file is read once during the construction and not used again
@@ -37,9 +42,9 @@ class PkiSigner:
         """
         ver = openssl_backend.openssl_version_number()
         if ver < 0x30000000:
-            raise Exception(f'Unsupported OpenSSL version: 0x{ver:08x}, must be above 0x30000000')
-        with open(priv_key_path, 'rb') as keyFile:
-            key = keyFile.read()
+            raise RuntimeError(f'Unsupported OpenSSL version: 0x{ver:08x}, must be above 0x30000000')
+        with open(priv_key_path, 'rb') as key_file:
+            key = key_file.read()
             pwd = priv_key_passwd.encode() if priv_key_passwd is not None else None
             self.__key = crypto_serialization.load_pem_private_key(key, pwd, openssl_backend)
             
@@ -53,11 +58,11 @@ class PkiSigner:
         Returns:
             Signature as a `bytes` object
         """
-        with open(path, 'rb') as dataFile:
+        with open(path, 'rb') as data_file:
             if isinstance(self.__key, rsa.RSAPrivateKey):
-                digest = file_digest(dataFile, hashlib.sha256).hexdigest()
+                digest = file_digest(data_file, hashlib.sha256).hexdigest()
             else:
-                digest = file_digest(dataFile, hashlib.blake2b).hexdigest()
+                digest = file_digest(data_file, hashlib.blake2b).hexdigest()
 
         if isinstance(self.__key, rsa.RSAPrivateKey):
             padding = crypto_padding.PKCS1v15()
@@ -86,12 +91,11 @@ class PkiSigner:
             Signature as a `bytes` object
         """
         if not isinstance(self.__key, rsa.RSAPrivateKey):
-            raise Exception('The private key type is not currently supported for Alpine signatures')
+            raise ValueError('The private key type is not currently supported for Alpine signatures')
 
         data = path.read_bytes()
 
         padding = crypto_padding.PKCS1v15()
-        hashVal = crypto_hashes.SHA1()
-        signature = self.__key.sign(data, padding, hashVal)
+        hash_algo = crypto_hashes.SHA1()
+        signature = self.__key.sign(data, padding, hash_algo)
         return signature
-                    

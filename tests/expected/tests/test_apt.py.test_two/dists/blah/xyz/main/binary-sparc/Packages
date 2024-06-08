@@ -1,0 +1,36 @@
+Package: wget
+Version: 1.10-2ubuntu0.1
+Section: web
+Priority: optional
+Architecture: sparc
+Depends: libc6 (>= 2.3.4-1), libssl0.9.7
+Conflicts: wget-ssl
+Installed-Size: 1536
+Maintainer: Noèl Köthe <noel@debian.org>
+Description: retrieves files from the web
+ Wget is a network utility to retrieve files from the Web
+ using http and ftp, the two most widely used Internet
+ protocols. It works non-interactively, so it will work in
+ the background, after having logged off. The program supports
+ recursive retrieval of web-authoring pages as well as ftp
+ sites -- you can use wget to make mirrors of archives and
+ home pages or to travel the Web like a WWW robot.
+ .
+ Wget works particularly well with slow or unstable connections
+ by continuing to retrieve a document until the document is fully
+ downloaded. Re-getting files from where it left off works on
+ servers (both http and ftp) that support it. Both http and ftp
+ retrievals can be time stamped, so wget can see if the remote
+ file has changed since the last retrieval and automatically
+ retrieve the new version if it has.
+ .
+ Wget supports proxy servers; this can lighten the network load,
+ speed up retrieval, and provide access behind firewalls.
+ .
+ http://www.gnu.org/software/wget/
+Filename: wget_1.10-2ubuntu0.1_sparc.deb
+Size: 235322
+MD5sum: a372ccc35c9f22a8043167ec5d7aa0e9
+SHA1: 6f6c45e4ca02d74f45684c154f9045ea65432de7
+SHA256: 9f316ce6fac392646f2d41a2cb5427070d90d63689a4f6e749f665d0a0525fb4
+SHA512: 2df38b878d0ba352d0685e13eee37a13a957406618c8b6b6051015d5ec9a6106e2f8a1add86bd895dc9669cfe92c9f2c2c8b7f9272d2b064f850f334549dd1c6

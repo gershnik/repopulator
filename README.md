@@ -55,12 +55,11 @@ Currently repositories are required to be signed and you need to provide signing
 
 ```python
 from repopulator import AptRepo, PgpSigner
-from pathlib import Path
 
 repo = AptRepo()
 
-package1 = repo.add_package(Path('/path/to/awesome_3.14_amd64.deb'))
-package2 = repo.add_package(Path('/path/to/awesome_3.14_arm64.deb'))
+package1 = repo.add_package('/path/to/awesome_3.14_amd64.deb')
+package2 = repo.add_package('/path/to/awesome_3.14_arm64.deb')
 
 dist = repo.add_distribution('jammy', 
                              origin='my packages', 
@@ -69,28 +68,27 @@ dist = repo.add_distribution('jammy',
                              version='1.2', 
                              description='my awesome repo')
 
-dist.add_package(component='main', package=package1)
-dist.add_package(component='main', package=package2)
+repo.assign_package(package1, dist, component='main')
+repo.assign_package(package2, dist, component='main')
 
-signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
+signer = PgpSigner('name_of_key_to_use', 'password_of_that_key')
 
-repo.export(Path('/path/of/new/repo'), signer)
+repo.export('/path/of/new/repo', signer)
 
 ```
 
-#### YUM/DNF
+#### RPM
 
 ```python
 from repopulator import RpmRepo, PgpSigner
-from pathlib import Path
 
 repo = RpmRepo()
-repo.add_package(Path('/path/to/awesome-3.14-1.el9.x86_64.rpm'))
-repo.add_package(Path('/path/to/awesome-3.14-1.el9.aarch64.rpm'))
+repo.add_package('/path/to/awesome-3.14-1.el9.x86_64.rpm')
+repo.add_package('/path/to/awesome-3.14-1.el9.aarch64.rpm')
 
-signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
+signer = PgpSigner('name_of_key_to_use', 'password_of_that_key')
 
-repo.export(Path('/path/of/new/repo'), signer)
+repo.export('/path/of/new/repo', signer)
 
 ```
 
@@ -98,35 +96,33 @@ repo.export(Path('/path/of/new/repo'), signer)
 
 ```python
 from repopulator import PacmanRepo, PgpSigner
-from pathlib import Path
 
 repo = PacmanRepo('myrepo')
 # if .sig file is present next to the .zst file it will be used for signature
 # otherwise new signature will be generated at export time
-repo.add_package(Path('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst'))
+repo.add_package('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst')
+repo.add_package('/path/to/another-1.2-1-x86_64.pkg.tar.zst')
 
-signer = PgpSigner(Path.home() / '.gnupg', 'name_of_key_to_use', 'password_of_that_key')
+signer = PgpSigner('name_of_key_to_use', 'password_of_that_key')
 
-repo.export(Path('/path/of/new/repo'), signer)
+repo.export('/path/of/new/repo', signer)
 
 ```
 
 #### Alpine apk
 
 ```python
-from repopulator import PacmanRepo, PkiSigner
-from pathlib import Path
+from repopulator import AlpineRepo, PkiSigner
 
-repo = PacmanRepo('my repo description')
-repo.add_package(Path('/path/to/awesome-3.14-r0.apk'))
-repo.add_package(Path('/path/to/another-1.23-r0.apk'))
+repo = AlpineRepo('my repo description')
+repo.add_package('/path/to/awesome-3.14-r0.apk')
+repo.add_package('/path/to/another-1.23-r0.apk')
 
-signer = PkiSigner(Path('/path/to/private/key'), 'password_or_None')
+signer = PkiSigner('/path/to/private/key', 'password_or_None')
 
-# The last argument is the 'name' of the signer to use
-# Unlike `pkg` tool we do not parse it out of private key filename
-# and do not require you to name key files in certain way
-repo.export(Path('/path/of/new/repo'), signer, 'mymail@mydomain.com-1234abcd')
+# Unlike `pkg` tool we do not parse signer name out of private key filename
+# so you can name your key files whatever you wish
+repo.export('/path/of/new/repo', signer, signer_name = 'mymail@mydomain.com-1234abcd')
 
 ```
 
@@ -134,15 +130,14 @@ repo.export(Path('/path/of/new/repo'), signer, 'mymail@mydomain.com-1234abcd')
 
 ```python
 from repopulator import FreeBSDRepo, PkiSigner
-from pathlib import Path
 
 repo = FreeBSDRepo()
-repo.add_package(Path('/path/to/awesome-3.14.pkg'))
-repo.add_package(Path('/path/to/another-1.2.pkg'))
+repo.add_package('/path/to/awesome-3.14.pkg')
+repo.add_package('/path/to/another-1.2.pkg')
 
-signer = PkiSigner(Path('/path/to/private/key'), 'password_or_None')
+signer = PkiSigner('/path/to/private/key', 'password_or_None')
 
-repo.export(Path('/path/of/new/repo'), signer)
+repo.export('/path/of/new/repo', signer)
 
 ```
 

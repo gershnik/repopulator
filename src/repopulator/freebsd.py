@@ -17,11 +17,12 @@ import hashlib
 
 from pathlib import Path
 from datetime import datetime, timezone
+from os import PathLike
 
 from typing import Any, BinaryIO, Mapping, Optional, Sequence
 
 from .pki_signer import PkiSigner
-from .util import NoPublicConstructor, lower_bound, VersionKey, file_digest
+from .util import NoPublicConstructor, PackageParsingException, lower_bound, VersionKey, file_digest, path_from_pathlike
 
 
 class FreeBSDPackage(metaclass=NoPublicConstructor):
@@ -39,7 +40,7 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
             except KeyError:
                 pass
             if manifest is None:
-                raise Exception(f'{src_path} is not a valid FreeBSD package: no +COMPACT_MANIFEST file')
+                raise PackageParsingException(f'{src_path} is not a valid FreeBSD package: no +COMPACT_MANIFEST file')
             manifest_bytes = manifest.readline() # the whole thing should be 1 line
         raw_data = json.loads(manifest_bytes)
         fields = {
@@ -66,10 +67,10 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
         """Internal do not use.
         Use FreeBSDRepo.add_package to create instances of this class
         """
-        self.__srcPath = src_path
+        self.__src_path = src_path
         self.__manifest = manifest
         self.__fields = fields
-        self.__versionKey = VersionKey.parse(self.__fields['version'])
+        self.__version_key = VersionKey.parse(self.__fields['version'])
 
     @property
     def name(self) -> str:
@@ -84,7 +85,7 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
     @property
     def version_key(self) -> VersionKey:
         """Version of the package as a properly comparable key"""
-        return self.__versionKey
+        return self.__version_key
     
     @property
     def arch(self) -> str:
@@ -104,7 +105,7 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
     @property
     def src_path(self) -> Path:
         """Path to the original package file"""
-        return self.__srcPath
+        return self.__src_path
         
 
     def _export_to_site(self, fp: BinaryIO):
@@ -122,7 +123,7 @@ class FreeBSDRepo:
         """Constructor for FreeBSDRepo class"""
         self.__packages: list[FreeBSDPackage] = []
 
-    def add_package(self, path: Path) -> FreeBSDPackage:
+    def add_package(self, path: str | PathLike[str]) -> FreeBSDPackage:
         """Adds a package to the repository
 
         Args:
@@ -130,17 +131,34 @@ class FreeBSDRepo:
         Returns:
             a FreeBSDPackage object for the added package
         """
+        path = path_from_pathlike(path)
         package = FreeBSDPackage._load(path, path.name)
         for existing in self.__packages:
             if existing.repo_filename == package.repo_filename:
                 raise ValueError("duplicate package filename")
-        def package_key(p: FreeBSDPackage): return (p.name, p.version_key)
-        idx = lower_bound(self.__packages, package, lambda x, y: package_key(x) < package_key(y))
-        if idx < len(self.__packages) and package_key(self.__packages[idx]) == package_key(package):
+        idx = lower_bound(self.__packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(self.__packages) and self._package_key(self.__packages[idx]) == self._package_key(package):
             raise ValueError('Duplicate package')
         self.__packages.insert(idx, package)
 
         return package
+    
+    def del_package(self, package: FreeBSDPackage):
+        """Removes a package from this repository
+
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        idx = lower_bound(self.__packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(self.__packages) and self.__packages[idx] is package:
+            del self.__packages[idx]
+
+    @staticmethod
+    def _package_key(package: FreeBSDPackage): 
+        return (package.name, package.version_key)
     
     @property
     def packages(self) -> Sequence[FreeBSDPackage]:
@@ -148,7 +166,7 @@ class FreeBSDRepo:
         return self.__packages
 
     
-    def export(self, root: Path, signer: PkiSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
+    def export(self, root: str | PathLike[str], signer: PkiSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
 
         This actually creates an on-disk repository suitable to serve to `pkg` clients. If the directory to export to
@@ -169,6 +187,7 @@ class FreeBSDRepo:
         if now is None:
             now = datetime.now(timezone.utc)
         
+        root = path_from_pathlike(root)
         packagesite = root / 'packagesite'
         if packagesite.exists():
             shutil.rmtree(packagesite)
@@ -185,7 +204,7 @@ class FreeBSDRepo:
         if data.exists():
             shutil.rmtree(data)
         data.mkdir(parents=True)
-        with open(data / 'data', 'w') as datafile:
+        with open(data / 'data', 'w', encoding='utf-8') as datafile:
             content = {'groups': [], 'packages': []}
             for package in self.__packages:
                 package._export_to_data(content['packages'])
@@ -221,8 +240,8 @@ class FreeBSDRepo:
     @staticmethod
     def __archive(directory: Path, filename: str, signer: PkiSigner, now: datetime):
         signature = signer.get_free_bsd_signature(directory / filename)
-        with open(directory / 'signature', 'wb') as sigFile:
-            sigFile.write(signature)
+        with open(directory / 'signature', 'wb') as sig_file:
+            sig_file.write(signature)
 
 
         def norm(info: tarfile.TarInfo):
