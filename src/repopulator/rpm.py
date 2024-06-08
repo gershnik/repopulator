@@ -518,12 +518,29 @@ class RpmRepo:
         for existing in self.__packages:
             if existing.pkgid == package.pkgid:
                 raise ValueError("duplicate package id")
-        def package_key(p: RpmPackage): return (p.name, p.version_key, p.arch)
-        idx = lower_bound(self.__packages, package, lambda x, y: package_key(x) < package_key(y))
-        if idx < len(self.__packages) and package_key(self.__packages[idx]) == package_key(package):
+        
+        idx = lower_bound(self.__packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(self.__packages) and self._package_key(self.__packages[idx]) == self._package_key(package):
             raise ValueError('Duplicate package')
         self.__packages.insert(idx, package)
         return package
+    
+    def del_package(self, package: RpmPackage):
+        """Removes a package from this repository
+
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        idx = lower_bound(self.__packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
+        if idx < len(self.__packages) and self.__packages[idx] is package:
+            del self.__packages[idx]
+
+    @staticmethod
+    def _package_key(p: RpmPackage): 
+        return (p.name, p.version_key, p.arch)
     
     @property
     def packages(self) -> Sequence[RpmPackage]:

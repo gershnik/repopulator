@@ -222,6 +222,22 @@ class PacmanRepo:
             arch_packages.insert(idx, package)
         return package
     
+    def del_package(self, package: PacmanPackage):
+        """Removes a package from this repository
+
+        It is not an error to pass a package that is not in a repository to this function.
+        It will be ignored in such case.
+
+        Args:
+            package: the package to remove
+        """
+        arch_packages = self.__packages.get(package.arch, [])
+        idx = lower_bound(arch_packages, package, lambda x, y: x.name < y.name)
+        if idx < len(arch_packages) and arch_packages[idx] is package:
+            del arch_packages[idx]
+            if not arch_packages:
+                del self.__packages[package.arch]
+    
     @property
     def name(self):
         """Repository name"""
