@@ -4,4 +4,4 @@ build
 twine
 pytest
 python-dotenv
-
+pylint
