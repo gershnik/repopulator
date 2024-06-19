@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+- Command line script to build repositories. Invoke with `repopulator` (or `python3 -m repopulator`) 
+
+### Changed
+- AptRepo.add_distribution informational fields arguments are now optional rather than required.
+
 ## [1.0] - 2024-06-08
 
 ### Added

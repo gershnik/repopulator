@@ -1,3 +1,9 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2024, Eugene Gershnik
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE.txt file or at
+# https://opensource.org/licenses/BSD-3-Clause
+
 # pylint: skip-file
 
 import os
@@ -91,8 +97,20 @@ def pgp_signer():
                      homedir=os.environ.get('GNUPGHOME'))
 
 @pytest.fixture
+def pgp_cmd():
+    return ['-k', os.environ['PGP_KEY_NAME'], '-w', os.environ['PGP_KEY_PASSWD']]
+    
+
+@pytest.fixture
 def pki_signer():
     return PkiSigner((Path(os.environ['BSD_KEY'])), os.environ.get('BSD_KEY_PASSWD'))
+
+@pytest.fixture
+def pki_cmd():
+    ret = ['-k', os.environ['BSD_KEY']]
+    if (pwd := os.environ.get('BSD_KEY_PASSWD')) is not None:
+        ret += ['-w', pwd]
+    return ret
 
 
 @pytest.fixture(scope='session')
