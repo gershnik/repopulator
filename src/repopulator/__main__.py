@@ -35,7 +35,20 @@ class _Handler(metaclass=ABCMeta):
     def handle(self, args: argparse.Namespace) -> int:
         ...
 
+
 class _AlpineHandler(_Handler):
+    class _ExtendPackageAction(argparse._ExtendAction):
+        def __call__(self, 
+                    parser: argparse.ArgumentParser, 
+                    namespace: argparse.Namespace, 
+                    values: str | Sequence[Any] | None, 
+                    option_string: str | None = None) -> None:
+            if isinstance(values, list):
+                value = [(x, namespace.arch) for x in values]
+            else:
+                value = (values, namespace.arch)
+            super().__call__(parser, namespace, value, option_string)
+
     def add_parser(self, key: str, subparsers: argparse._SubParsersAction[argparse.ArgumentParser]):
         parser: argparse.ArgumentParser = subparsers.add_parser(key, description='Create Alpine apk repo')
         
@@ -54,9 +67,13 @@ class _AlpineHandler(_Handler):
         parser.add_argument('-s', '--signer', type=str, dest='signer',
                             help='name of the signer. This can be used to override name deduced from the key filename')
         
-        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE',
-                            help='.apk file(s) to add to repository. To override apk architecture use filename:arch format. '
-                            'For example foo-doc-1.1-r0.apk:x86_64')
+        parser.add_argument('-a', '--arch', dest='arch', metavar='ARCH', nargs='?', default=None,
+                            help='override architecture of subsequent packages. To cancel override use -a/--arch '
+                            'with no arguments')
+        
+        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', 
+                            action=_AlpineHandler._ExtendPackageAction,
+                            help='.apk file(s) to add to repository')
 
 
     def handle(self, args: argparse.Namespace):
@@ -77,14 +94,13 @@ class _AlpineHandler(_Handler):
         print(f'Signing as {signer_name}')
         
         repo = AlpineRepo(desc)
-        for p in packages:
-            parts = p.split(':', 2)
-            if len(parts) == 2:
-                print(f'Adding {parts[0]} with architecture {parts[1]}')
-                repo.add_package(parts[0], force_arch=parts[1])
+        for name, arch in packages:
+            if arch is not None:
+                print(f'Adding {name} with architecture {arch}')
+                repo.add_package(name, force_arch=arch)
             else:
-                print(f'Adding {parts[0]}')
-                repo.add_package(parts[0])
+                print(f'Adding {name}')
+                repo.add_package(name)
         signer = PkiSigner(key_path, key_password)
         
         repo.export(dest, signer, signer_name)
@@ -192,42 +208,62 @@ class _PacmanHandler(_Handler):
         
         return 0
     
-class _AptDistroAction(argparse.Action):
-    def __call__(self, 
-                 parser: argparse.ArgumentParser, 
-                 namespace: argparse.Namespace, 
-                 values: str | Sequence[Any] | None, 
-                 option_string: str | None = None) -> None:
-        if not isinstance(values, str):
-            raise argparse.ArgumentError(self, 'distribution option must have a single value')
-        if not hasattr(namespace, 'distros'):
-            namespace.distros = {}
-        distro = namespace.distros.get(values)
-        if distro is None:
-            distro = argparse.Namespace()
-            distro.origin = None
-            distro.label = None
-            distro.suite = None
-            distro.codename = None
-            distro.version = None
-            distro.desc = None
-            distro.packages = []
-            namespace.distros[values] = distro
-        namespace.current_distro = distro
-
-
-class _AptStoreAction(argparse._StoreAction):
-    def __call__(self, 
-                 parser: argparse.ArgumentParser, 
-                 namespace: argparse.Namespace, 
-                 values: str | Sequence[Any] | None, 
-                 option_string: str | None = None) -> None:
-        if not hasattr(namespace, 'distros'):
-            name = argparse._get_action_name(self)
-            raise argparse.ArgumentError(self, f'you must use --distro before {name}')
-        super().__call__(parser, namespace.current_distro, values, option_string)
     
 class _AptHandler(_Handler):
+    class _DistroAction(argparse.Action):
+        def __call__(self, 
+                    parser: argparse.ArgumentParser, 
+                    namespace: argparse.Namespace, 
+                    values: str | Sequence[Any] | None, 
+                    option_string: str | None = None) -> None:
+            if not isinstance(values, str):
+                raise argparse.ArgumentError(self, 'distribution option must have a single value')
+            if not hasattr(namespace, 'distros'):
+                namespace.distros = {}
+            distro = namespace.distros.get(values)
+            if distro is None:
+                distro = argparse.Namespace()
+                distro.component = None
+                distro.origin = None
+                distro.label = None
+                distro.suite = None
+                distro.codename = None
+                distro.version = None
+                distro.desc = None
+                distro.packages = []
+                namespace.distros[values] = distro
+            namespace.current_distro = distro
+
+
+    class _StoreAction(argparse._StoreAction):
+        def __call__(self, 
+                    parser: argparse.ArgumentParser, 
+                    namespace: argparse.Namespace, 
+                    values: str | Sequence[Any] | None, 
+                    option_string: str | None = None) -> None:
+            if not hasattr(namespace, 'distros'):
+                name = argparse._get_action_name(self)
+                raise argparse.ArgumentError(self, f'you must use --distro before {name}')
+            super().__call__(parser, namespace.current_distro, values, option_string)
+
+    class _ExtendPackageAction(argparse._ExtendAction):
+        def __call__(self, 
+                    parser: argparse.ArgumentParser, 
+                    namespace: argparse.Namespace, 
+                    values: str | Sequence[Any] | None, 
+                    option_string: str | None = None) -> None:
+            if not hasattr(namespace, 'distros'):
+                name = argparse._get_action_name(self)
+                raise argparse.ArgumentError(self, f'you must use --distro before {name}')
+            
+            if (component := namespace.current_distro.component) is None:
+                component = 'main'
+            if isinstance(values, list):
+                value = [(x, component) for x in values]
+            else:
+                value = (values, component)
+            super().__call__(parser, namespace.current_distro, value, option_string)
+
     def add_parser(self, key: str, subparsers: argparse._SubParsersAction[argparse.ArgumentParser]):
         parser: argparse.ArgumentParser = subparsers.add_parser(key, description='Create APT repo')
         
@@ -238,29 +274,31 @@ class _AptHandler(_Handler):
         parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='PASSWORD', required=True,
                             help='GPG key password')
         
-        parser.add_argument('-d', '--distro', type=str, dest='distro', metavar='DISTRO', required=True, action=_AptDistroAction,
+        parser.add_argument('-d', '--distro', type=str, dest='distro', metavar='DISTRO', required=True, action=_AptHandler._DistroAction,
                             help='Distribution name. This can be a relative path like `stable/updates`. All subsequent '
                             'per-distribution options apply to this distribution '
                             'Conversely this option is required to precede all per-distribution options. Multiple '
                             'distributions may be specified on the same command line')
         
-        parser.add_argument('-g', '--origin', type=str, dest='origin', metavar='STRING', required=False, action=_AptStoreAction,
+        parser.add_argument('-c', '--comp', type=str, dest='component', metavar='STRING', 
+                            nargs='?', default=None, action=_AptHandler._StoreAction,
+                            help='Component for subsequent packages in the current distribution. If not '
+                            'specified, defaults to `main`')
+        parser.add_argument('--origin', type=str, dest='origin', metavar='STRING', action=_AptHandler._StoreAction,
                             help='current distribution origin')
-        parser.add_argument('-l', '--label', type=str, dest='label', metavar='STRING', required=False, action=_AptStoreAction,
+        parser.add_argument('--label', type=str, dest='label', metavar='STRING', action=_AptHandler._StoreAction,
                             help='current distribution label')
-        parser.add_argument('-s', '--suite', type=str, dest='suite', metavar='STRING', required=False, action=_AptStoreAction,
+        parser.add_argument('--suite', type=str, dest='suite', metavar='STRING', action=_AptHandler._StoreAction,
                             help='current distribution suite')
-        parser.add_argument('-c', '--codename', type=str, dest='codename', metavar='STRING', required=False, action=_AptStoreAction,
+        parser.add_argument('--codename', type=str, dest='codename', metavar='STRING', action=_AptHandler._StoreAction,
                             help='current distribution codename')
-        parser.add_argument('--dist-version', type=str, dest='version', metavar='STRING', required=False, action=_AptStoreAction,
+        parser.add_argument('--distro-version', type=str, dest='version', metavar='STRING', action=_AptHandler._StoreAction,
                             help='current distribution version')
-        parser.add_argument('--desc', type=str, dest='desc', metavar='STRING', required=False, action=_AptStoreAction,
+        parser.add_argument('--desc', type=str, dest='desc', metavar='STRING', action=_AptHandler._StoreAction,
                             help='current distribution description')
-        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action=_AptStoreAction,
-                            help='.deb file(s) to add to the current distribution. To specify a component for each package '
-                            'use `filename:component` format. For example `foo-1.2.3_amd64.deb:contrib` will assign '
-                            'foo-1.2.3_amd64.deb to contrib component. '
-                            'If no component is specified `main` is assumed.')
+        
+        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action=_AptHandler._ExtendPackageAction,
+                            help='.deb file(s) to add to the current distribution')
         
     def handle(self, args: argparse.Namespace):
         distros: dict[str, argparse.Namespace] = args.distros
@@ -272,14 +310,7 @@ class _AptHandler(_Handler):
 
         all_packages: dict[str, AptPackage] = {}
         for distro_path, distro_args in distros.items():
-            # normalize the list of packages to set((name, component))
-            normalized: set[Tuple[str, str]] = set()
-            if distro_args.packages is not None:
-                for package in distro_args.packages:
-                    name, _, component = package.partition(':')
-                    if len(component) == 0:
-                        component = 'main'
-                    normalized.add((name, component))
+            normalized: set[Tuple[str, str]] = set(distro_args.packages) if distro_args.packages is not None else set()
             
             print(f'Adding distribution: {distro_path}')
             distro = repo.add_distribution(distro_path,

@@ -177,6 +177,8 @@ def test_cmd(binaries_path, output_path, pgp_cmd):
                     '-p', 
                     binaries_path / 'wget_1.10-2ubuntu0.1_sparc.deb', 
                     binaries_path / 'wget_1.10.2-1ubuntu1.2_sparc.deb',
+                    '-c', 'haha',
+                    '-p',
                     binaries_path / 'nano-udeb_1.3.10-1_amd64.udeb',
                     '-d', 'world',
                     '-p', 
