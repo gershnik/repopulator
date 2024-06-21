@@ -5,3 +5,4 @@ mkdocstrings[python]
 black
 #mkdocs-bootswatch
 #mkdocs-material
+markdown-include

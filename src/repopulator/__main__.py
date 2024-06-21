@@ -24,6 +24,7 @@ from repopulator.pacman import PacmanRepo
 from repopulator.rpm import RpmRepo
 from repopulator.pgp_signer import PgpSigner
 from repopulator.pki_signer import PkiSigner
+from repopulator.version import VERSION
 
 
 class _Handler(metaclass=ABCMeta):
@@ -52,17 +53,17 @@ class _AlpineHandler(_Handler):
     def add_parser(self, key: str, subparsers: argparse._SubParsersAction[argparse.ArgumentParser]):
         parser: argparse.ArgumentParser = subparsers.add_parser(key, description='Create Alpine apk repo')
         
-        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST',
+        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST', required=True,
                             help='output path to export the repository to')
         
         parser.add_argument('-d', '--desc', type=str, dest='desc', required=True,
                             help='repository description')
-        parser.add_argument('-k', '--key', type=Path, dest='key_path', metavar='PATH', required=True,
+        parser.add_argument('-k', '--key', type=Path, dest='key_path', metavar='KEY_PATH', required=True,
                             help='path of the private key for signing. If -s/--signer option is not supplied '
                             'the stem of the private key filename is used as the name. '
                             'So for example a key someone@someorg.com-123456.rsa will result in someone@someorg.com-123456 '
                             'being used as a signer name.')
-        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='PASSWORD',
+        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='KEY_PASSWORD',
                             help='private key password')
         parser.add_argument('-s', '--signer', type=str, dest='signer',
                             help='name of the signer. This can be used to override name deduced from the key filename')
@@ -112,13 +113,13 @@ class _FreeBSDHandler(_Handler):
     def add_parser(self, key: str, subparsers: argparse._SubParsersAction[argparse.ArgumentParser]):
         parser: argparse.ArgumentParser = subparsers.add_parser(key, description='Create FreeBSD pkg repo')
         
-        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST',
+        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST', required=True,
                             help='output path to export the repository to')
         parser.add_argument('-k', '--key', type=Path, dest='key_path', metavar='PATH', required=True,
                             help='path of the private key for signing.')
         parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='PASSWORD', 
                             help='private key password')
-        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE',
+        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action='extend',
                             help='.pkg file(s) to add to repository.')
 
     def handle(self, args: argparse.Namespace):
@@ -143,13 +144,13 @@ class _RpmHandler(_Handler):
     def add_parser(self, key: str, subparsers: argparse._SubParsersAction[argparse.ArgumentParser]):
         parser: argparse.ArgumentParser = subparsers.add_parser(key, description='Create RPM repo')
         
-        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST',
+        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST', required=True,
                             help='output path to export the repository to')
-        parser.add_argument('-k', '--key', type=Path, dest='key_name', metavar='NAME', required=True,
+        parser.add_argument('-k', '--key', type=Path, dest='key_name', metavar='KEY_NAME', required=True,
                             help='Name or ID of the GPG key for signing')
-        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='PASSWORD', required=True,
+        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='KEY_PASSWORD', required=True,
                             help='GPG key password')
-        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE',
+        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action='extend',
                             help='.rpm file(s) to add to repository.')
         
 
@@ -175,18 +176,18 @@ class _PacmanHandler(_Handler):
     def add_parser(self, key: str, subparsers: argparse._SubParsersAction[argparse.ArgumentParser]):
         parser: argparse.ArgumentParser = subparsers.add_parser(key, description='Create Pacman repo')
         
-        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST',
+        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST', required=True,
                             help='output path to export the repository to')
         
         parser.add_argument('-n', '--name', type=str, dest='name', required=True,
                             help='repository name')
-        parser.add_argument('-k', '--key', type=Path, dest='key_name', metavar='NAME', required=True,
+        parser.add_argument('-k', '--key', type=Path, dest='key_name', metavar='KEY_NAME', required=True,
                             help='Name or ID of the GPG key for signing')
-        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='PASSWORD', required=True,
+        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='KEY_PASSWORD', required=True,
                             help='GPG key password')
-        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE',
-                            help='.zst file to add to repository. If a .sig file with the same name exists next to it, '
-                            ' it will be automatically used to supply the package signature')
+        parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action='extend',
+                            help='.zst file(s) to add to repository. If a .sig file with the same name exists next '
+                            'to a .zst file, it will be automatically used to supply the package signature')
         
 
     def handle(self, args: argparse.Namespace):
@@ -267,11 +268,11 @@ class _AptHandler(_Handler):
     def add_parser(self, key: str, subparsers: argparse._SubParsersAction[argparse.ArgumentParser]):
         parser: argparse.ArgumentParser = subparsers.add_parser(key, description='Create APT repo')
         
-        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST',
+        parser.add_argument('-o', '--output', dest='dest', type=Path, metavar='DEST', required=True,
                             help='output path to export the repository to')
-        parser.add_argument('-k', '--key', type=Path, dest='key_name', metavar='NAME', required=True,
+        parser.add_argument('-k', '--key', type=Path, dest='key_name', metavar='KEY_NAME', required=True,
                             help='Name or ID of the GPG key for signing')
-        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='PASSWORD', required=True,
+        parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='KEY_PASSWORD', required=True,
                             help='GPG key password')
         
         parser.add_argument('-d', '--distro', type=str, dest='distro', metavar='DISTRO', required=True, action=_AptHandler._DistroAction,
@@ -280,21 +281,21 @@ class _AptHandler(_Handler):
                             'Conversely this option is required to precede all per-distribution options. Multiple '
                             'distributions may be specified on the same command line')
         
-        parser.add_argument('-c', '--comp', type=str, dest='component', metavar='STRING', 
+        parser.add_argument('-c', '--comp', type=str, dest='component', metavar='COMPONENT', 
                             nargs='?', default=None, action=_AptHandler._StoreAction,
                             help='Component for subsequent packages in the current distribution. If not '
                             'specified, defaults to `main`')
-        parser.add_argument('--origin', type=str, dest='origin', metavar='STRING', action=_AptHandler._StoreAction,
+        parser.add_argument('--origin', type=str, dest='origin', metavar='ORIGIN', action=_AptHandler._StoreAction,
                             help='current distribution origin')
-        parser.add_argument('--label', type=str, dest='label', metavar='STRING', action=_AptHandler._StoreAction,
+        parser.add_argument('--label', type=str, dest='label', metavar='LABEL', action=_AptHandler._StoreAction,
                             help='current distribution label')
-        parser.add_argument('--suite', type=str, dest='suite', metavar='STRING', action=_AptHandler._StoreAction,
+        parser.add_argument('--suite', type=str, dest='suite', metavar='SUITE', action=_AptHandler._StoreAction,
                             help='current distribution suite')
-        parser.add_argument('--codename', type=str, dest='codename', metavar='STRING', action=_AptHandler._StoreAction,
+        parser.add_argument('--codename', type=str, dest='codename', metavar='CODENAME', action=_AptHandler._StoreAction,
                             help='current distribution codename')
-        parser.add_argument('--distro-version', type=str, dest='version', metavar='STRING', action=_AptHandler._StoreAction,
+        parser.add_argument('--version', type=str, dest='version', metavar='VERSION', action=_AptHandler._StoreAction,
                             help='current distribution version')
-        parser.add_argument('--desc', type=str, dest='desc', metavar='STRING', action=_AptHandler._StoreAction,
+        parser.add_argument('--desc', type=str, dest='desc', metavar='DESC', action=_AptHandler._StoreAction,
                             help='current distribution description')
         
         parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action=_AptHandler._ExtendPackageAction,
@@ -355,6 +356,7 @@ def main():
         description='Populates software repositories',
         epilog="Use repopulator TYPE -h to get more help for each type's options"
     )
+    parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {VERSION}')
     subparsers = parser.add_subparsers(
         help='type of repository to create, one of: ' + ', '.join(repo_types),
         metavar='TYPE',
