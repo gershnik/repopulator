@@ -1,6 +1,14 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2024, Eugene Gershnik
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE.txt file or at
+# https://opensource.org/licenses/BSD-3-Clause
+
 # pylint: skip-file
 
 import pytest
+import sys
+import subprocess
 
 from repopulator import *
 
@@ -75,3 +83,20 @@ def test_crud(binaries_path):
     repo.del_package(package2)
     assert [x for x in repo.packages] == [package1]
 
+@pytest.mark.download(
+    'https://pkg.freebsd.org/FreeBSD:13:amd64/release_3/All/zsm-0.4.0.pkg',
+    'https://pkg.freebsd.org/FreeBSD:13:amd64/release_3/All/gnustep-app-2.0.0_20.pkg',
+    'https://pkg.freebsd.org/FreeBSD:13:amd64/release_3/All/gnurobots-1.2.0_17.pkg'
+)
+def test_cmd(binaries_path, output_path, pki_cmd):
+    subprocess.run([sys.executable, '-m', 'repopulator', 'freebsd'] + 
+                    pki_cmd + [
+                    '-p', 
+                    binaries_path / 'zsm-0.4.0.pkg', 
+                    binaries_path / 'gnustep-app-2.0.0_20.pkg',
+                    binaries_path / 'gnurobots-1.2.0_17.pkg',
+                    '-o', output_path
+                    ], check=True)
+    compare_files(output_path / 'All/zsm-0.4.0.pkg', binaries_path / 'zsm-0.4.0.pkg')
+    compare_files(output_path / 'All/gnustep-app-2.0.0_20.pkg', binaries_path / 'gnustep-app-2.0.0_20.pkg')
+    compare_files(output_path / 'All/gnurobots-1.2.0_17.pkg', binaries_path / 'gnurobots-1.2.0_17.pkg')

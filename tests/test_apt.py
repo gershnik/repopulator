@@ -1,6 +1,14 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2024, Eugene Gershnik
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE.txt file or at
+# https://opensource.org/licenses/BSD-3-Clause
+
 # pylint: skip-file
 
 import pytest
+import sys
+import subprocess
 
 from pathlib import PurePosixPath
 from repopulator import *
@@ -157,4 +165,26 @@ def test_crud(binaries_path):
     repo.del_package(package2)
     assert [x for x in dist2.architectures('hello')] == ['sparc']
 
-
+@pytest.mark.download(
+    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10-2ubuntu0.1_sparc.deb',
+    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10.2-1ubuntu1.2_sparc.deb',
+    'https://old-releases.ubuntu.com/ubuntu/pool/main/n/nano/nano-udeb_1.3.10-1_amd64.udeb'
+)
+def test_cmd(binaries_path, output_path, pgp_cmd):
+    subprocess.run([sys.executable, '-m', 'repopulator', 'apt'] + 
+                   pgp_cmd + [
+                    '-d', 'hello',
+                    '-p', 
+                    binaries_path / 'wget_1.10-2ubuntu0.1_sparc.deb', 
+                    binaries_path / 'wget_1.10.2-1ubuntu1.2_sparc.deb',
+                    '-c', 'haha',
+                    '-p',
+                    binaries_path / 'nano-udeb_1.3.10-1_amd64.udeb',
+                    '-d', 'world',
+                    '-p', 
+                    binaries_path / 'wget_1.10-2ubuntu0.1_sparc.deb', 
+                    '-o', output_path
+                    ], check=True)
+    compare_files(output_path / 'pool/wget_1.10-2ubuntu0.1_sparc.deb', binaries_path / 'wget_1.10-2ubuntu0.1_sparc.deb')
+    compare_files(output_path / 'pool/wget_1.10.2-1ubuntu1.2_sparc.deb', binaries_path / 'wget_1.10.2-1ubuntu1.2_sparc.deb')
+    compare_files(output_path / 'pool/nano-udeb_1.3.10-1_amd64.udeb', binaries_path / 'nano-udeb_1.3.10-1_amd64.udeb')

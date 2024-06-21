@@ -1,8 +1,15 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2024, Eugene Gershnik
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE.txt file or at
+# https://opensource.org/licenses/BSD-3-Clause
+
 # pylint: skip-file
 
 import pytest
 import sys
 import os
+import subprocess
 
 from repopulator import *
 
@@ -103,3 +110,23 @@ def test_crud(binaries_path):
     repo.del_package(package2)
     assert [x for x in repo.packages('x86_64')] == [package1]
 
+@pytest.mark.download(
+    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
+    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
+    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst',
+    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst.sig',
+    'https://archive.archlinux.org/packages/t/tar/tar-1.34-1-x86_64.pkg.tar.zst',
+    'https://archive.archlinux.org/packages/t/tar/tar-1.34-1-x86_64.pkg.tar.zst.sig'
+)
+def test_cmd(binaries_path, output_path, pgp_cmd):
+    subprocess.run([sys.executable, '-m', 'repopulator', 'pacman',
+                    '-n', 'myrepo'] + pgp_cmd + [
+                    '-p', 
+                    binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst', 
+                    binaries_path / 'pacman-5.2.2-3-x86_64.pkg.tar.zst',
+                    binaries_path / 'tar-1.34-1-x86_64.pkg.tar.zst',
+                    '-o', output_path
+                    ], check=True)
+    compare_files(output_path / 'x86_64/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst', binaries_path / 'makedumpfile-1.7.1-1-x86_64.pkg.tar.zst')
+    compare_files(output_path / 'x86_64/pacman-5.2.2-3-x86_64.pkg.tar.zst', binaries_path / 'pacman-5.2.2-3-x86_64.pkg.tar.zst')
+    compare_files(output_path / 'x86_64/tar-1.34-1-x86_64.pkg.tar.zst', binaries_path / 'tar-1.34-1-x86_64.pkg.tar.zst')

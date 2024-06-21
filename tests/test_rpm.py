@@ -1,6 +1,14 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2024, Eugene Gershnik
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE.txt file or at
+# https://opensource.org/licenses/BSD-3-Clause
+
 # pylint: skip-file
 
 import pytest
+import sys
+import subprocess
 
 from repopulator import RpmRepo, RpmVersion
 from repopulator.rpm import _compare_abi_version
@@ -82,3 +90,20 @@ def test_crud(binaries_path):
     repo.del_package(package2)
     assert [x for x in repo.packages] == [package1]
 
+@pytest.mark.download(
+    "https://download.clearlinux.org/releases/10540/clear/x86_64/os/Packages/sudo-setuid-1.8.17p1-34.x86_64.rpm",
+    "https://download.clearlinux.org/releases/10540/clear/x86_64/os/Packages/dhcp-dev-4.3.3-10.x86_64.rpm",
+    "https://download.clearlinux.org/releases/10540/clear/x86_64/os/Packages/Django-1.10-39.x86_64.rpm"
+)
+def test_cmd(binaries_path, output_path, pgp_cmd):
+    subprocess.run([sys.executable, '-m', 'repopulator', 'rpm'] + 
+                   pgp_cmd + [
+                    '-p', 
+                    binaries_path / 'sudo-setuid-1.8.17p1-34.x86_64.rpm', 
+                    binaries_path / 'dhcp-dev-4.3.3-10.x86_64.rpm',
+                    binaries_path / 'Django-1.10-39.x86_64.rpm',
+                    '-o', output_path
+                    ], check=True)
+    compare_files(output_path / 'sudo-setuid-1.8.17p1-34.x86_64.rpm', binaries_path / 'sudo-setuid-1.8.17p1-34.x86_64.rpm')
+    compare_files(output_path / 'dhcp-dev-4.3.3-10.x86_64.rpm', binaries_path / 'dhcp-dev-4.3.3-10.x86_64.rpm')
+    compare_files(output_path / 'Django-1.10-39.x86_64.rpm', binaries_path / 'Django-1.10-39.x86_64.rpm')

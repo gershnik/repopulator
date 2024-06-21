@@ -62,3 +62,6 @@ Homepage = 'https://github.com/gershnik/repopulator'
 Documentation = 'https://gershnik.github.io/repopulator'
 Issues = 'https://github.com/gershnik/repopulator/issues'
 Changelog = 'https://github.com/gershnik/repopulator/blob/master/CHANGELOG.md'
+
+[project.scripts]
+repopulator = 'repopulator.__main__:main'

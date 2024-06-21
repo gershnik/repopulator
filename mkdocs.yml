@@ -33,4 +33,14 @@ plugins:
 
 markdown_extensions:
   - toc
+  - def_list
+  - tables
   - pymdownx.magiclink
+  - markdown_include.include
+
+nav:
+  - 'index.md'
+  - 'usage.md'
+  - 'reference.md'
+  - 'command-line.md'
+  - 'license.md'

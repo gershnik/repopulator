@@ -157,30 +157,33 @@ class AptDistribution(metaclass=NoPublicConstructor):
     """A distribution in AptRepo
     
     Attributes:
-        origin (str): Origin of the distribution
-        label (str): Label of the distribution
-        suite (str): Suite of the distribution
-        version (str): Version of the distribution
-        description (str): Description of the distribution
+        origin (Optional[str]): Origin of the distribution
+        label (Optional[str]): Label of the distribution
+        suite (Optional[str]): Suite of the distribution
+        codename (Optional[str]): Codename of the distribution
+        version (Optional[str]): Version of the distribution
+        description (Optional[str]): Description of the distribution
     """
 
     @classmethod
     def _new(cls,
              path: PurePosixPath,
-             origin: str,
-             label: str,
-             suite: str,
-             version: str,
-             description: str) -> AptDistribution:
-        return cls._create(path, origin, label, suite, version, description)
+             origin: Optional[str],
+             label: Optional[str],
+             suite: Optional[str],
+             codename: Optional[str],
+             version: Optional[str],
+             description: Optional[str]) -> AptDistribution:
+        return cls._create(path, origin, label, suite, codename, version, description)
 
     def __init__(self, 
                  path: PurePosixPath,
-                 origin: str,
-                 label: str,
-                 suite: str, 
-                 version: str,
-                 description: str) -> None:
+                 origin: Optional[str],
+                 label: Optional[str],
+                 suite: Optional[str],
+                 codename: Optional[str], 
+                 version: Optional[str],
+                 description: Optional[str]) -> None:
         """Internal, do not use.
         Use AptRepo.add_distribution to create instances of this class
         """
@@ -189,6 +192,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
         self.origin = origin
         self.label = label
         self.suite = suite
+        self.codename = codename
         self.version = version
         self.description = description
 
@@ -286,14 +290,24 @@ class AptDistribution(metaclass=NoPublicConstructor):
 
         Release_path = dist_dir / 'Release' # pylint: disable=invalid-name
         with open(Release_path, "wb") as f:
-            f.write(f'Origin: {self.origin}\n'.encode())
-            f.write(f'Label: {self.label}\n'.encode())
-            f.write(f'Suite: {self.suite}\n'.encode())
-            f.write(f'Codename: {self.__path.name}\n'.encode())
-            f.write(f'Version: {self.version}\n'.encode())
+            if self.origin is not None:
+                f.write(f'Origin: {self.origin}\n'.encode())
+            if self.label is not None:
+                f.write(f'Label: {self.label}\n'.encode())
+            if self.suite is not None:
+                f.write(f'Suite: {self.suite}\n'.encode())
+            else:
+                f.write(f'Suite: {self.__path.name}\n'.encode())
+            if self.codename is not None:
+                f.write(f'Codename: {self.codename}\n'.encode())
+            else:
+                f.write(f'Codename: {self.__path.name}\n'.encode())
+            if self.version is not None:
+                f.write(f'Version: {self.version}\n'.encode())
             f.write(f'Architectures: {",".join(archs)}\n'.encode())
             f.write(f'Components: {",".join(components)}\n'.encode())
-            f.write(f'Description: {self.description}\n'.encode())
+            if self.description is not None:
+                f.write(f'Description: {self.description}\n'.encode())
             f.write(f'Date: {now.strftime("%a, %d %b %Y %I:%M:%S %z")}\n'.encode())
 
             hashes = [
@@ -356,19 +370,22 @@ class AptRepo:
     def add_distribution(self,
                          path: PurePosixPath | str,
                          *,
-                         origin: str,
-                         label: str,
-                         suite: str,
-                         version: str,
-                         description: str) -> AptDistribution:
+                         origin: Optional[str]=None,
+                         label: Optional[str]=None,
+                         suite: Optional[str]=None,
+                         codename: Optional[str]=None,
+                         version: Optional[str]=None,
+                         description: Optional[str]=None) -> AptDistribution:
         """Adds a new distribution to the repository
 
         Args:
             path: distribution "name" inside the repo (e.g. 'jammy' or 'focal'), which is also its path.
-                The last component of this path is also automatically used as the distribution 'Codename'
             origin: 'Origin' field. See https://wiki.debian.org/DebianRepository/Format#Origin
             label: 'Label' field. See https://wiki.debian.org/DebianRepository/Format#Label
-            suite: 'Suite' field. See https://wiki.debian.org/DebianRepository/Format#Suite
+            suite: 'Suite' field. See https://wiki.debian.org/DebianRepository/Format#Suite If omitted, Suite is
+                set to the last component of the path
+            codename: 'Codename' field. See https://wiki.debian.org/DebianRepository/Format#Codename If omitted, Codename is
+                set to the last component of the path
             version: 'Version' field. See https://wiki.debian.org/DebianRepository/Format#Version
             description: 'Description' field. A description of the distribution
 
@@ -379,12 +396,20 @@ class AptRepo:
         path = path if isinstance(path, PurePosixPath) else PurePosixPath(path)
         if path.is_absolute():
             raise ValueError('path value must be a relative path')
-        origin = ensure_one_line_str(origin, 'origin')
-        label = ensure_one_line_str(label, 'label')
-        suite = ensure_one_line_str(suite, 'sutie')
-        version = ensure_one_line_str(version, 'version')
-        description = ensure_one_line_str(description, 'description')
-        dist = AptDistribution._new(path, origin=origin, label=label, suite=suite, version=version, description=description)
+        if origin is not None:
+            origin = ensure_one_line_str(origin, 'origin')
+        if label is not None:
+            label = ensure_one_line_str(label, 'label')
+        if suite is not None:
+            suite = ensure_one_line_str(suite, 'suite')
+        if codename is not None:
+            codename = ensure_one_line_str(codename, 'codename')
+        if version is not None:
+            version = ensure_one_line_str(version, 'version')
+        if description is not None:
+            description = ensure_one_line_str(description, 'description')
+        dist = AptDistribution._new(path, origin=origin, label=label, suite=suite, codename=codename, 
+                                    version=version, description=description)
         if dist in self.__distributions:
             raise ValueError('Duplicate distribution')
         self.__distributions.add(dist)

@@ -18,10 +18,8 @@ This is done in a portable fashion without relying on any platform and distribut
 * Alpine apk
 * FreeBSD pkg
 
+## Documentation
 
-## Reference
-
-::: repopulator
-options:
-    summary:
-    modules: false
+* [Usage](usage.md)
+* [Reference](reference.md)
+* [Command-Line Interface](command-line.md)
