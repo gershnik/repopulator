@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
-- Command line script to build repositories. Invoke with `repopulator` (or `python3 -m repopulator`) 
+- Command-line interface. Invoke with `repopulator` (or `python3 -m repopulator`) 
 
 ### Changed
 - AptRepo.add_distribution informational fields arguments are now optional rather than required.
@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - CRUD for all repo-related objects
 
 ### Fixed
-- PgpSigner now respects home directory parameter
+- `PgpSigner` now respects home directory parameter
 - Project is now Stable
 
 ## [0.7] - 2024-06-05
@@ -36,7 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [0.5] - 2024-06-05
 
 ### Fixed
-- Broken APT Package.gz generation
+- Broken APT `Package.gz` generation
 
 ## [0.4] - 2024-06-04
 
