@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Changed
+- Updated dependencies. Notably `cryptography` dependency is now ~=43.0.1
+
 ## [1.1] - 2024-06-21
 
 ### Added
