@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.2] - 2024-09-10
+
 ### Changed
 - Updated dependencies. Notably `cryptography` dependency is now ~=43.0.1
 
@@ -66,3 +68,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.7]: https://github.com/gershnik/repopulator/releases/0.7
 [1.0]: https://github.com/gershnik/repopulator/releases/1.0
 [1.1]: https://github.com/gershnik/repopulator/releases/1.1
+[1.2]: https://github.com/gershnik/repopulator/releases/1.2
