@@ -442,7 +442,7 @@ class AptRepo:
         """
 
         path = path_from_pathlike(path)
-        package = AptPackage._load(path, path.name)
+        package = AptPackage._load(path, 'pool/' + path.name)
         idx = lower_bound(self.__packages, package, lambda x, y: x.repo_filename < y.repo_filename)
         if idx < len(self.__packages) and self.__packages[idx].repo_filename == package.repo_filename:
             raise ValueError('Duplicate package')
@@ -542,6 +542,6 @@ class AptRepo:
             shutil.rmtree(pool)
         pool.mkdir(parents=True)
         for package in self.__packages:
-            dest = pool / package.repo_filename
+            dest = root / package.repo_filename
             shutil.copy2(package.src_path, dest)
         
