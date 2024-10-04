@@ -17,7 +17,7 @@ Description: free Pico clone with some new features - tiny build
  .
  This package contains a minimal build of GNU nano, aimed for use in
  debian-installer. Thus, many features are disabled in this version.
-Filename: nano-udeb_1.3.10-1_amd64.udeb
+Filename: pool/nano-udeb_1.3.10-1_amd64.udeb
 Size: 33560
 MD5sum: 191e33984bfa643ae8b9ae68f327a768
 SHA1: 450db28b335812219a2e8a8d25df40b8284ea7b1

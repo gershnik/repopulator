@@ -28,7 +28,7 @@ Description: retrieves files from the web
  speed up retrieval, and provide access behind firewalls.
  .
  http://www.gnu.org/software/wget/
-Filename: wget_1.10-2ubuntu0.1_sparc.deb
+Filename: pool/wget_1.10-2ubuntu0.1_sparc.deb
 Size: 235322
 MD5sum: a372ccc35c9f22a8043167ec5d7aa0e9
 SHA1: 6f6c45e4ca02d74f45684c154f9045ea65432de7

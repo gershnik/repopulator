@@ -36,7 +36,7 @@ def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     assert package.version_str == '1.10-2ubuntu0.1'
     assert package.version_key == VersionKey(1, 10, 2, 'ubuntu', 0, 1)
     assert package.src_path == binaries_path / 'wget_1.10-2ubuntu0.1_sparc.deb'
-    assert package.repo_filename == 'wget_1.10-2ubuntu0.1_sparc.deb'
+    assert package.repo_filename == 'pool/wget_1.10-2ubuntu0.1_sparc.deb'
 
     repo.assign_package(package, dist, component='main')
 
@@ -67,7 +67,7 @@ def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     assert package2.version_str == '1.3.10-1'
     assert package2.version_key == VersionKey(1, 3, 10, 1)
     assert package2.src_path == binaries_path / 'nano-udeb_1.3.10-1_amd64.udeb'
-    assert package2.repo_filename == 'nano-udeb_1.3.10-1_amd64.udeb'
+    assert package2.repo_filename == 'pool/nano-udeb_1.3.10-1_amd64.udeb'
 
     repo.assign_package(package1, dist, component='main')
     repo.assign_package(package2, dist, component='main')
@@ -102,7 +102,7 @@ def test_two_close(binaries_path, output_path, expected_path, pgp_signer, fixed_
     assert package2.version_str == '1.10.2-1ubuntu1.2'
     assert package2.version_key == VersionKey(1, 10, 2, 1, 'ubuntu', 1, 2)
     assert package2.src_path == binaries_path / 'wget_1.10.2-1ubuntu1.2_sparc.deb'
-    assert package2.repo_filename == 'wget_1.10.2-1ubuntu1.2_sparc.deb'
+    assert package2.repo_filename == 'pool/wget_1.10.2-1ubuntu1.2_sparc.deb'
 
     repo.assign_package(package1, dist, component='main')
     repo.assign_package(package2, dist, component='main')
