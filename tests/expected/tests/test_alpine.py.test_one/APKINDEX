@@ -1,16 +1,16 @@
-C:Q1TXVgzyQiVmY+lk5/cMY6XdPA4CI=
+C:Q1IZdVsEDSxN0qfNVNB4uePz6O/fY=
 P:samba-client
-V:4.19.6-r0
+V:4.19.9-r0
 A:x86_64
-S:678507
+S:678672
 I:2490368
 T:Samba client programs
 U:https://www.samba.org/
 L:GPL-3.0-or-later AND LGPL-3.0-or-later
 o:samba
 m:Natanael Copa <ncopa@alpinelinux.org>
-t:1716198147
-c:b4a9e905062153013701be64f4bec53be3cb2008
-D:samba-libs=4.19.6-r0 samba-common=4.19.6-r0 so:libCHARSET3-samba4.so so:libaddns-samba4.so so:libarchive.so.13 so:libc.musl-x86_64.so.1 so:libcli-cldap-samba4.so so:libcli-ldap-samba4.so so:libcli-smb-common-samba4.so so:libcli-spoolss-samba4.so so:libcliauth-samba4.so so:libcmdline-contexts-samba4.so so:libcmdline-samba4.so so:libcom-err-samba4.so so:libdbwrap-samba4.so so:libdcerpc-binding.so.0 so:libdcerpc-samba-samba4.so so:libevents-samba4.so so:libformw.so.6 so:libgenrand-samba4.so so:libgensec-samba4.so so:libgnutls.so.30 so:libkrb5-samba4.so so:libkrb5samba-samba4.so so:libldb.so.2 so:libldbsamba-samba4.so so:liblibcli-lsa3-samba4.so so:liblibcli-netlogon3-samba4.so so:liblibsmb-samba4.so so:libmscat-samba4.so so:libmsrpc3-samba4.so so:libncursesw.so.6 so:libndr-nbt.so.0 so:libndr-samba-samba4.so so:libndr-samba4.so so:libndr-standard.so.0 so:libndr.so.3 so:libpanelw.so.6 so:libpopt.so.0 so:libregistry-samba4.so so:libreplace-samba4.so so:libsamba-credentials.so.1 so:libsamba-debug-samba4.so so:libsamba-errors.so.1 so:libsamba-hostconfig.so.0 so:libsamba-passdb.so.0 so:libsamba-security-samba4.so so:libsamba-sockets-samba4.so so:libsamba-util.so.0 so:libsamba3-util-samba4.so so:libsamdb-common-samba4.so so:libsecrets3-samba4.so so:libserver-role-samba4.so so:libsmbclient-raw-samba4.so so:libsmbclient.so.0 so:libsmbconf.so.0 so:libsocket-blocking-samba4.so so:libtalloc.so.2 so:libtevent-util.so.0 so:libtevent.so.0 so:libtrusts-util-samba4.so so:libutil-reg-samba4.so so:libutil-tdb-samba4.so
-p:cmd:cifsdd=4.19.6-r0 cmd:dbwrap_tool=4.19.6-r0 cmd:dumpmscat=4.19.6-r0 cmd:mdsearch=4.19.6-r0 cmd:mvxattr=4.19.6-r0 cmd:nmblookup=4.19.6-r0 cmd:oLschema2ldif=4.19.6-r0 cmd:regdiff=4.19.6-r0 cmd:regpatch=4.19.6-r0 cmd:regshell=4.19.6-r0 cmd:regtree=4.19.6-r0 cmd:rpcclient=4.19.6-r0 cmd:samba-regedit=4.19.6-r0 cmd:sharesec=4.19.6-r0 cmd:smbcacls=4.19.6-r0 cmd:smbclient=4.19.6-r0 cmd:smbcquotas=4.19.6-r0 cmd:smbget=4.19.6-r0 cmd:smbprint=4.19.6-r0 cmd:smbspool=4.19.6-r0 cmd:smbtar=4.19.6-r0 cmd:smbtree=4.19.6-r0
+t:1730298331
+c:cfe78cf5f7a0e65f211643c2a5291a349b762c18
+D:samba-libs=4.19.9-r0 samba-common=4.19.9-r0 so:libCHARSET3-samba4.so so:libaddns-samba4.so so:libarchive.so.13 so:libc.musl-x86_64.so.1 so:libcli-cldap-samba4.so so:libcli-ldap-samba4.so so:libcli-smb-common-samba4.so so:libcli-spoolss-samba4.so so:libcliauth-samba4.so so:libcmdline-contexts-samba4.so so:libcmdline-samba4.so so:libcom-err-samba4.so so:libdbwrap-samba4.so so:libdcerpc-binding.so.0 so:libdcerpc-samba-samba4.so so:libevents-samba4.so so:libformw.so.6 so:libgenrand-samba4.so so:libgensec-samba4.so so:libgnutls.so.30 so:libkrb5-samba4.so so:libkrb5samba-samba4.so so:libldb.so.2 so:libldbsamba-samba4.so so:liblibcli-lsa3-samba4.so so:liblibcli-netlogon3-samba4.so so:liblibsmb-samba4.so so:libmscat-samba4.so so:libmsrpc3-samba4.so so:libncursesw.so.6 so:libndr-nbt.so.0 so:libndr-samba-samba4.so so:libndr-samba4.so so:libndr-standard.so.0 so:libndr.so.3 so:libpanelw.so.6 so:libpopt.so.0 so:libregistry-samba4.so so:libreplace-samba4.so so:libsamba-credentials.so.1 so:libsamba-debug-samba4.so so:libsamba-errors.so.1 so:libsamba-hostconfig.so.0 so:libsamba-passdb.so.0 so:libsamba-security-samba4.so so:libsamba-sockets-samba4.so so:libsamba-util.so.0 so:libsamba3-util-samba4.so so:libsamdb-common-samba4.so so:libsecrets3-samba4.so so:libserver-role-samba4.so so:libsmbclient-raw-samba4.so so:libsmbclient.so.0 so:libsmbconf.so.0 so:libsocket-blocking-samba4.so so:libtalloc.so.2 so:libtevent-util.so.0 so:libtevent.so.0 so:libtrusts-util-samba4.so so:libutil-reg-samba4.so so:libutil-tdb-samba4.so
+p:cmd:cifsdd=4.19.9-r0 cmd:dbwrap_tool=4.19.9-r0 cmd:dumpmscat=4.19.9-r0 cmd:mdsearch=4.19.9-r0 cmd:mvxattr=4.19.9-r0 cmd:nmblookup=4.19.9-r0 cmd:oLschema2ldif=4.19.9-r0 cmd:regdiff=4.19.9-r0 cmd:regpatch=4.19.9-r0 cmd:regshell=4.19.9-r0 cmd:regtree=4.19.9-r0 cmd:rpcclient=4.19.9-r0 cmd:samba-regedit=4.19.9-r0 cmd:sharesec=4.19.9-r0 cmd:smbcacls=4.19.9-r0 cmd:smbclient=4.19.9-r0 cmd:smbcquotas=4.19.9-r0 cmd:smbget=4.19.9-r0 cmd:smbprint=4.19.9-r0 cmd:smbspool=4.19.9-r0 cmd:smbtar=4.19.9-r0 cmd:smbtree=4.19.9-r0
 
