@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Changed
+- Dependencies are now `>=` rather than `~=` to better align with Python libraries best practices.
+
 ## [1.3] - 2024-10-04
 
 ### Fixed

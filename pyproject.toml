@@ -20,9 +20,9 @@ authors= [
 ]
 requires-python = ">=3.8"
 dependencies = [
-    "arpy~=2.3.0",
-    "cryptography~=43.0.1",
-    "zstandard[cffi]~=0.23.0"
+    "arpy>=2.3.0",
+    "cryptography>=43.0.1",
+    "zstandard[cffi]>=0.23.0"
 ]
 keywords = [
     "cross-platform", "apt-repository", "yum-repositories", 
