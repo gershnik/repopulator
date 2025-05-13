@@ -30,11 +30,9 @@ keywords = [
     "freebsd-packages", "rpm-repositories", "apt-repo", "yum-repos",
     "pacman-repo", "alpine-repository"
 ]
-license = {text = "BSD-3-Clause"}
+license = "BSD-3-Clause"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    
-    "License :: OSI Approved :: BSD License",
     
     "Operating System :: OS Independent",
 
