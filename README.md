@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Language](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org)
-[![python](https://img.shields.io/badge/python->=3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
+[![python](https://img.shields.io/badge/python->=3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 [![pypi](https://img.shields.io/pypi/v/repopulator)](https://pypi.org/project/repopulator)
 
 A portable Python library to generate binary software repositories
@@ -17,7 +17,7 @@ All binary package repositories have their own tools that usually range from bei
 
 ## Requirements
 
-* Python >= 3.8
+* Python >= 3.9
 * If you plan to build repositories that require GPG signing `gpg` command needs to be available in PATH
 * If you plan to build repositories that require private key signing OpenSSL > 3.0 libraries need to be available on your platform
 
