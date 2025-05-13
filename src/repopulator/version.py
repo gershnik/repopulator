@@ -6,4 +6,4 @@
 
 """package version info"""
 
-VERSION = '1.5'
+VERSION = '1.6'

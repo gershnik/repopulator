@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.6] - 2025-05-13
+
 ### Changed
 - Bumping minimum supported Python to 3.9
 - Bumping required setuptools version to 77.0.3 to support PEP 639
@@ -92,3 +94,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [1.3]: https://github.com/gershnik/repopulator/releases/1.3
 [1.4]: https://github.com/gershnik/repopulator/releases/1.4
 [1.5]: https://github.com/gershnik/repopulator/releases/1.5
+[1.6]: https://github.com/gershnik/repopulator/releases/1.6
