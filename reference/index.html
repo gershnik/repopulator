@@ -1,0 +1,4265 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Reference - repopulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Reference";
+        var mkdocs_page_input_path = "reference.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> repopulator
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">repopulator - generate binary software repositories</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Reference</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator">repopulator</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.AlpinePackage">AlpinePackage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.arch">arch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.fields">fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.repo_filename">repo_filename</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.src_path">src_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.version_key">version_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.version_str">version_str</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpinePackage.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.AlpineRepo">AlpineRepo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpineRepo.architectures">architectures</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpineRepo.description">description</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpineRepo.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpineRepo.add_package">add_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpineRepo.del_package">del_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpineRepo.export">export</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AlpineRepo.packages">packages</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.AptDistribution">AptDistribution</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptDistribution.components">components</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptDistribution.path">path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptDistribution.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptDistribution.architectures">architectures</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptDistribution.packages">packages</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.AptPackage">AptPackage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.arch">arch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.fields">fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.repo_filename">repo_filename</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.src_path">src_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.version_key">version_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.version_str">version_str</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptPackage.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.AptRepo">AptRepo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.distributions">distributions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.packages">packages</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.add_distribution">add_distribution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.add_package">add_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.assign_package">assign_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.del_distribution">del_distribution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.del_package">del_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.export">export</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.AptRepo.unassign_package">unassign_package</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.FreeBSDPackage">FreeBSDPackage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.arch">arch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.fields">fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.repo_filename">repo_filename</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.src_path">src_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.version_key">version_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.version_str">version_str</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDPackage.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.FreeBSDRepo">FreeBSDRepo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDRepo.packages">packages</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDRepo.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDRepo.add_package">add_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDRepo.del_package">del_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.FreeBSDRepo.export">export</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.PacmanPackage">PacmanPackage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.arch">arch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.fields">fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.repo_filename">repo_filename</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.sig_path">sig_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.src_path">src_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.version_key">version_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.version_str">version_str</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanPackage.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.PacmanRepo">PacmanRepo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanRepo.architectures">architectures</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanRepo.name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanRepo.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanRepo.add_package">add_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanRepo.del_package">del_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanRepo.export">export</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PacmanRepo.packages">packages</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.PgpSigner">PgpSigner</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PgpSigner.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PgpSigner.binary_sign_external">binary_sign_external</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PgpSigner.export_public_key">export_public_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PgpSigner.sign_external">sign_external</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PgpSigner.sign_inline">sign_inline</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.PkiSigner">PkiSigner</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PkiSigner.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PkiSigner.get_alpine_signature">get_alpine_signature</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.PkiSigner.get_free_bsd_signature">get_free_bsd_signature</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.RpmPackage">RpmPackage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.arch">arch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.fields">fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.pkgid">pkgid</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.repo_filename">repo_filename</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.src_path">src_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.version_key">version_key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.version_str">version_str</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmPackage.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.RpmRepo">RpmRepo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmRepo.packages">packages</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmRepo.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmRepo.add_package">add_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmRepo.del_package">del_package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmRepo.export">export</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.RpmVersion">RpmVersion</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.RpmVersion.__init__">__init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repopulator.VersionKey">VersionKey</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.VersionKey.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#repopulator.VersionKey.parse">parse</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../command-line/">Command-Line Interface</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">repopulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Reference</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/gershnik/repopulator/edit/master/docs/reference.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="reference">Reference</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="repopulator"></a>
+    <div class="doc doc-contents first">
+
+        <p>repopulator package</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.AlpinePackage" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">AlpinePackage</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A package in AlpineRepo</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpinePackage.arch" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">arch</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architecture of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpinePackage.fields" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">fields</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">fields: <a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Information about package stored in the repository index</p>
+<p>The available fields are documented at: <a href="https://wiki.alpinelinux.org/wiki/Apk_spec#APKINDEX_Format">https://wiki.alpinelinux.org/wiki/Apk_spec#APKINDEX_Format</a></p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpinePackage.name" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">name</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Name of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpinePackage.repo_filename" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">repo_filename</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">repo_filename: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Filename of the package when stored inside the repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpinePackage.src_path" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">src_path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Path to the original package file</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpinePackage.version_key" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_key</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_key: <a class="autorefs autorefs-internal" title="VersionKey (repopulator.util.VersionKey)" href="#repopulator.VersionKey">VersionKey</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a properly comparable key</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpinePackage.version_str" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_str</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_str: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a string</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AlpinePackage.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>, index: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>])</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Internal do not use.
+Use AlpineRepo.add_package to create instances of this class</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.AlpineRepo" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">AlpineRepo</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Generates Alpine apk repositories</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpineRepo.architectures" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">architectures</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">architectures: <a class="autorefs autorefs-external" title="typing.KeysView" href="https://docs.python.org/3/library/typing.html#typing.KeysView">KeysView</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architectures in this repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AlpineRepo.description" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">description</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">description</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Repository description</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AlpineRepo.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(desc: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for AlpineRepo class</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>desc</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>repository description. This is the description shown
+when performing <code>apk update</code></p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AlpineRepo.add_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">add_package(
+    path: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    force_arch: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None,
+) -&gt; <a class="autorefs autorefs-internal" title="AlpinePackage (repopulator.alpine.AlpinePackage)" href="#repopulator.AlpinePackage">AlpinePackage</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a package to the repository</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the path to <code>.apk</code> file for the package.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>force_arch</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>the architecture (e.g. "x86_64", "aarch64", etc.) to use if the package
+that are marked "noarch". All Alpine packages in a repo must belong to some architecture.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="AlpinePackage (repopulator.alpine.AlpinePackage)" href="#repopulator.AlpinePackage">AlpinePackage</a></code>
+              –
+              <div class="doc-md-description">
+                <p>an AlpinePackage object for the added package</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AlpineRepo.del_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">del_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">del_package(package: <a class="autorefs autorefs-internal" title="AlpinePackage (repopulator.alpine.AlpinePackage)" href="#repopulator.AlpinePackage">AlpinePackage</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Removes a package from this repository</p>
+<p>It is not an error to pass a package that is not in a repository to this function.
+It will be ignored in such case.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>package</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="AlpinePackage (repopulator.alpine.AlpinePackage)" href="#repopulator.AlpinePackage">AlpinePackage</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the package to remove</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AlpineRepo.export" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">export(
+    root: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    signer: <a class="autorefs autorefs-internal" title="PkiSigner (repopulator.pki_signer.PkiSigner)" href="#repopulator.PkiSigner">PkiSigner</a>,
+    signer_name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>,
+    now: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>] = None,
+    keep_expanded: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> = False,
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Export the repository into a given folder</p>
+<p>This actually creates an on-disk repository suitable to serve to <code>apk</code> clients. If the directory to export to
+already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.</p>
+<p>Specifically any existing <arch>/*.apk files will be removed and replaced with the ones from the repository for
+the architectures in the repository. </p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>root</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the root path to export to. The directory will be created if it does not exist</p>
+              </div>
+            </li>
+            <li>
+              <b><code>signer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="PkiSigner (repopulator.pki_signer.PkiSigner)" href="#repopulator.PkiSigner">PkiSigner</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>A PkiSigner instance to use for signing the repository. Note that this is used to only sign the
+repository itself, not the packages in it. The packages need to be signed ahead of time which usually
+happens automatically if you use <code>abuild</code> tool</p>
+              </div>
+            </li>
+            <li>
+              <b><code>signer_name</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The "name" of the signer to use. It is usually something like "<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#121;&#109;&#97;&#105;&#108;&#64;&#109;&#121;&#100;&#111;&#109;&#97;&#105;&#110;&#46;&#99;&#111;&#109;&#45;&#49;&#50;&#51;&#52;&#97;&#98;&#99;&#100;">&#109;&#121;&#109;&#97;&#105;&#108;&#64;&#109;&#121;&#100;&#111;&#109;&#97;&#105;&#110;&#46;&#99;&#111;&#109;&#45;&#49;&#50;&#51;&#52;&#97;&#98;&#99;&#100;</a>" 
+(see <a href="https://wiki.alpinelinux.org/wiki/Abuild_and_Helpers#Setting_up_the_build_environment">https://wiki.alpinelinux.org/wiki/Abuild_and_Helpers#Setting_up_the_build_environment</a> for details).
+Unlike what <code>pkg</code> tool does it is not parsed out of private key filename - you have to pass it here manually.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>now</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional timestamp to use when generating files (including various timestamp fields <em>inside</em> files).
+Specifying this argument allows for reproducible repository creation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>keep_expanded</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>, default:
+                      <code>False</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>keep intermediate uncompressed files on disk. This is useful for testing and
+troubleshooting only</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AlpineRepo.packages" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">packages</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">packages(arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>) -&gt; <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="AlpinePackage (repopulator.alpine.AlpinePackage)" href="#repopulator.AlpinePackage">AlpinePackage</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Packages for a given architecture</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.AptDistribution" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">AptDistribution</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A distribution in AptRepo</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>origin</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Origin of the distribution</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Label of the distribution</p>
+              </div>
+            </li>
+            <li>
+              <b><code>suite</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Suite of the distribution</p>
+              </div>
+            </li>
+            <li>
+              <b><code>codename</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Codename of the distribution</p>
+              </div>
+            </li>
+            <li>
+              <b><code>version</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Version of the distribution</p>
+              </div>
+            </li>
+            <li>
+              <b><code>description</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Description of the distribution</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptDistribution.components" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">components</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">components: <a class="autorefs autorefs-external" title="typing.KeysView" href="https://docs.python.org/3/library/typing.html#typing.KeysView">KeysView</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Components in this distribution</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptDistribution.path" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">path: <a class="autorefs autorefs-external" title="pathlib.PurePosixPath" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath">PurePosixPath</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Path of the distribution</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptDistribution.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(
+    path: <a class="autorefs autorefs-external" title="pathlib.PurePosixPath" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath">PurePosixPath</a>,
+    origin: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    label: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    suite: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    codename: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    version: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    description: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+) -&gt; None</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Internal, do not use.
+Use AptRepo.add_distribution to create instances of this class</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptDistribution.architectures" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">architectures</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">architectures(component: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>) -&gt; <a class="autorefs autorefs-external" title="typing.KeysView" href="https://docs.python.org/3/library/typing.html#typing.KeysView">KeysView</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architectures for a given component</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptDistribution.packages" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">packages</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">packages(component: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>) -&gt; <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architectures for a given component and architecture</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.AptPackage" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">AptPackage</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A package in AptRepo</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptPackage.arch" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">arch</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architecture of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptPackage.fields" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">fields</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">fields: <a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Information about package stored in the repository index</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptPackage.name" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">name</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Name of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptPackage.repo_filename" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">repo_filename</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">repo_filename: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Filename of the package when stored inside the repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptPackage.src_path" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">src_path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Path to the original package file</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptPackage.version_key" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_key</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_key: <a class="autorefs autorefs-internal" title="VersionKey (repopulator.util.VersionKey)" href="#repopulator.VersionKey">VersionKey</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a properly comparable key</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptPackage.version_str" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_str</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_str: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a string</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptPackage.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(
+    src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>, fields: <a class="autorefs autorefs-external" title="typing.Dict" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]]
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Internal, do not use.
+Use AptRepo.add_package to create instances of this class</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.AptRepo" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">AptRepo</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Generates APT repositories</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptRepo.distributions" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">distributions</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">distributions: <a class="autorefs autorefs-external" title="typing.AbstractSet" href="https://docs.python.org/3/library/typing.html#typing.AbstractSet">AbstractSet</a>[<a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Distributions in this repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.AptRepo.packages" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">packages</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">packages: <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Packages in this repository</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__()</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for AptRepo class</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.add_distribution" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_distribution</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">add_distribution(
+    path: <a class="autorefs autorefs-external" title="pathlib.PurePosixPath" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath">PurePosixPath</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>,
+    *,
+    origin: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None,
+    label: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None,
+    suite: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None,
+    codename: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None,
+    version: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None,
+    description: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None
+) -&gt; <a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a new distribution to the repository</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.PurePosixPath" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath">PurePosixPath</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>distribution "name" inside the repo (e.g. 'jammy' or 'focal'), which is also its path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>origin</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>'Origin' field. See <a href="https://wiki.debian.org/DebianRepository/Format#Origin">https://wiki.debian.org/DebianRepository/Format#Origin</a></p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>'Label' field. See <a href="https://wiki.debian.org/DebianRepository/Format#Label">https://wiki.debian.org/DebianRepository/Format#Label</a></p>
+              </div>
+            </li>
+            <li>
+              <b><code>suite</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>'Suite' field. See <a href="https://wiki.debian.org/DebianRepository/Format#Suite">https://wiki.debian.org/DebianRepository/Format#Suite</a> If omitted, Suite is
+set to the last component of the path</p>
+              </div>
+            </li>
+            <li>
+              <b><code>codename</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>'Codename' field. See <a href="https://wiki.debian.org/DebianRepository/Format#Codename">https://wiki.debian.org/DebianRepository/Format#Codename</a> If omitted, Codename is
+set to the last component of the path</p>
+              </div>
+            </li>
+            <li>
+              <b><code>version</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>'Version' field. See <a href="https://wiki.debian.org/DebianRepository/Format#Version">https://wiki.debian.org/DebianRepository/Format#Version</a></p>
+              </div>
+            </li>
+            <li>
+              <b><code>description</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>'Description' field. A description of the distribution</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a></code>
+              –
+              <div class="doc-md-description">
+                <p>a new AptDistribution object</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.add_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">add_package(path: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]) -&gt; <a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a package to the repository</p>
+<p>Adding a package to the repository simply adds it to the pool of available packages.
+After doing that you need to add the returned package to one or more distributions to make it available
+to repository clients.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the path to <code>.deb</code> file for the package.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Returns:
+    an AptPackage object for the added package</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.assign_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">assign_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">assign_package(
+    package: <a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a>,
+    dist: <a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a>,
+    component: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>,
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Assigns a repository package to a distribution's component</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>package</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the package to assign. </p>
+              </div>
+            </li>
+            <li>
+              <b><code>dist</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the distribution to assign to</p>
+              </div>
+            </li>
+            <li>
+              <b><code>component</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the distribution's component to assign the package to</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.del_distribution" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">del_distribution</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">del_distribution(dist: <a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Removes a distribution from the repository.</p>
+<p>If the distribution is not in this repo the function ignores it and succeeds</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>dist</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the distribution to remove</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.del_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">del_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">del_package(package: <a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Removes a package from this repository</p>
+<p>The package is removed from the repository and all distributions in it. 
+It is not an error to pass a package that is not in a repository to this function.
+It will be ignored in such case.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>package</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the package to remove</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.export" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">export(
+    root: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    signer: <a class="autorefs autorefs-internal" title="PgpSigner (repopulator.pgp_signer.PgpSigner)" href="#repopulator.PgpSigner">PgpSigner</a>,
+    now: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>] = None,
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Export the repository into a given folder.</p>
+<p>This actually creates an on-disk repository suitable to serve to APT clients. If the directory to export to
+already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.</p>
+<p>Specifically:</p>
+<ul>
+<li>any existing pool/*.deb files will be removed and replaced with the ones from the repository.</li>
+<li>'dists' subdirectory will be completely erased and replaced with exported content</li>
+</ul>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>root</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the root path to export to. The directory will be created if it does not exist</p>
+              </div>
+            </li>
+            <li>
+              <b><code>signer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="PgpSigner (repopulator.pgp_signer.PgpSigner)" href="#repopulator.PgpSigner">PgpSigner</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>A PgpSigner instance to use for signing the repository.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>now</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional timestamp to use when generating files (including various timestamp fields <em>inside</em> files).
+Specifying this argument allows for reproducible repository creation.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.AptRepo.unassign_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">unassign_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">unassign_package(
+    package: <a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a>,
+    dist: <a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a>,
+    component: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] = None,
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Removes a repository package from a distribution's component</p>
+<p>If the package or distribution are not in this repository or the package is not 
+assigned to the distribution's component the call is silently ignored.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>package</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="AptPackage (repopulator.apt.AptPackage)" href="#repopulator.AptPackage">AptPackage</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the package to remove. </p>
+              </div>
+            </li>
+            <li>
+              <b><code>dist</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="AptDistribution (repopulator.apt.AptDistribution)" href="#repopulator.AptDistribution">AptDistribution</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the distribution to remove from</p>
+              </div>
+            </li>
+            <li>
+              <b><code>component</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>if specified remove the package only from this component. Otherwise, remove it from all</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.FreeBSDPackage" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">FreeBSDPackage</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A package in FreeBSDRepo</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDPackage.arch" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">arch</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architecture of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDPackage.fields" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">fields</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">fields: <a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Information about package stored in the repository index.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDPackage.name" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">name</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Name of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDPackage.repo_filename" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">repo_filename</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">repo_filename: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Filename of the package when stored inside the repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDPackage.src_path" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">src_path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Path to the original package file</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDPackage.version_key" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_key</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_key: <a class="autorefs autorefs-internal" title="VersionKey (repopulator.util.VersionKey)" href="#repopulator.VersionKey">VersionKey</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a properly comparable key</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDPackage.version_str" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_str</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_str: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a string</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.FreeBSDPackage.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(
+    src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>, manifest: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a>, fields: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]
+) -&gt; None</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Internal do not use.
+Use FreeBSDRepo.add_package to create instances of this class</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.FreeBSDRepo" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">FreeBSDRepo</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Generates FreeBSD pkg repositories</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.FreeBSDRepo.packages" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">packages</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">packages: <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="FreeBSDPackage (repopulator.freebsd.FreeBSDPackage)" href="#repopulator.FreeBSDPackage">FreeBSDPackage</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Packages in the repository</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.FreeBSDRepo.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__()</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for FreeBSDRepo class</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.FreeBSDRepo.add_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">add_package(path: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]) -&gt; <a class="autorefs autorefs-internal" title="FreeBSDPackage (repopulator.freebsd.FreeBSDPackage)" href="#repopulator.FreeBSDPackage">FreeBSDPackage</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a package to the repository</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the path to <code>.pkg</code> file for the package.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Returns:
+    a FreeBSDPackage object for the added package</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.FreeBSDRepo.del_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">del_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">del_package(package: <a class="autorefs autorefs-internal" title="FreeBSDPackage (repopulator.freebsd.FreeBSDPackage)" href="#repopulator.FreeBSDPackage">FreeBSDPackage</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Removes a package from this repository</p>
+<p>It is not an error to pass a package that is not in a repository to this function.
+It will be ignored in such case.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>package</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="FreeBSDPackage (repopulator.freebsd.FreeBSDPackage)" href="#repopulator.FreeBSDPackage">FreeBSDPackage</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the package to remove</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.FreeBSDRepo.export" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">export(
+    root: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    signer: <a class="autorefs autorefs-internal" title="PkiSigner (repopulator.pki_signer.PkiSigner)" href="#repopulator.PkiSigner">PkiSigner</a>,
+    now: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>] = None,
+    keep_expanded: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> = False,
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Export the repository into a given folder</p>
+<p>This actually creates an on-disk repository suitable to serve to <code>pkg</code> clients. If the directory to export to
+already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.</p>
+<p>Specifically any existing All/*.pkg files will be removed and replaced with the ones from the repository.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>root</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the root path to export to. The directory will be created if it does not exist</p>
+              </div>
+            </li>
+            <li>
+              <b><code>signer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="PkiSigner (repopulator.pki_signer.PkiSigner)" href="#repopulator.PkiSigner">PkiSigner</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>A PkiSigner instance to use for signing the repository.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>now</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional timestamp to use when generating files (including various timestamp fields <em>inside</em> files).
+Specifying this argument allows for reproducible repository creation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>keep_expanded</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>, default:
+                      <code>False</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>keep intermediate uncompressed files on disk. This is useful for testing and
+troubleshooting only</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.PacmanPackage" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">PacmanPackage</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A package in PacmanRepo</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.arch" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">arch</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architecture of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.fields" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">fields</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">fields: <a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Information about package stored in the repository index</p>
+<p>See <a href="https://repod.archlinux.page/repositories/sync_database.html#desc-v2">https://repod.archlinux.page/repositories/sync_database.html#desc-v2</a>
+for information about available fields</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.name" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">name</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Name of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.repo_filename" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">repo_filename</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">repo_filename: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Filename of the package when stored inside the repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.sig_path" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">sig_path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">sig_path: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Path to the package signature file, if present</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.src_path" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">src_path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Path to the original package file</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.version_key" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_key</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_key: <a class="autorefs autorefs-internal" title="VersionKey (repopulator.util.VersionKey)" href="#repopulator.VersionKey">VersionKey</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a properly comparable key</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanPackage.version_str" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_str</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_str: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a string</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PacmanPackage.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(
+    src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>,
+    sig_path: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>],
+    desc: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>],
+    files: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Internal do not use.
+Use <a class="autorefs autorefs-internal" title="add_package" href="#repopulator.PacmanRepo.add_package">add_package</a> to create instances of this class</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.PacmanRepo" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">PacmanRepo</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Generates Pacman repositories</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanRepo.architectures" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">architectures</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">architectures: <a class="autorefs autorefs-external" title="typing.KeysView" href="https://docs.python.org/3/library/typing.html#typing.KeysView">KeysView</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architectures in this repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.PacmanRepo.name" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">name</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">name</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Repository name</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PacmanRepo.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for AlpineRepo class</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>repository name.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PacmanRepo.add_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">add_package(path: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]) -&gt; <a class="autorefs autorefs-internal" title="PacmanPackage (repopulator.pacman.PacmanPackage)" href="#repopulator.PacmanPackage">PacmanPackage</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a package to the repository</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the path to <code>.zst</code> file for the package. If a matching <code>.zst.sig</code> file exists alongside it,
+it will be used as a signature file.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Returns:
+    a PacmanPackage object for the added package</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PacmanRepo.del_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">del_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">del_package(package: <a class="autorefs autorefs-internal" title="PacmanPackage (repopulator.pacman.PacmanPackage)" href="#repopulator.PacmanPackage">PacmanPackage</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Removes a package from this repository</p>
+<p>It is not an error to pass a package that is not in a repository to this function.
+It will be ignored in such case.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>package</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="PacmanPackage (repopulator.pacman.PacmanPackage)" href="#repopulator.PacmanPackage">PacmanPackage</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the package to remove</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PacmanRepo.export" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">export(
+    root: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>,
+    signer: <a class="autorefs autorefs-internal" title="PgpSigner (repopulator.pgp_signer.PgpSigner)" href="#repopulator.PgpSigner">PgpSigner</a>,
+    now: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>] = None,
+    keep_expanded: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> = False,
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Export the repository into a given folder</p>
+<p>This actually creates an on-disk repository suitable to serve to <code>pacman</code> clients. If the directory to export to
+already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.</p>
+<p>Specifically any existing <arch>/.pkg.tar.zst and <arch>/.pkg.tar.zst.sig files will be removed and
+replaced with the ones from the repository for the architectures in the repository.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>root</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the root path to export to. The directory will be created if it does not exist</p>
+              </div>
+            </li>
+            <li>
+              <b><code>signer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="PgpSigner (repopulator.pgp_signer.PgpSigner)" href="#repopulator.PgpSigner">PgpSigner</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>A PgpSigner instance to use for signing the repository. It is used to sign the
+repository itself and any packages that do not have pre-existing signatures.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>now</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional timestamp to use when generating files (including various timestamp fields <em>inside</em> files).
+Specifying this argument allows for reproducible repository creation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>keep_expanded</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>, default:
+                      <code>False</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>keep intermediate uncompressed files on disk. This is useful for testing and
+troubleshooting only</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PacmanRepo.packages" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">packages</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">packages(arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>) -&gt; <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="PacmanPackage (repopulator.pacman.PacmanPackage)" href="#repopulator.PacmanPackage">PacmanPackage</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Packages for a given architecture</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.PgpSigner" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">PgpSigner</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Implementation of PGP signing</p>
+<p>Many repository formats rely on PGP signing and use this class for it.</p>
+<p>This class simply delegates signing to <code>gpg</code> executable that needs to be present on $PATH.
+Unfortunately, currently there seems to be no good way to perform PGP signing in "pure Python".</p>
+<p>You are required to supply key name and password for signing. Signing is done non-interactively without any
+user prompts.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PgpSigner.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(
+    *,
+    key_name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>,
+    key_pwd: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>,
+    homedir: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]] = None
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for PgpSigner class</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>key_name</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>name or identifier of the key to use</p>
+              </div>
+            </li>
+            <li>
+              <b><code>key_pwd</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>password of the key</p>
+              </div>
+            </li>
+            <li>
+              <b><code>homedir</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>GPG home directory. If not specified the gpg defaults are used (including
+honoring GNUPGHOME environment variable)</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PgpSigner.binary_sign_external" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">binary_sign_external</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">binary_sign_external(path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>, sig_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Signs a given file producing binary signature in a separate file</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>file to sign</p>
+              </div>
+            </li>
+            <li>
+              <b><code>sig_path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>path to write the signature to</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PgpSigner.export_public_key" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export_public_key</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">export_public_key(path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Utility method to export the public key of the signing key into a file
+Args:
+    path: path of the file to write the public key to</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PgpSigner.sign_external" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">sign_external</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">sign_external(path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>, sig_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Signs a given file producing text (aka "armored") signature in a separate file</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>file to sign</p>
+              </div>
+            </li>
+            <li>
+              <b><code>sig_path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>path to write the signature to</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PgpSigner.sign_inline" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">sign_inline</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">sign_inline(path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>, out_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a signature to a given text file</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>file to sign</p>
+              </div>
+            </li>
+            <li>
+              <b><code>out_path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>path to write the signed content to</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.PkiSigner" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">PkiSigner</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Implementation of private key based signing</p>
+<p>Many repository formats rely on private key signing and use this class for it.</p>
+<p>The supplied key needs to be in PEM format. Its cryptographic type needs to be appropriate for the repository
+that it will be used for.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PkiSigner.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(
+    priv_key_path: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    priv_key_passwd: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for PkiSigner class</p>
+<p>The private key file is read once during the construction and not used again
+Args:
+    priv_key_path: path to the private key file. The file must be in PEM format.
+    priv_key_passwd: password for the key if it requires one.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PkiSigner.get_alpine_signature" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">get_alpine_signature</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">get_alpine_signature(path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Generate file signature in a format required by Alpine apk repositories</p>
+<p>Only rsa keys are currently supported</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>path of the file to sign</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Returns:
+    Signature as a <code>bytes</code> object</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.PkiSigner.get_free_bsd_signature" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">get_free_bsd_signature</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">get_free_bsd_signature(path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Generate file signature in a format required by FreeBSD repositories</p>
+<p>Private key type must be one of: rsa, ecdsa or eddsa
+Args:
+    path: path of the file to sign
+Returns:
+    Signature as a <code>bytes</code> object</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.RpmPackage" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">RpmPackage</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>A package in RpmRepo</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.arch" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">arch</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">arch: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Architecture of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.fields" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">fields</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">fields: <span title="repopulator.util.ImmutableDict">ImmutableDict</span></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Information about package stored in the repository index</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.name" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">name</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">name: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Name of the package</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.pkgid" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">pkgid</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">pkgid: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Unique identifier of the package in the repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.repo_filename" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">repo_filename</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">repo_filename: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Filename of the package when stored inside the repository</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.src_path" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">src_path</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Path to the original package file</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.version_key" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_key</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_key: <a class="autorefs autorefs-internal" title="RpmVersion (repopulator.rpm.RpmVersion)" href="#repopulator.RpmVersion">RpmVersion</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a properly comparable key</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmPackage.version_str" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version_str</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">version_str: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Version of the package as a string</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.RpmPackage.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(
+    src_path: <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>,
+    filename: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>,
+    pkgid: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>,
+    size: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>,
+    mtime: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>,
+    headers: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>],
+    header_range: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>],
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Internal, do not use
+Use RpmRepo.addPackage to create instances of this class</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.RpmRepo" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">RpmRepo</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Generates RPM repositories</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="repopulator.RpmRepo.packages" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">packages</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">packages: <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="RpmPackage (repopulator.rpm.RpmPackage)" href="#repopulator.RpmPackage">RpmPackage</a>]</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Packages in the repository</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.RpmRepo.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__()</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for RpmRepo class</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.RpmRepo.add_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">add_package(path: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]) -&gt; <a class="autorefs autorefs-internal" title="RpmPackage (repopulator.rpm.RpmPackage)" href="#repopulator.RpmPackage">RpmPackage</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a package to the repository</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the path to <code>.rpm</code> file for the package.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Returns:
+    an RpmPackage object for the added package</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.RpmRepo.del_package" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">del_package</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">del_package(package: <a class="autorefs autorefs-internal" title="RpmPackage (repopulator.rpm.RpmPackage)" href="#repopulator.RpmPackage">RpmPackage</a>)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Removes a package from this repository</p>
+<p>It is not an error to pass a package that is not in a repository to this function.
+It will be ignored in such case.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>package</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="RpmPackage (repopulator.rpm.RpmPackage)" href="#repopulator.RpmPackage">RpmPackage</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>the package to remove</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.RpmRepo.export" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">export(
+    root: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>],
+    signer: <a class="autorefs autorefs-internal" title="PgpSigner (repopulator.pgp_signer.PgpSigner)" href="#repopulator.PgpSigner">PgpSigner</a>,
+    now: <a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>] = None,
+    keep_expanded: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> = False,
+)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Export the repository into a given folder</p>
+<p>This actually creates an on-disk repository suitable to serve to <code>pacman</code> clients. If the directory to export to
+already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.</p>
+<p>Specifically any existing *.rpm files will be removed and replaced with the ones from the repository.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>root</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="os.PathLike" href="https://docs.python.org/3/library/os.html#os.PathLike">PathLike</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>the root path to export to. The directory will be created if it does not exist</p>
+              </div>
+            </li>
+            <li>
+              <b><code>signer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="PgpSigner (repopulator.pgp_signer.PgpSigner)" href="#repopulator.PgpSigner">PgpSigner</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>A PgpSigner instance to use for signing the repository.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>now</code></b>
+                  (<code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>optional timestamp to use when generating files (including various timestamp fields <em>inside</em> files).
+Specifying this argument allows for reproducible repository creation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>keep_expanded</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>, default:
+                      <code>False</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>keep intermediate uncompressed files on disk. This is useful for testing and
+troubleshooting only</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.RpmVersion" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">RpmVersion</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Representation of RPM package version</p>
+<p>Instances of this class are properly comparable (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>) and hashable.</p>
+<p>The string representation of an RpmVersion object is the properly formatted version string</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.RpmVersion.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(version: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]) -&gt; None</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for RpmVersion class</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>version</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>either the full RPM version in string form or a tuple of (epoch, version, release)</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="repopulator.VersionKey" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">VersionKey</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Representation of a package version</p>
+<p>Package versions cannot be compared as simple strings. For example "1.10" should be bigger than
+ "1.2". This class allows correct sematic comparisons for versions.</p>
+<p>Instances of this class are properly comparable (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>) and hashable.</p>
+<p>Logically a version key is a heterogeneous tuple of <code>str</code> and <code>int</code> elements.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.VersionKey.__init__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__init__</span>
+
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">__init__(*args)</code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor for VersionKey class</p>
+<p>Arguments are any number of version parts. Each part can be:</p>
+<ul>
+<li>a single <code>int</code> for a numeric part</li>
+<li>an <code>str</code> or <code>bytes</code> object for a string part</li>
+</ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="repopulator.VersionKey.parse" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">parse</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h3>
+<pre class="highlight"><code class="language-python doc-signature">parse(version: <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>) -&gt; <a class="autorefs autorefs-internal" title="VersionKey (repopulator.util.VersionKey)" href="#repopulator.VersionKey">VersionKey</a></code></pre>
+
+    <div class="doc doc-contents ">
+
+        <p>Parses the version key from a string</p>
+<p>Parsing is always well defined for any string and never fails</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>version</code></b>
+                  (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>a version string</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Returns: parsed key</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div><p>options:
+    summary:
+    modules: false</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../usage/" class="btn btn-neutral float-left" title="Usage"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../command-line/" class="btn btn-neutral float-right" title="Command-Line Interface">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024, Eugene Gershnik</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/gershnik/repopulator" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../usage/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../command-line/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

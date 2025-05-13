@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Command-Line Interface - repopulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Command-Line Interface";
+        var mkdocs_page_input_path = "command-line.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> repopulator
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">repopulator - generate binary software repositories</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../reference/">Reference</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Command-Line Interface</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#general">General</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#alpine">Alpine</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#apt">APT</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#freebsd">FreeBSD</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pacman">Pacman</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rpm">RPM</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">repopulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Command-Line Interface</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/gershnik/repopulator/edit/master/docs/command-line.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="command-line-interface">Command-Line Interface</h1>
+<h2 id="general">General</h2>
+<p>The <code>repopulator</code> module provides a simple command-line interface to create repositories.</p>
+<p>You can invoke the command-line either via a script</p>
+<pre><code class="language-bash">$ repopulator
+</code></pre>
+<p>or as a module</p>
+<pre><code class="language-bash">$ python3 -m repopulator
+</code></pre>
+<p>The general form of the command line is:</p>
+<pre><code class="language-bash">$ repopulator TYPE -o DEST [options...] -p package1 package2 ....
+</code></pre>
+<p>where <code>TYPE</code> is one of: <code>alpine</code>, <code>apt</code>, <code>freebsd</code>, <code>pacman</code>, <code>rpm</code> and <code>DEST</code> is the destination directory for the repository.</p>
+<p>You can obtain overall help by using</p>
+<pre><code class="language-bash">$ repopulator -h/--help
+</code></pre>
+<p>and a help about available options for each repository via:</p>
+<pre><code class="language-bash">$ repopulator TYPE -h/--help
+</code></pre>
+<p>Options and their effect for each repository type are described below</p>
+<h2 id="alpine">Alpine</h2>
+<p>The general command-line form for Alpine pkg repository is:</p>
+<pre><code class="language-bash">$ repopulator alpine -o DEST -d DESC -k KEY_PATH [-w KEY_PASSWORD] [-s SIGNER] \
+     -p package1 package2 ... \
+     -a ARCH1 -p package3 package4 ... \
+     -a ARCH2 -p package5 package6 ...
+
+</code></pre>
+<p>Where:</p>
+<dl>
+<dt><code>-d DESC</code>, <code>--desc DESC</code></dt>
+<dd>The repository description</dd>
+<dt><code>-k KEY_PATH</code>, <code>--key KEY_PATH</code></dt>
+<dd>The path to private key for signing. If <code>-s/--signer</code> option is not supplied the stem of the private key filename is used as the name. So for example a key <code>someone@someorg.com-123456.rsa</code> will result in <code>someone@someorg.com-123456</code> being used as a signer name.</dd>
+<dt><code>-w KEY_PASSWORD</code>, <code>--password KEY_PASSWORD</code></dt>
+<dd>The password for the private key, if needed</dd>
+<dt><code>-s SIGNER</code>, <code>--signer SIGNER</code></dt>
+<dd>The signer name that overrides automatic deduction from the key filename described above</dd>
+<dt><code>-a ARCH</code>, <code>--arch ARCH</code></dt>
+<dd>Forces the architecture of the <em>following</em> packages to be <code>ARCH</code>. </dd>
+<dt><code>-p path ...</code>, <code>--package path...</code></dt>
+<dd><code>.apk</code> packages to add</dd>
+</dl>
+<p>By default, internal architecture of the package is used to decide under which architecture to register it in the repo. 
+Some packages (such as <code>-doc-</code>, <code>-openrc-</code> etc.) do not have specific architecture and are marked as <code>noarch</code>. All Alpine packages in a repo must belong to some architecture so you need to use <code>-a ARCH</code> with them. </p>
+<p>If you wish to "stop" the latest <code>-a ARCH</code> effect and revert to using architecture of the package use <code>-a</code> without an argument.</p>
+<h2 id="apt">APT</h2>
+<p>The general command-line form for APT repository is:</p>
+<pre><code class="language-bash">$ repopulator apt -o DEST -k KEY_NAME -w KEY_PASSWORD \
+    -d DISTRO1 \
+      [--origin ORIGIN] [--label LABEL] [--suite SUITE] \
+        [--codename CODENAME] [--version VERSION] [--desc DESC] \
+      [-c COMPONENT1] \
+          -p package1 package2 ... \
+      [-c COMPONENT2] \
+          -p package3 package4 ... \
+    -d DISTRO2 \
+    ...
+</code></pre>
+<p>Where:</p>
+<dl>
+<dt><code>-k KEY_NAME</code>, <code>--key KEY_NAME</code></dt>
+<dd>Name or ID of the GPG key for signing</dd>
+<dt><code>-w KEY_PASSWORD</code>, <code>--password KEY_PASSWORD</code></dt>
+<dd>GPG key password</dd>
+<dt><code>-d DISTRO</code>, <code>--distro DISTRO</code></dt>
+<dd>Starts a new distribution named <code>DISTRO</code> (e.g. <code>jammy</code> or <code>focal</code>). All subsequent arguments refer to this distribution until the next <code>-d/--distro</code> argument. The distribution name can be a path like <code>stable/updates</code></dd>
+<dt><code>--origin ORIGIN</code></dt>
+<dd>Optional <code>Origin</code> field for the distribution. See <a href="https://wiki.debian.org/DebianRepository/Format#Origin">https://wiki.debian.org/DebianRepository/Format#Origin</a></dd>
+<dt><code>--label LABEL</code></dt>
+<dd>Optional <code>Label</code> field for the distribution. See <a href="https://wiki.debian.org/DebianRepository/Format#Label">https://wiki.debian.org/DebianRepository/Format#Label</a></dd>
+<dt><code>--suite SUITE</code></dt>
+<dd>Optional <code>Suite</code> field for the distribution. See <a href="https://wiki.debian.org/DebianRepository/Format#Suite">https://wiki.debian.org/DebianRepository/Format#Suite</a>. If omitted defaults to the last component of distribution path.</dd>
+<dt><code>--codename CODENAME</code></dt>
+<dd>Optional <code>Codename</code> field for the distribution. See <a href="https://wiki.debian.org/DebianRepository/Format#Codename">https://wiki.debian.org/DebianRepository/Format#Codename</a>. If omitted defaults to the last component of distribution path.</dd>
+<dt><code>--version VERSION</code></dt>
+<dd>Optional <code>Version</code> field for the distribution. See <a href="https://wiki.debian.org/DebianRepository/Format#Version">https://wiki.debian.org/DebianRepository/Format#Version</a>. If omitted defaults to the last component of distribution path.</dd>
+<dt><code>--desc DESC</code></dt>
+<dd>Optional <code>Description</code> field for the distribution. See <a href="https://wiki.debian.org/DebianRepository/Format#Description">https://wiki.debian.org/DebianRepository/Format#Description</a>. If omitted defaults to the last component of distribution path.</dd>
+<dt><code>-c COMPONENT</code>, <code>--comp COMPONENT</code></dt>
+<dd>Optional component of the <em>following</em> packages. If not specified or component name is omitted defaults to <code>main</code>. You can specify multiple components for a distribution. </dd>
+<dt><code>-p path ...</code>, <code>--package path...</code></dt>
+<dd><code>.deb</code> (or <code>.udeb</code>) packages to add to the current distribution and component</dd>
+</dl>
+<h2 id="freebsd">FreeBSD</h2>
+<p>The general command-line form for FreeBSD repository is:</p>
+<pre><code class="language-bash">$ repopulator freebsd -o DEST -k KEY_PATH [-w KEY_PASSWORD] \
+     -p package1 package2 ... 
+</code></pre>
+<p>Where:</p>
+<dl>
+<dt><code>-k KEY_PATH</code>, <code>--key KEY_PATH</code></dt>
+<dd>The path to private key for signing. </dd>
+<dt><code>-w KEY_PASSWORD</code>, <code>--password KEY_PASSWORD</code></dt>
+<dd>The password for the private key, if needed</dd>
+<dt><code>-p path ...</code>, <code>--package path...</code></dt>
+<dd><code>.pkg</code> packages to add</dd>
+</dl>
+<h2 id="pacman">Pacman</h2>
+<p>The general command-line form for Pacman repository is:</p>
+<pre><code class="language-bash">$ repopulator pacman -o DEST -k KEY_NAME -w KEY_PASSWORD \
+    -n name -p package1 package2 ...
+</code></pre>
+<p>Where:</p>
+<dl>
+<dt><code>-k KEY_NAME</code>, <code>--key KEY_NAME</code></dt>
+<dd>Name or ID of the GPG key for signing</dd>
+<dt><code>-w KEY_PASSWORD</code>, <code>--password KEY_PASSWORD</code></dt>
+<dd>GPG key password</dd>
+<dt><code>-n NAME</code>, <code>--name NAME</code></dt>
+<dd>Repository name</dd>
+<dt><code>-p path ...</code>, <code>--package path...</code></dt>
+<dd><code>.zst</code> packages to add. If a matching .sig file with the same name exists next to the package, it will be automatically used to supply the package signature</dd>
+</dl>
+<h2 id="rpm">RPM</h2>
+<p>The general command-line form for Pacman repository is:</p>
+<pre><code class="language-bash">$ repopulator rpm -o DEST -k KEY_NAME -w KEY_PASSWORD \
+    -p package1 package2 ...
+</code></pre>
+<p>Where:</p>
+<dl>
+<dt><code>-k KEY_NAME</code>, <code>--key KEY_NAME</code></dt>
+<dd>Name or ID of the GPG key for signing</dd>
+<dt><code>-w KEY_PASSWORD</code>, <code>--password KEY_PASSWORD</code></dt>
+<dd>GPG key password</dd>
+<dt><code>-p path ...</code>, <code>--package path...</code></dt>
+<dd><code>.rpm</code> packages to add. </dd>
+</dl>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../reference/" class="btn btn-neutral float-left" title="Reference"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../license/" class="btn btn-neutral float-right" title="License">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024, Eugene Gershnik</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/gershnik/repopulator" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../reference/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../license/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
