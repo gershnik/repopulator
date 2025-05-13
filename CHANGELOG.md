@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.5] - 2025-05-13
+
 ### Changed
 - Switched to using official `rpmfile` dependency instead of a bundled one since it now incorporates our fixes.
 - Package metadata has been updated to conform to the newest setuptools requirements
@@ -85,3 +87,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [1.2]: https://github.com/gershnik/repopulator/releases/1.2
 [1.3]: https://github.com/gershnik/repopulator/releases/1.3
 [1.4]: https://github.com/gershnik/repopulator/releases/1.4
+[1.5]: https://github.com/gershnik/repopulator/releases/1.5
