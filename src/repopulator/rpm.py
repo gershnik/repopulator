@@ -17,12 +17,12 @@ import re
 import collections.abc
 import xml.etree.ElementTree as ET
 
+from rpmfile import open as rpmfile_open
+
 from pathlib import Path
 from datetime import datetime, timezone
 from functools import total_ordering
 from typing import Any, Callable, Optional, Sequence, Tuple
-
-from .rpmfile import open as rpmfile_open
 
 from .pgp_signer import PgpSigner
 from .util import ImmutableDict, NoPublicConstructor, find_if, lower_bound, VersionKey, file_digest, indent_tree, path_from_pathlike
