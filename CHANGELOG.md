@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Changed
-- Restoring old license format since not all tools understand PEP 639 yet
+- Bumping minimum supported Python to 3.9
+- Bumping required setuptools version to 77.0.3 to support PEP 639
 
 ## [1.5] - 2025-05-13
 
