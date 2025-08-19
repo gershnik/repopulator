@@ -1,6 +1,6 @@
 
 
-# repolulator
+# repopulator
 
 [![License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Language](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org)
