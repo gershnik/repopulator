@@ -19,8 +19,8 @@ All binary package repositories have their own tools that usually range from bei
 ## Requirements
 
 * Python >= 3.9
-* If you plan to build repositories that require GPG signing `gpg` command needs to be available in PATH
-* If you plan to build repositories that require private key signing OpenSSL > 3.0 libraries need to be available on your platform
+* If you plan to build repositories that require GPG signing, `gpg` command needs to be available in PATH
+* If you plan to build repositories that require private key signing, OpenSSL > 3.0 libraries need to be available on your platform
 
 ## Supported repository formats
 
