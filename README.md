@@ -6,6 +6,7 @@
 [![Language](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org)
 [![python](https://img.shields.io/badge/python->=3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 [![pypi](https://img.shields.io/pypi/v/repopulator)](https://pypi.org/project/repopulator)
+[![PyPI Downloads](https://static.pepy.tech/badge/repopulator)](https://pepy.tech/projects/repopulator)
 
 A portable Python library to generate binary software repositories
 
