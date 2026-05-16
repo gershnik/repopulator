@@ -224,11 +224,11 @@ class AptDistribution(metaclass=NoPublicConstructor):
         return self.__packages[component].keys() 
     
     def packages(self, component: str, arch: str) -> Sequence[AptPackage]:
-        """Architectures for a given component and architecture"""
+        """Packages for a given component and architecture"""
         return self.__packages[component][arch]
     
     def __repr__(self):
-        return f"{self.__path} distribution)"
+        return f"{self.__path} distribution"
     
     @staticmethod
     def _package_key(p: AptPackage): 
@@ -418,7 +418,7 @@ class AptRepo:
     def del_distribution(self, dist: AptDistribution):
         """Removes a distribution from the repository.
 
-        If the distribution is not in this repo the function ignores it and succeeds
+        If the distribution is not in this repo, the function ignores it and succeeds
 
         Params:
             dist: the distribution to remove
@@ -436,7 +436,7 @@ class AptRepo:
         to repository clients.
 
         Args:
-            path: the path to `.deb` file for the package.
+            path: the path to the `.deb` file for the package.
         Returns:
             an AptPackage object for the added package
         """
@@ -454,7 +454,7 @@ class AptRepo:
 
         The package is removed from the repository and all distributions in it. 
         It is not an error to pass a package that is not in a repository to this function.
-        It will be ignored in such case.
+        It will be ignored in such a case.
 
         Args:
             package: the package to remove
@@ -482,13 +482,13 @@ class AptRepo:
     def unassign_package(self, package: AptPackage, dist: AptDistribution, component: Optional[str] = None):
         """Removes a repository package from a distribution's component
 
-        If the package or distribution are not in this repository or the package is not 
-        assigned to the distribution's component the call is silently ignored.
+        If the package or distribution is not in this repository or the package is not 
+        assigned to the distribution's component, the call is silently ignored.
 
         Args:
             package: the package to remove. 
             dist: the distribution to remove from
-            component: if specified remove the package only from this component. Otherwise, remove it from all
+            component: if specified, remove the package only from this component. Otherwise, remove it from all
         """
 
         if package not in self.__packages:
@@ -512,7 +512,7 @@ class AptRepo:
         """Export the repository into a given folder.
 
         This actually creates an on-disk repository suitable to serve to APT clients. If the directory to export to
-        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        already exists, the export process tries to handle pre-existing content there gracefully. Content that doesn't
         conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
 
         Specifically:

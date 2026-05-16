@@ -2,24 +2,24 @@
 
 # repopulator
 
-[![License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Language](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org)
-[![python](https://img.shields.io/badge/python->=3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
-[![pypi](https://img.shields.io/pypi/v/repopulator)](https://pypi.org/project/repopulator)
-[![PyPI Downloads](https://static.pepy.tech/badge/repopulator)](https://pepy.tech/projects/repopulator)
+[![License][badge-license]][license]
+![Language][badge-language]
+![python][badge-lang-ver]
+[![pypi][badge-pypi]][pypi-repopulator]
+[![PyPI Downloads][badge-downloads]][downloads-stats]
 
 A portable Python library to generate binary software repositories
 
 ## Purpose
 
-Ever needed to build an APT package repository on Fedora? Or perhaps a DNF repository on Debian? How about FreeBSD repository on Windows or Mac? This library allows you to do all these things and more. And yes, you can do it even on Windows if you are so inclined for some reason.
+Ever needed to build an APT package repository on Fedora? Or perhaps a DNF repository on Debian? How about a FreeBSD repository on Windows or Mac? This library allows you to do all these things and more. And yes, you can do it even on Windows if you are so inclined for some reason.
 
-All binary package repositories have their own tools that usually range from being "non-portable" to "portable with lots of effort to limited platforms only". On the other hand it is often convenient to build software packages in a Map/Reduce fashion where a single host collects multiple packages built for different platforms to produce binary repositories. Such host will necessarily need to be able to build repositories for "foreign" packages. This library is an attempt to enable such scenario. It provides both programmatic and command-line access.
+All binary package repositories have their own tools that usually range from being "non-portable" to "portable with lots of effort to limited platforms only". On the other hand, it is often convenient to build software packages in a Map/Reduce fashion where a single host collects multiple packages built for different platforms to produce binary repositories. Such a host will necessarily need to be able to build repositories for "foreign" packages. This library is an attempt to enable such a scenario. It provides both programmatic and command-line access.
 
 ## Requirements
 
 * Python >= 3.9
-* If you plan to build repositories that require GPG signing, `gpg` command needs to be available in PATH
+* If you plan to build repositories that require GPG signing, the `gpg` command needs to be available in the PATH
 * If you plan to build repositories that require private key signing, OpenSSL > 3.0 libraries need to be available on your platform
 
 ## Supported repository formats
@@ -38,7 +38,7 @@ pip install repopulator
 
 ## Documentation
 
-Documentation for API and command-line syntax is available at https://gershnik.github.io/repopulator/
+Documentation for the API and command-line syntax is available at https://gershnik.github.io/repopulator/
 
 ## Examples
 
@@ -134,7 +134,7 @@ repo.add_package('/path/to/another-1.23-r0.apk')
 
 signer = PkiSigner('/path/to/private/key', 'password_or_None')
 
-# Unlike `pkg` tool we do not parse signer name out of private key filename
+# Unlike the `pkg` tool, we do not parse the signer name out of the private key filename
 # so you can name your key files whatever you wish
 repo.export('/path/of/new/repo', signer, signer_name = 'mymail@mydomain.com-1234abcd')
 
@@ -174,3 +174,15 @@ repopulator freebsd -o /path/of/new/repo \
   -p /path/to/awesome-3.14.pkg /path/to/another-1.2.pkg
 ```
 
+<!--  Links -->
+
+[badge-license]: https://img.shields.io/badge/license-BSD-brightgreen.svg
+[license]: https://opensource.org/licenses/BSD-3-Clause
+[badge-language]: https://img.shields.io/badge/language-Python-blue.svg
+[badge-lang-ver]: https://img.shields.io/badge/python->=3.9-blue.svg
+[badge-pypi]: https://img.shields.io/pypi/v/repopulator
+[pypi-repopulator]: https://pypi.org/project/repopulator
+[badge-downloads]: https://static.pepy.tech/badge/repopulator
+[downloads-stats]: https://pepy.tech/projects/repopulator
+
+<!-- End Links -->

@@ -2,14 +2,14 @@
 
 The basic outline of the usage is the same for all repository types:
 
-- Create the repository object
-- Add packages to it. These must be files somewhere on your filesystem *which is not their final destination*
-- Some repositories like APT have additional subdivisions (distributions for APT). If so you need to create them and assign packages added to repository to them
+- Create the repository object.
+- Add packages to it. These must be files somewhere on your filesystem *which is not their final destination*.
+- Some repositories like APT have additional subdivisions (distributions for APT). If so, you need to create them and assign packages added to the repository to them.
 - Export the repository to the destination folder. This overwrites any repository already there (but not any extra files you might have). 
 
-That's all there is to it. Note that there is no ability to "load" existing repositories and change them. This is deliberate. If you want to do incremental repository maintenance it is far easier to keep necessary info yourself in your own format than to parse it out of various repositories. 
+That's all there is to it. Note that there is no ability to "load" existing repositories and change them. This is deliberate. If you want to do incremental repository maintenance, it is far easier to keep the necessary info yourself in your own format than to parse it out of various repositories. 
 
-Currently repositories are required to be signed and you need to provide signing info for export (see examples below). This requirement might be relaxed in future versions.
+Currently repositories are required to be signed, and you need to provide signing info for export (see examples below). This requirement might be relaxed in future versions.
 
 ## APT
 
@@ -60,8 +60,8 @@ repo.export('/path/of/new/repo', signer)
 from repopulator import PacmanRepo, PgpSigner
 
 repo = PacmanRepo('myrepo')
-# if .sig file is present next to the .zst file it will be used for signature
-# otherwise new signature will be generated at export time
+# if a .sig file is present next to the .zst file, it will be used for signature
+# otherwise, a new signature will be generated at export time
 repo.add_package('/path/to/awesome-3.14-1-x86_64.pkg.tar.zst')
 repo.add_package('/path/to/another-1.2-1-x86_64.pkg.tar.zst')
 
@@ -82,14 +82,14 @@ repo.add_package('/path/to/another-1.23-r0.apk')
 
 # Every package in a repo must belong to a specific architecture
 # By default, the architecture is taken from the package. Some
-# packages like for example -doc- ones are 'noarch' - e.g. 
-# architecture independent. For these you need to use force_arch 
+# packages like, for example, -doc- ones are 'noarch' - that is, 
+# architecture independent. For these, you need to use the force_arch 
 # argument.
 repo.add_package('/path/to/another-doc-1.23-r0.apk', force_arch='x86_64')
 
 signer = PkiSigner('/path/to/private/key', 'password_or_None')
 
-# Unlike `pkg` tool we do not parse signer name out of the private key filename
+# Unlike the `pkg` tool, we do not parse the signer name out of the private key filename
 # so you can name your key files whatever you wish
 repo.export('/path/of/new/repo', signer, signer_name = 'mymail@mydomain.com-1234abcd')
 

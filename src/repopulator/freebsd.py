@@ -64,8 +64,8 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
         return cls._create(src_path, manifest_bytes, fields)
 
     def __init__(self, src_path: Path, manifest: bytes, fields: dict[str, Any]) -> None:
-        """Internal do not use.
-        Use FreeBSDRepo.add_package to create instances of this class
+        """Internal, do not use.
+        Use FreeBSDRepo.add_package to create instances of this class.
         """
         self.__src_path = src_path
         self.__manifest = manifest
@@ -94,7 +94,7 @@ class FreeBSDPackage(metaclass=NoPublicConstructor):
     
     @property
     def fields(self) -> Mapping[str, Any]:
-        """Information about package stored in the repository index."""
+        """Information about the package stored in the repository index."""
         return self.__fields
     
     @property
@@ -127,9 +127,9 @@ class FreeBSDRepo:
         """Adds a package to the repository
 
         Args:
-            path: the path to `.pkg` file for the package.
+            path: the path to the `.pkg` file for the package.
         Returns:
-            a FreeBSDPackage object for the added package
+            a FreeBSDPackage object for the added package.
         """
         path = path_from_pathlike(path)
         package = FreeBSDPackage._load(path, path.name)
@@ -147,10 +147,10 @@ class FreeBSDRepo:
         """Removes a package from this repository
 
         It is not an error to pass a package that is not in a repository to this function.
-        It will be ignored in such case.
+        It will be ignored in such a case.
 
         Args:
-            package: the package to remove
+            package: the package to remove.
         """
         idx = lower_bound(self.__packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
         if idx < len(self.__packages) and self.__packages[idx] is package:
@@ -170,18 +170,18 @@ class FreeBSDRepo:
         """Export the repository into a given folder
 
         This actually creates an on-disk repository suitable to serve to `pkg` clients. If the directory to export to
-        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        already exists, the export process tries to handle pre-existing content there gracefully. Content that doesn't
         conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
 
-        Specifically any existing All/*.pkg files will be removed and replaced with the ones from the repository.
+        Specifically, any existing All/*.pkg files will be removed and replaced with the ones from the repository.
 
         Args:
-            root: the root path to export to. The directory will be created if it does not exist
+            root: the root path to export to. The directory will be created if it does not exist.
             signer: A PkiSigner instance to use for signing the repository.
-            now: optional timestamp to use when generating files (including various timestamp fields *inside* files).
+            now: an optional timestamp to use when generating files (including various timestamp fields *inside* files).
                 Specifying this argument allows for reproducible repository creation.
             keep_expanded: keep intermediate uncompressed files on disk. This is useful for testing and
-                troubleshooting only
+                troubleshooting only.
         """
 
         if now is None:

@@ -63,12 +63,12 @@ def ensure_one_line_str(arg: Any, arg_name: str) -> str:
 class VersionKey:
     """Representation of a package version
 
-    Package versions cannot be compared as simple strings. For example "1.10" should be bigger than
-     "1.2". This class allows correct sematic comparisons for versions.
+    Package versions cannot be compared as simple strings. For example, "1.10" should be bigger than
+     "1.2". This class allows correct semantic comparisons for versions.
 
     Instances of this class are properly comparable (`==`, `!=`, `<`, `<=`, `>`, `>=`) and hashable.
 
-    Logically a version key is a heterogeneous tuple of `str` and `int` elements.
+    Logically, a version key is a heterogeneous tuple of `str` and `int` elements.
     """
 
     def __init__(self, *args):
@@ -90,7 +90,7 @@ class VersionKey:
             elif isinstance(arg, bytes):
                 self.__parts.append(arg.decode())
             else:
-                raise ValueError('VersionKey parts must integers, strings or bytes')
+                raise ValueError('VersionKey parts must be integers, strings or bytes')
 
     @staticmethod
     def parse(version: str) -> VersionKey:
@@ -188,7 +188,7 @@ def file_digest(fileobj, digest, /, *, _bufsize=2**18):
     *digest* must either be a hash algorithm name as a *str*, a hash
     constructor, or a callable that returns a hash object.
     """
-    # On Linux we could use AF_ALG sockets and sendfile() to archive zero-copy
+    # On Linux we could use AF_ALG sockets and sendfile() to achieve zero-copy
     # hashing with hardware acceleration.
     if isinstance(digest, str):
         digestobj = hashlib.new(digest)

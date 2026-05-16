@@ -71,12 +71,12 @@ _ABI_VERSION_PATTERN = re.compile(r'([^(]+)\(([^)]*)\)')
 
 def _compare_abi_version(dep1: str, dep2: str):
     """
-    Compares two library dependencies with ABI part by ABI version
+    Compares two library dependencies with ABI parts by ABI version
 
     libc.so.6() < libc.so.6(GLIBC_2.3.4)(64 bit) < libc.so.6(GLIBC_2.4)
     Return values: 0 - same; 1 - first is bigger; -1 - second is bigger; None - error
 
-    Error is returned when the libraries name prefixes without ABI aren't the same
+    An error is returned when the library name prefixes without an ABI aren't the same
     """
 
     if dep1 == dep2: return 0
@@ -249,7 +249,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
     def __init__(self, src_path: Path, filename: str, pkgid: str, size: int, mtime: int,
                  headers: dict[str, Any], header_range: tuple[int, int]):
         """Internal, do not use
-        Use RpmRepo.addPackage to create instances of this class
+        Use RpmRepo.add_package to create instances of this class
         """
         self.__src_path = src_path
         self.__filename = filename
@@ -292,7 +292,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
     
     @property
     def fields(self) -> ImmutableDict:
-        """Information about package stored in the repository index"""
+        """Information about the package stored in the repository index"""
         return ImmutableDict(self.__headers)
     
     @property
@@ -510,7 +510,7 @@ class RpmRepo:
         """Adds a package to the repository
 
         Args:
-            path: the path to `.rpm` file for the package.
+            path: the path to the `.rpm` file for the package.
         Returns:
             an RpmPackage object for the added package
         """
@@ -530,7 +530,7 @@ class RpmRepo:
         """Removes a package from this repository
 
         It is not an error to pass a package that is not in a repository to this function.
-        It will be ignored in such case.
+        It will be ignored in such a case.
 
         Args:
             package: the package to remove
@@ -551,11 +551,11 @@ class RpmRepo:
     def export(self, root: str | os.PathLike[str], signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
 
-        This actually creates an on-disk repository suitable to serve to `pacman` clients. If the directory to export to
-        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        This actually creates an on-disk repository suitable to serve to `DNF`/`YUM` clients. If the directory to export to
+        already exists, the export process tries to handle pre-existing content there gracefully. Content that doesn't
         conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
 
-        Specifically any existing *.rpm files will be removed and replaced with the ones from the repository.
+        Specifically, any existing *.rpm files will be removed and replaced with the ones from the repository.
 
         Args:
             root: the root path to export to. The directory will be created if it does not exist

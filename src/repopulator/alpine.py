@@ -109,7 +109,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
         return cls._create(src_path, index)
     
     def __init__(self, src_path: Path, index: dict[str, str]):
-        """Internal do not use.
+        """Internal, do not use.
         Use AlpineRepo.add_package to create instances of this class
         """
         self.__src_path = src_path
@@ -138,7 +138,7 @@ class AlpinePackage(metaclass=NoPublicConstructor):
     
     @property
     def fields(self) -> Mapping[str, str]:
-        """Information about package stored in the repository index
+        """Information about the package stored in the repository index
 
         The available fields are documented at: https://wiki.alpinelinux.org/wiki/Apk_spec#APKINDEX_Format
         """
@@ -192,7 +192,7 @@ class AlpineRepo:
         """Constructor for AlpineRepo class
 
         Args:
-            desc: repository description. This is the description shown
+            desc: the repository description. This is the description shown
                 when performing `apk update`
         """
 
@@ -203,9 +203,9 @@ class AlpineRepo:
         """Adds a package to the repository
         
         Args:
-            path: the path to `.apk` file for the package.
+            path: the path to the `.apk` file for the package.
             force_arch: the architecture (e.g. "x86_64", "aarch64", etc.) to use if the package
-                that are marked "noarch". All Alpine packages in a repo must belong to some architecture.
+                is marked "noarch". All Alpine packages in a repo must belong to some architecture.
 
         Returns:
             an AlpinePackage object for the added package
@@ -214,7 +214,7 @@ class AlpineRepo:
         path = path_from_pathlike(path)
         package = AlpinePackage._load(path, force_arch)
         if package.arch == 'noarch':
-            raise ValueError('package has "noarch" architecture, you must use force_arch parameter to specify which repo architecture to assign it to')
+            raise ValueError('package has "noarch" architecture; you must use the force_arch parameter to specify which repo architecture to assign it to')
         arch_packages = self.__packages.setdefault(package.arch, [])
         idx = lower_bound(arch_packages, package, lambda x, y: self._package_key(x) < self._package_key(y))
         if idx < len(arch_packages) and self._package_key(arch_packages[idx]) == self._package_key(package):
@@ -225,8 +225,8 @@ class AlpineRepo:
     def del_package(self, package: AlpinePackage):
         """Removes a package from this repository
 
-        It is not an error to pass a package that is not in a repository to this function.
-        It will be ignored in such case.
+        It is not an error to pass a package that is not in the repository to this function.
+        It will be ignored in such a case.
 
         Args:
             package: the package to remove
@@ -265,20 +265,20 @@ class AlpineRepo:
         """Export the repository into a given folder
         
         This actually creates an on-disk repository suitable to serve to `apk` clients. If the directory to export to
-        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        already exists, the export process tries to handle pre-existing content there gracefully. Content that doesn't
         conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
 
-        Specifically any existing <arch>/*.apk files will be removed and replaced with the ones from the repository for
+        Specifically, any existing <arch>/*.apk files will be removed and replaced with the ones from the repository for
         the architectures in the repository. 
 
         Args:
             root: the root path to export to. The directory will be created if it does not exist
             signer: A PkiSigner instance to use for signing the repository. Note that this is used to only sign the
                 repository itself, not the packages in it. The packages need to be signed ahead of time which usually
-                happens automatically if you use `abuild` tool
+                happens automatically if you use the `abuild` tool
             signer_name: The "name" of the signer to use. It is usually something like "mymail@mydomain.com-1234abcd" 
                 (see https://wiki.alpinelinux.org/wiki/Abuild_and_Helpers#Setting_up_the_build_environment for details).
-                Unlike what `pkg` tool does it is not parsed out of private key filename - you have to pass it here manually.
+                Unlike what the `pkg` tool does, it is not parsed out of the private key filename - you have to pass it here manually.
             now: optional timestamp to use when generating files (including various timestamp fields *inside* files).
                 Specifying this argument allows for reproducible repository creation.
             keep_expanded: keep intermediate uncompressed files on disk. This is useful for testing and

@@ -35,7 +35,7 @@ class PkiSigner:
     def __init__(self, priv_key_path: str | PathLike[str], priv_key_passwd: Optional[str]):
         """Constructor for PkiSigner class
 
-        The private key file is read once during the construction and not used again
+        The private key file is read once during construction and not used again.
         Args:
             priv_key_path: path to the private key file. The file must be in PEM format.
             priv_key_passwd: password for the key if it requires one.
@@ -52,7 +52,7 @@ class PkiSigner:
     def get_free_bsd_signature(self, path: Path):
         """Generate file signature in a format required by FreeBSD repositories
 
-        Private key type must be one of: rsa, ecdsa or eddsa
+        Private key type must be one of: RSA, ECDSA, or EdDSA.
         Args:
             path: path of the file to sign
         Returns:
@@ -83,7 +83,7 @@ class PkiSigner:
     def get_alpine_signature(self, path: Path):
         """Generate file signature in a format required by Alpine apk repositories
 
-        Only rsa keys are currently supported
+        Only RSA keys are currently supported.
 
         Args:
             path: path of the file to sign
