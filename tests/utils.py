@@ -13,6 +13,8 @@ import gzip
 from pathlib import Path
 from lxml import etree
 
+from typing import Optional
+
 from repopulator.util import file_digest
 
 GZIP_MAGIC = b'\x1f\x8b'
@@ -37,14 +39,14 @@ def compare_files(actual: Path, expected: Path, populate_expected: bool=False):
         shutil.copy2(actual, expected)
 
 
-def _hash_xml_transformed(path: Path, xslt: etree.XSLT|None) -> str:
+def _hash_xml_transformed(path: Path, xslt: Optional[etree.XSLT]) -> str:
     if not path.exists():
         return ''
     if xslt is not None:
         return hashlib.sha256(bytes(xslt(etree.parse(path)))).hexdigest()
     return hash_file(path)
 
-def compare_xml_files(actual: Path, expected: Path, transform: str|None=None, populate_expected: bool=False):
+def compare_xml_files(actual: Path, expected: Path, transform: Optional[str], populate_expected: bool=False):
     if not populate_expected:
         assert actual.exists()
         xslt = etree.XSLT(etree.fromstring(transform.encode('utf-8'))) if transform is not None else None
