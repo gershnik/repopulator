@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.7] - 2026-05-17
+
 ### Fixed
 
 - Incorrect deduplication of multiple APT packages with disjoint architectures
@@ -120,3 +122,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [1.4]: https://github.com/gershnik/repopulator/releases/1.4
 [1.5]: https://github.com/gershnik/repopulator/releases/1.5
 [1.6]: https://github.com/gershnik/repopulator/releases/1.6
+[1.7]: https://github.com/gershnik/repopulator/releases/1.7
