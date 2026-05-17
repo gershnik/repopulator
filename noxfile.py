@@ -18,6 +18,7 @@ if (mydir/".extrapythons").exists():
 def test(session):
     session.install("pytest")
     session.install("python-dotenv")
+    session.install("lxml")
     #session.install("--no-build-isolation", "--editable", ".")
     session.install(".")
     session.run("pytest")
