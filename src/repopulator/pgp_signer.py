@@ -20,27 +20,27 @@ class PgpSigner:
 
     Many repository formats rely on PGP signing and use this class for it.
 
-    This class simply delegates signing to `gpg` executable that needs to be present on $PATH.
+    This class simply delegates signing to the `gpg` executable that needs to be present on $PATH.
     Unfortunately, currently there seems to be no good way to perform PGP signing in "pure Python".
 
-    You are required to supply key name and password for signing. Signing is done non-interactively without any
+    You are required to supply the key name and password for signing. Signing is done non-interactively without any
     user prompts.
     """
     def __init__(self, *, key_name: str, key_pwd: str, homedir: Optional[str | PathLike[str]] = None):
         """Constructor for PgpSigner class
 
         Args:
-            key_name: name or identifier of the key to use
-            key_pwd: password of the key
-            homedir: GPG home directory. If not specified the gpg defaults are used (including
-                honoring GNUPGHOME environment variable)
+            key_name: the name or identifier of the key to use
+            key_pwd: the password of the key
+            homedir: GPG home directory. If not specified, the GPG defaults are used (including
+                honoring the GNUPGHOME environment variable)
         """
         self.__homedir = path_from_pathlike(homedir) if homedir is not None else None
         self.__key_name = key_name
         self.__key_pwd = key_pwd
         
     def sign_external(self, path: Path, sig_path: Path):
-        """Signs a given file producing text (aka "armored") signature in a separate file
+        """Signs a given file, producing a text (aka "armored") signature in a separate file
 
         Args:
             path: file to sign
@@ -52,14 +52,14 @@ class PgpSigner:
         command += [
             '--armor', '--detach-sign', '--sign',
             '--default-key', self.__key_name,
-            '--passphrase', self.__key_pwd,
+            '--passphrase-fd', '0',
             '--digest-algo', 'sha512',
             '-o', sig_path, path
         ]
-        subprocess.run(command, check=True)
+        subprocess.run(command, input=(self.__key_pwd + '\n').encode('utf-8'), check=True)
         
     def binary_sign_external(self, path: Path, sig_path: Path):
-        """Signs a given file producing binary signature in a separate file
+        """Signs a given file, producing a binary signature in a separate file
 
         Args:
             path: file to sign
@@ -71,11 +71,11 @@ class PgpSigner:
         command += [
             '--detach-sign', '--sign', 
             '--default-key', self.__key_name,
-            '--passphrase', self.__key_pwd,
+            '--passphrase-fd', '0',
             '--digest-algo', 'sha512',
             '-o', sig_path, path
         ]
-        subprocess.run(command, check=True)
+        subprocess.run(command, input=(self.__key_pwd + '\n').encode('utf-8'), check=True)
         
     def sign_inline(self, path: Path, out_path: Path):
         """Adds a signature to a given text file
@@ -90,16 +90,16 @@ class PgpSigner:
         command += [
             '--armor', '--detach-sign', '--sign', '--clearsign', 
             '--default-key', self.__key_name,
-            '--passphrase', self.__key_pwd,
+            '--passphrase-fd', '0',
             '--digest-algo', 'sha512',
             '-o', out_path, path
         ]
-        subprocess.run(command, check=True)
+        subprocess.run(command, input=(self.__key_pwd + '\n').encode('utf-8'), check=True)
         
     def export_public_key(self, path: Path):
         """Utility method to export the public key of the signing key into a file
         Args:
-            path: path of the file to write the public key to
+            path: the path of the file to write the public key to
         """
         command = ['gpg', '--batch', '--quiet']
         if self.__homedir is not None:

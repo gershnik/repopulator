@@ -5,6 +5,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Fixed
+
+- Incorrect deduplication of multiple APT packages with disjoint architectures
+- RPM "other" metadata in `repomd.xml` now uses correct format and is no longer ignored by YUM/DNF
+- FreeBSD packages using zstd compression can now be imported on Python < 3.14
+- VersionKey `__hash__` now actually works.
+- Exception when RPM "serial" key is an integer.
+- Adding an older version of a package to a Pacman repo now properly reports an exception instead of 
+  silently doing nothing.
+- `AptRepo` now leaves any non `*.deb` files alone in a destination pool (as was promised by the docs).
+- `gpg` passphrase is no longer passed on the command line. 
+- Dotless signature files are now handled correctly on the command line.
+- Typos and grammar in documentation.
+- Tests now work again.
+
+### Added
+
+- `RpmVersion` now has a decent `__repr__`.
+- `PacmanRepo` now accepts string or PathLike destination paths like all other repos.
+- Performance improvements for APT and RPM repository generation
+
+### Changed
+
+- PyPy 3.9 and 3.10 are no longer supported (due to dependencies no longer supporting them)
+
 ## [1.6] - 2025-05-13
 
 ### Changed

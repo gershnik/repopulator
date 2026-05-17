@@ -6,7 +6,7 @@
 
 # pylint: disable=missing-function-docstring
 
-"""Command line utility"""
+"""Command line utility."""
 
 from __future__ import annotations
 
@@ -59,17 +59,17 @@ class _AlpineHandler(_Handler):
         parser.add_argument('-d', '--desc', type=str, dest='desc', required=True,
                             help='repository description')
         parser.add_argument('-k', '--key', type=Path, dest='key_path', metavar='KEY_PATH', required=True,
-                            help='path of the private key for signing. If -s/--signer option is not supplied '
+                            help='path of the private key for signing. If the -s/--signer option is not supplied, '
                             'the stem of the private key filename is used as the name. '
-                            'So for example a key someone@someorg.com-123456.rsa will result in someone@someorg.com-123456 '
+                            'So, for example, a key someone@someorg.com-123456.rsa will result in someone@someorg.com-123456 '
                             'being used as a signer name.')
         parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='KEY_PASSWORD',
                             help='private key password')
         parser.add_argument('-s', '--signer', type=str, dest='signer',
-                            help='name of the signer. This can be used to override name deduced from the key filename')
+                            help='name of the signer. This can be used to override the name deduced from the key filename')
         
         parser.add_argument('-a', '--arch', dest='arch', metavar='ARCH', nargs='?', default=None,
-                            help='override architecture of subsequent packages. To cancel override use -a/--arch '
+                            help='override architecture of subsequent packages. To cancel override, use -a/--arch '
                             'with no arguments')
         
         parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', 
@@ -90,7 +90,10 @@ class _AlpineHandler(_Handler):
             if last_dot_idx == 0:
                 print('unable to determine signer name from the key, please use --signer option', file=sys.stderr)
                 return 1
-            signer_name = key_path.name[0:last_dot_idx]    
+            if last_dot_idx > 0:
+                signer_name = key_path.name[0:last_dot_idx]
+            else:
+                signer_name = key_path.name
             
         print(f'Signing as {signer_name}')
         
@@ -120,7 +123,7 @@ class _FreeBSDHandler(_Handler):
         parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='PASSWORD', 
                             help='private key password')
         parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action='extend',
-                            help='.pkg file(s) to add to repository.')
+                            help='.pkg file(s) to add to the repository.')
 
     def handle(self, args: argparse.Namespace):
         packages: Sequence[str] = args.packages
@@ -151,7 +154,7 @@ class _RpmHandler(_Handler):
         parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='KEY_PASSWORD', required=True,
                             help='GPG key password')
         parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action='extend',
-                            help='.rpm file(s) to add to repository.')
+                            help='.rpm file(s) to add to the repository.')
         
 
     def handle(self, args: argparse.Namespace):
@@ -186,7 +189,7 @@ class _PacmanHandler(_Handler):
         parser.add_argument('-w', '--password', type=str, dest='key_password', metavar='KEY_PASSWORD', required=True,
                             help='GPG key password')
         parser.add_argument('-p', '--packages', nargs='+', metavar='PACKAGE', action='extend',
-                            help='.zst file(s) to add to repository. If a .sig file with the same name exists next '
+                            help='.zst file(s) to add to the repository. If a .sig file with the same name exists next '
                             'to a .zst file, it will be automatically used to supply the package signature')
         
 
@@ -277,8 +280,8 @@ class _AptHandler(_Handler):
         
         parser.add_argument('-d', '--distro', type=str, dest='distro', metavar='DISTRO', required=True, action=_AptHandler._DistroAction,
                             help='Distribution name. This can be a relative path like `stable/updates`. All subsequent '
-                            'per-distribution options apply to this distribution '
-                            'Conversely this option is required to precede all per-distribution options. Multiple '
+                            'per-distribution options apply to this distribution. '
+                            'Conversely, this option is required to precede all per-distribution options. Multiple '
                             'distributions may be specified on the same command line')
         
         parser.add_argument('-c', '--comp', type=str, dest='component', metavar='COMPONENT', 
@@ -340,7 +343,7 @@ class _AptHandler(_Handler):
 
 
 def main():
-    """script entry point"""
+    """Script entry point."""
 
     repo_types: dict[str, _Handler] = {
         'alpine': _AlpineHandler(),

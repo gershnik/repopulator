@@ -89,7 +89,7 @@ class PacmanPackage(metaclass=NoPublicConstructor):
         return cls._create(src_path, sig_path, desc, files)
     
     def __init__(self, src_path: Path, sig_path: Optional[Path], desc: dict[str, Any], files: list[str]):
-        """Internal do not use.
+        """Internal, do not use.
         Use [add_package][repopulator.PacmanRepo.add_package] to create instances of this class
         """
         self.__src_path = src_path
@@ -120,7 +120,7 @@ class PacmanPackage(metaclass=NoPublicConstructor):
     
     @property
     def fields(self) -> Mapping[str, Any]:
-        """Information about package stored in the repository index
+        """Information about the package stored in the repository index
 
         See https://repod.archlinux.page/repositories/sync_database.html#desc-v2
         for information about available fields
@@ -167,8 +167,6 @@ class PacmanPackage(metaclass=NoPublicConstructor):
 
         for line in fp:
             line = line.decode()
-            if len(line) == 0:
-                break
             if line.startswith('#'):
                 continue
             eqpos = line.find('=')
@@ -191,7 +189,7 @@ class PacmanRepo:
     """Generates Pacman repositories"""
 
     def __init__(self, name: str):
-        """Constructor for AlpineRepo class
+        """Constructor for PacmanRepo class
 
         Args:
             name: repository name.
@@ -203,7 +201,7 @@ class PacmanRepo:
         """Adds a package to the repository
 
         Args:
-            path: the path to `.zst` file for the package. If a matching `.zst.sig` file exists alongside it,
+            path: the path to the `.zst` file for the package. If a matching `.zst.sig` file exists alongside it,
                 it will be used as a signature file.
         Returns:
             a PacmanPackage object for the added package
@@ -218,8 +216,9 @@ class PacmanRepo:
         if idx < len(arch_packages) and (existing := arch_packages[idx]).name == package.name:
             if existing.version_key == package.version_key:
                 raise ValueError('Duplicate package')
-            if existing.version_key < package.version_key:
-                arch_packages[idx] = package
+            if existing.version_key > package.version_key:
+                raise ValueError('Duplicate (older) package')
+            arch_packages[idx] = package   
         else:
             arch_packages.insert(idx, package)
         return package
@@ -228,7 +227,7 @@ class PacmanRepo:
         """Removes a package from this repository
 
         It is not an error to pass a package that is not in a repository to this function.
-        It will be ignored in such case.
+        It will be ignored in such a case.
 
         Args:
             package: the package to remove
@@ -254,28 +253,29 @@ class PacmanRepo:
         """Packages for a given architecture"""
         return self.__packages[arch]
     
-    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
+    def export(self, root: str | PathLike[str], signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
 
         This actually creates an on-disk repository suitable to serve to `pacman` clients. If the directory to export to
-        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        already exists, the export process tries to handle pre-existing content there gracefully. Content that doesn't
         conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
 
-        Specifically any existing <arch>/.pkg.tar.zst and <arch>/.pkg.tar.zst.sig files will be removed and
+        Specifically, any existing `<arch>/*.pkg.tar.zst` and `<arch>/*.pkg.tar.zst.sig` files will be removed and
         replaced with the ones from the repository for the architectures in the repository.
 
         Args:
-            root: the root path to export to. The directory will be created if it does not exist
+            root: the root path to export to. The directory will be created if it does not exist.
             signer: A PgpSigner instance to use for signing the repository. It is used to sign the
                 repository itself and any packages that do not have pre-existing signatures.
             now: optional timestamp to use when generating files (including various timestamp fields *inside* files).
                 Specifying this argument allows for reproducible repository creation.
             keep_expanded: keep intermediate uncompressed files on disk. This is useful for testing and
-                troubleshooting only
+                troubleshooting only.
         """
         if now is None:
             now = datetime.now(timezone.utc)
 
+        root = path_from_pathlike(root)
         expanded = root / 'expanded'
         if expanded.exists():
             shutil.rmtree(expanded)

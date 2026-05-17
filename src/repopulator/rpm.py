@@ -25,7 +25,8 @@ from functools import total_ordering
 from typing import Any, Callable, Optional, Sequence, Tuple
 
 from .pgp_signer import PgpSigner
-from .util import ImmutableDict, NoPublicConstructor, find_if, lower_bound, VersionKey, file_digest, indent_tree, path_from_pathlike
+from .util import ImmutableDict, NoPublicConstructor, HashingWriter, VersionKey, \
+                  find_if, lower_bound, file_digest, indent_tree, path_from_pathlike
 
 _RPMSENSE_ANY           = 0
 _RPMSENSE_LESS          = 1 << 1
@@ -71,12 +72,12 @@ _ABI_VERSION_PATTERN = re.compile(r'([^(]+)\(([^)]*)\)')
 
 def _compare_abi_version(dep1: str, dep2: str):
     """
-    Compares two library dependencies with ABI part by ABI version
+    Compares two library dependencies with ABI parts by ABI version
 
     libc.so.6() < libc.so.6(GLIBC_2.3.4)(64 bit) < libc.so.6(GLIBC_2.4)
     Return values: 0 - same; 1 - first is bigger; -1 - second is bigger; None - error
 
-    Error is returned when the libraries name prefixes without ABI aren't the same
+    An error is returned when the library name prefixes without an ABI aren't the same
     """
 
     if dep1 == dep2: return 0
@@ -122,7 +123,7 @@ class RpmVersion:
                 version = version[colon_pos+1:]
             else:
                 self.epoch = "0"
-            ver_parts = version.split('-', 2)
+            ver_parts = version.split('-', 1)
             self.ver = ver_parts[0]
             self.rel = ver_parts[1] if len(ver_parts) == 2 else None
         elif isinstance(version, collections.abc.Sequence):
@@ -158,6 +159,9 @@ class RpmVersion:
         if self.rel is not None:
             ret += f'-{self.rel}'
         return ret
+    
+    def __repr__(self):
+        return f"RpmVersion(({self.epoch}, {self.ver}, {self.rel}))"
     
 class _RpmFile:
     # pylint: disable=missing-function-docstring
@@ -249,7 +253,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
     def __init__(self, src_path: Path, filename: str, pkgid: str, size: int, mtime: int,
                  headers: dict[str, Any], header_range: tuple[int, int]):
         """Internal, do not use
-        Use RpmRepo.addPackage to create instances of this class
+        Use RpmRepo.add_package to create instances of this class
         """
         self.__src_path = src_path
         self.__filename = filename
@@ -257,7 +261,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
         self.__headers = headers
         self.__name: str = self.__headers['name'].decode()
         self.__arch: str = self.__headers['arch'].decode()
-        self.__version = RpmVersion((self.__headers.get('serial', '0'),
+        self.__version = RpmVersion((str(self.__headers.get('serial', '0')),
                                      self.__headers['version'].decode(),
                                      self.__headers['release'].decode()))
         
@@ -292,7 +296,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
     
     @property
     def fields(self) -> ImmutableDict:
-        """Information about package stored in the repository index"""
+        """Information about the package stored in the repository index"""
         return ImmutableDict(self.__headers)
     
     @property
@@ -510,7 +514,7 @@ class RpmRepo:
         """Adds a package to the repository
 
         Args:
-            path: the path to `.rpm` file for the package.
+            path: the path to the `.rpm` file for the package.
         Returns:
             an RpmPackage object for the added package
         """
@@ -530,7 +534,7 @@ class RpmRepo:
         """Removes a package from this repository
 
         It is not an error to pass a package that is not in a repository to this function.
-        It will be ignored in such case.
+        It will be ignored in such a case.
 
         Args:
             package: the package to remove
@@ -551,11 +555,11 @@ class RpmRepo:
     def export(self, root: str | os.PathLike[str], signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
 
-        This actually creates an on-disk repository suitable to serve to `pacman` clients. If the directory to export to
-        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        This actually creates an on-disk repository suitable to serve to `DNF`/`YUM` clients. If the directory to export to
+        already exists, the export process tries to handle pre-existing content there gracefully. Content that doesn't
         conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
 
-        Specifically any existing *.rpm files will be removed and replaced with the ones from the repository.
+        Specifically, any existing *.rpm files will be removed and replaced with the ones from the repository.
 
         Args:
             root: the root path to export to. The directory will be created if it does not exist
@@ -592,7 +596,8 @@ class RpmRepo:
         os.utime(filelists_path, (now.timestamp(), now.timestamp()))
         self.__summarize_file(root, filelists_path, filelists, now, keep_expanded)
 
-        other = ET.SubElement(repomd, 'other')
+        other = ET.SubElement(repomd, 'data')
+        other.set('type', 'other')
         other_path = self.__export_other(repodata)
         os.utime(other_path, (now.timestamp(), now.timestamp()))
         self.__summarize_file(root, other_path, other, now, keep_expanded)
@@ -659,17 +664,18 @@ class RpmRepo:
         gz_path = path.parent / (path.name + '.gz')
 
         open_st = path.stat()
-        with open(path, 'rb') as f_in:
-            open_digest = file_digest(f_in, hashlib.sha256)
-            f_in.seek(0, 0)
-            with open(gz_path, 'wb') as f_out:
-                with gzip.GzipFile(filename=path.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
-                    shutil.copyfileobj(f_in, f_zip)
-            
+        open_digest = hashlib.sha256()
+        digest   = hashlib.sha256()
+
+        with open(gz_path, 'wb') as f_out:
+            gz_tap = HashingWriter(f_out, digest)
+            with gzip.GzipFile(filename=path.name, mode='wb', fileobj=gz_tap, mtime=int(now.timestamp())) as f_zip:
+                open_tap = HashingWriter(f_zip, open_digest)
+                with open(path, 'rb') as f_in:
+                    shutil.copyfileobj(f_in, open_tap)
+
         os.utime(gz_path, (now.timestamp(), now.timestamp()))
         st = gz_path.stat()
-        with open(gz_path, "rb") as f:
-            digest = file_digest(f, hashlib.sha256)
         
         checksum = ET.SubElement(parent, 'checksum')
         checksum.set('type', 'sha256')

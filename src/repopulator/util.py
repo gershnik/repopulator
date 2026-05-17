@@ -63,12 +63,12 @@ def ensure_one_line_str(arg: Any, arg_name: str) -> str:
 class VersionKey:
     """Representation of a package version
 
-    Package versions cannot be compared as simple strings. For example "1.10" should be bigger than
-     "1.2". This class allows correct sematic comparisons for versions.
+    Package versions cannot be compared as simple strings. For example, "1.10" should be bigger than
+     "1.2". This class allows correct semantic comparisons for versions.
 
     Instances of this class are properly comparable (`==`, `!=`, `<`, `<=`, `>`, `>=`) and hashable.
 
-    Logically a version key is a heterogeneous tuple of `str` and `int` elements.
+    Logically, a version key is a heterogeneous tuple of `str` and `int` elements.
     """
 
     def __init__(self, *args):
@@ -81,16 +81,16 @@ class VersionKey:
         * an `str` or `bytes` object for a string part
 
         """
-        self.__parts = []
-        for arg in args:
-            if isinstance(arg, int):
-                self.__parts.append(arg)
-            elif isinstance(arg, str):
-                self.__parts.append(arg)
-            elif isinstance(arg, bytes):
-                self.__parts.append(arg.decode())
+
+        def handle_one(x): 
+            if isinstance(x, int) or isinstance(x, str):
+                return x
+            elif isinstance(x, bytes):
+                return x.decode()
             else:
-                raise ValueError('VersionKey parts must integers, strings or bytes')
+                raise ValueError('VersionKey parts must be integers, strings or bytes')
+            
+        self.__parts = tuple(handle_one(arg) for arg in args)
 
     @staticmethod
     def parse(version: str) -> VersionKey:
@@ -102,10 +102,11 @@ class VersionKey:
             version: a version string
         Returns: parsed key
         """
-        ret = VersionKey()
+        
         def isalpha(c): return ('a' <= c <= 'z') or ('A' <= c <= 'Z')
         def isdigit(c): return '0' <= c <= '9'
 
+        parts: list[int|str] = []
         start_idx = 0
         prev: Optional[Callable[[str], bool]] = None
         for idx in range(0, len(version)):
@@ -115,7 +116,7 @@ class VersionKey:
                 if prev(c):
                     continue
                 substr = version[start_idx: idx]
-                ret.__parts.append(substr if prev is isalpha else int(substr))
+                parts.append(substr if prev is isalpha else int(substr))
                 prev = None
             
             if isalpha(c):
@@ -126,7 +127,10 @@ class VersionKey:
         
         if prev is not None:
             substr = version[start_idx:]
-            ret.__parts.append(substr if prev is isalpha else int(substr))
+            parts.append(substr if prev is isalpha else int(substr))
+
+        ret = VersionKey()
+        ret.__parts = tuple(parts)
         return ret
 
     def __eq__(self, other: object) -> bool:
@@ -175,30 +179,16 @@ class VersionKey:
 
     def __ge__(self, other):
         return not self.__lt__(other)
-
-# Copy of hashlib.file_digest added in Python 3.11 
-def file_digest(fileobj, digest, /, *, _bufsize=2**18):
-    """Hash the contents of a file-like object. Returns a digest object.
-
-    *fileobj* must be a file-like object opened for reading in binary mode.
-    It accepts file objects from open(), io.BytesIO(), and SocketIO objects.
-    The function may bypass Python's I/O and use the file descriptor *fileno*
-    directly.
-
-    *digest* must either be a hash algorithm name as a *str*, a hash
-    constructor, or a callable that returns a hash object.
-    """
-    # On Linux we could use AF_ALG sockets and sendfile() to archive zero-copy
-    # hashing with hardware acceleration.
-    if isinstance(digest, str):
-        digestobj = hashlib.new(digest)
-    else:
-        digestobj = digest()
-
+    
+# Extracted from hashlib.file_digest added in Python 3.11 
+def _hash_stream(fileobj, digest_objs, bufsize):
+    """Update one or more digest objects from a file-like object."""
     if hasattr(fileobj, "getbuffer"):
-        # io.BytesIO object, use zero-copy buffer
-        digestobj.update(fileobj.getbuffer())
-        return digestobj
+        # io.BytesIO — zero-copy buffer, share across all hashers
+        buf = fileobj.getbuffer()
+        for d in digest_objs:
+            d.update(buf)
+        return
 
     # Only binary files implement readinto().
     if not (
@@ -212,15 +202,55 @@ def file_digest(fileobj, digest, /, *, _bufsize=2**18):
 
     # binary file, socket.SocketIO object
     # Note: socket I/O uses different syscalls than file I/O.
-    buf = bytearray(_bufsize)  # Reusable buffer to reduce allocations.
+    buf = bytearray(bufsize)
     view = memoryview(buf)
     while True:
         size = fileobj.readinto(buf)
         if size == 0:
             break  # EOF
-        digestobj.update(view[:size])
+        chunk = view[:size]
+        for d in digest_objs:
+            d.update(chunk)
 
-    return digestobj
+# Adapted from hashlib.file_digest added in Python 3.11 
+def file_digest(fileobj, digest, /, *, _bufsize=2**18):
+    """Hash the contents of a file-like object. Returns a digest object.
+
+    *fileobj* must be a file-like object opened for reading in binary mode.
+    It accepts file objects from open(), io.BytesIO(), and SocketIO objects.
+    The function may bypass Python's I/O and use the file descriptor *fileno*
+    directly.
+
+    *digest* must either be a hash algorithm name as a *str*, a hash
+    constructor, or a callable that returns a hash object.
+    """
+    # On Linux we could use AF_ALG sockets and sendfile() to achieve zero-copy
+    # hashing with hardware acceleration.
+    if isinstance(digest, str):
+        digests = (hashlib.new(digest), )
+    else:
+        digests = (digest(), )
+
+    _hash_stream(fileobj, digests, _bufsize)
+    return digests[0]
+
+def file_multi_digest(fileobj, digest, /, *, _bufsize=2**18):
+    """Hash the contents of a file-like object. Returns a digest object.
+
+    *fileobj* must be a file-like object opened for reading in binary mode.
+    It accepts file objects from open(), io.BytesIO(), and SocketIO objects.
+    The function may bypass Python's I/O and use the file descriptor *fileno*
+    directly.
+
+    *digest* must be a tuple/list of any of
+     - a hash algorithm name as a *str*
+     - a hash constructor
+     - a callable that returns a hash object
+    """
+    digests = tuple(hashlib.new(d) if isinstance(d, str) else d() for d in digest)
+    _hash_stream(fileobj, digests, _bufsize)
+    return digests
+    
 
 # Copy of ET.indent added in Python 3.9
 def indent_tree(tree, space="  ", level=0):
@@ -277,22 +307,22 @@ class ImmutableDict(Mapping[Key, Val]):
     """A dictionary that cannot be modified"""
 
     def __init__(self, data: Dict[Key, Val]):
-        self._data = data
+        self.__data = data
 
     def __getitem__(self, key: Key) -> Val: 
-        return self._data[key]
+        return self.__data[key]
 
     def __len__(self):
-        return len(self._data)
+        return len(self.__data)
 
     def __iter__(self):
-        return iter(self._data)
+        return iter(self.__data)
     
     def items(self):
-        return self._data.items()
+        return self.__data.items()
     
     def values(self):
-        return self._data.values()
+        return self.__data.values()
     
 
 class NoPublicConstructor(type):
@@ -314,3 +344,19 @@ class NoPublicConstructor(type):
 
     def _create(cls: Type[T], *args: Any, **kwargs: Any) -> T:
         return super().__call__(*args, **kwargs) 
+
+
+class HashingWriter:
+    """File-like writer that updates a digest as bytes pass through."""
+    def __init__(self, fileobj, digest):
+        self.__fileobj = fileobj
+        self.__digest = digest
+    def write(self, data):
+        self.__digest.update(data)
+        return self.__fileobj.write(data)
+    def flush(self):
+        return self.__fileobj.flush()
+    @property
+    def digest(self):
+        return self.__digest
+

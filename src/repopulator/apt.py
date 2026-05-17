@@ -21,7 +21,8 @@ from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, BinaryIO, Dict, KeysView, Mapping, Optional, Sequence
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, lower_bound, file_digest, path_from_pathlike
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, \
+                  ensure_one_line_str, lower_bound, file_digest, file_multi_digest, path_from_pathlike
 
 
 class AptPackage(metaclass=NoPublicConstructor):
@@ -89,9 +90,9 @@ class AptPackage(metaclass=NoPublicConstructor):
                 (hashlib.sha256, 'SHA256'),
                 (hashlib.sha512, 'SHA512'),
             ]
-            for hash_func, name in hashes:
-                with open(src_path, "rb") as pack_file:
-                    digest = file_digest(pack_file, hash_func)
+            with open(src_path, "rb") as pack_file:
+                digests = file_multi_digest(pack_file, [h[0] for h in hashes])
+            for digest, (_, name) in zip(digests, hashes):
                 fields[name] = digest.hexdigest()
 
         return cls._create(src_path, fields)
@@ -224,11 +225,11 @@ class AptDistribution(metaclass=NoPublicConstructor):
         return self.__packages[component].keys() 
     
     def packages(self, component: str, arch: str) -> Sequence[AptPackage]:
-        """Architectures for a given component and architecture"""
+        """Packages for a given component and architecture"""
         return self.__packages[component][arch]
     
     def __repr__(self):
-        return f"{self.__path} distribution)"
+        return f"{self.__path} distribution"
     
     @staticmethod
     def _package_key(p: AptPackage): 
@@ -276,15 +277,17 @@ class AptDistribution(metaclass=NoPublicConstructor):
         components = []
         archs = []
         for comp, comp_archs in self.__packages.items():
-            components.append(comp)
+            entry = (comp, sorted(comp_archs.keys()))
+            idx = lower_bound(components, entry, lambda x,y: x[0]<y[0])
+            components.insert(idx, entry)
             for arch in comp_archs:
-                archs.append(arch)
-        components.sort()
-        archs.sort()
+                idx = lower_bound(archs, arch)
+                if idx == len(archs) or archs[idx] != arch:
+                    archs.insert(idx, arch)
 
         package_indices: Sequence[Path] = []
-        for comp in components:
-            for arch in archs:
+        for comp, comp_archs in components:
+            for arch in comp_archs:
                 pack, pack_gz = self.__export_packages(dist_dir, comp, arch, now)
                 package_indices += [pack, pack_gz]
 
@@ -305,7 +308,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
             if self.version is not None:
                 f.write(f'Version: {self.version}\n'.encode())
             f.write(f'Architectures: {",".join(archs)}\n'.encode())
-            f.write(f'Components: {",".join(components)}\n'.encode())
+            f.write(f'Components: {",".join(x[0] for x in components)}\n'.encode())
             if self.description is not None:
                 f.write(f'Description: {self.description}\n'.encode())
             f.write(f'Date: {now.strftime("%a, %d %b %Y %I:%M:%S %z")}\n'.encode())
@@ -418,7 +421,7 @@ class AptRepo:
     def del_distribution(self, dist: AptDistribution):
         """Removes a distribution from the repository.
 
-        If the distribution is not in this repo the function ignores it and succeeds
+        If the distribution is not in this repo, the function ignores it and succeeds
 
         Params:
             dist: the distribution to remove
@@ -436,7 +439,7 @@ class AptRepo:
         to repository clients.
 
         Args:
-            path: the path to `.deb` file for the package.
+            path: the path to the `.deb` file for the package.
         Returns:
             an AptPackage object for the added package
         """
@@ -454,7 +457,7 @@ class AptRepo:
 
         The package is removed from the repository and all distributions in it. 
         It is not an error to pass a package that is not in a repository to this function.
-        It will be ignored in such case.
+        It will be ignored in such a case.
 
         Args:
             package: the package to remove
@@ -482,13 +485,13 @@ class AptRepo:
     def unassign_package(self, package: AptPackage, dist: AptDistribution, component: Optional[str] = None):
         """Removes a repository package from a distribution's component
 
-        If the package or distribution are not in this repository or the package is not 
-        assigned to the distribution's component the call is silently ignored.
+        If the package or distribution is not in this repository or the package is not 
+        assigned to the distribution's component, the call is silently ignored.
 
         Args:
             package: the package to remove. 
             dist: the distribution to remove from
-            component: if specified remove the package only from this component. Otherwise, remove it from all
+            component: if specified, remove the package only from this component. Otherwise, remove it from all
         """
 
         if package not in self.__packages:
@@ -512,7 +515,7 @@ class AptRepo:
         """Export the repository into a given folder.
 
         This actually creates an on-disk repository suitable to serve to APT clients. If the directory to export to
-        already exists the export process tries to handle pre-existing content there gracefully. Content that doesn't
+        already exists, the export process tries to handle pre-existing content there gracefully. Content that doesn't
         conflict with repository content will be left alone. Content that does conflict will be removed or overwritten.
 
         Specifically:
@@ -539,7 +542,8 @@ class AptRepo:
 
         pool = root / 'pool'
         if pool.exists():
-            shutil.rmtree(pool)
+            for p in Path(pool).rglob('*.deb'):
+                p.unlink(missing_ok=True)
         pool.mkdir(parents=True)
         for package in self.__packages:
             dest = root / package.repo_filename

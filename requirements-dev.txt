@@ -5,3 +5,4 @@ twine
 pytest
 python-dotenv
 pylint
+lxml

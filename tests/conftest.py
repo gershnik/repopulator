@@ -9,13 +9,13 @@
 import os
 import pytest
 import shutil
-import subprocess
 
 
 from pathlib import Path, PurePosixPath
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
+from urllib.error import URLError
 from datetime import datetime, timezone
 from typing import Dict
 
@@ -58,13 +58,23 @@ def binaries_path(request: pytest.FixtureRequest):
     if mark is None:
         return binaries
     
-    urls = mark.args
-    for url in urls:
-        res = urlparse(url)
-        path = PurePosixPath(res.path)
-        local_path = binaries / path.name
+    args = mark.args
+    for arg in args:
+        if isinstance(arg, str):
+            url = arg
+            res = urlparse(url)
+            path = PurePosixPath(res.path)
+            local_path = binaries / path.name
+        elif (isinstance(arg, tuple) or isinstance(arg, list)) and len(arg) == 2:
+            url = arg[0]
+            local_path = binaries / arg[1]
+        else:
+            raise RuntimeError('Invalid argument to pytest.mark.download')
         if not local_path.exists():
-            urlretrieve(url, local_path)
+            try:
+                urlretrieve(url, local_path)
+            except URLError as err:
+                raise RuntimeError(f'unable to download {url}')
             os.utime(local_path, (FIXED_DATETIME.timestamp(), FIXED_DATETIME.timestamp()))
     
     return binaries
