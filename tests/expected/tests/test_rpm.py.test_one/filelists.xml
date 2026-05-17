@@ -1,7 +1,172 @@
 <?xml version='1.0' encoding='utf-8'?>
 <filelists xmlns="http://linux.duke.edu/metadata/filelists" packages="1">
-  <package pkgid="9268854320030a2b27654325b585ff85551386d8d11ba68336bbf982d80ce201" name="sudo-setuid" arch="x86_64">
-    <version epoch="0" ver="1.8.17p1" rel="34" />
+  <package pkgid="f384cfae34a1846aa4e4528309a03859ba5e476b95f23921aa2adbd20f322ffd" name="sudo" arch="x86_64">
+    <version epoch="0" ver="1.9.17" rel="5.p1.fc43" />
+    <file>/etc/dnf/protected.d/sudo.conf</file>
+    <file>/etc/pam.d/sudo</file>
+    <file>/etc/pam.d/sudo-i</file>
+    <file>/etc/sudo.conf</file>
+    <file>/etc/sudoers</file>
+    <file type="dir">/etc/sudoers.d</file>
+    <file>/usr/bin/cvtsudoers</file>
     <file>/usr/bin/sudo</file>
+    <file>/usr/bin/sudoedit</file>
+    <file>/usr/bin/sudoreplay</file>
+    <file>/usr/bin/visudo</file>
+    <file type="dir">/usr/lib/.build-id</file>
+    <file type="dir">/usr/lib/.build-id/28</file>
+    <file>/usr/lib/.build-id/28/f778a6d8b1ac8ec465d8aea85cca18794c8e76</file>
+    <file type="dir">/usr/lib/.build-id/39</file>
+    <file>/usr/lib/.build-id/39/239a1d8d7f5b80cf7849247c8ab8cd1168b2c6</file>
+    <file type="dir">/usr/lib/.build-id/6f</file>
+    <file>/usr/lib/.build-id/6f/92dc3c0ecaceab725df75d0b7b9b285e95bf90</file>
+    <file type="dir">/usr/lib/.build-id/79</file>
+    <file>/usr/lib/.build-id/79/07a3f379a0364294abc3d544bddc9770c3276a</file>
+    <file type="dir">/usr/lib/.build-id/81</file>
+    <file>/usr/lib/.build-id/81/19dc3977681ec4cdded298e66195d73fd1c879</file>
+    <file type="dir">/usr/lib/.build-id/8c</file>
+    <file>/usr/lib/.build-id/8c/e0b9c76ec270d3a16a76a613e79292dac57cd9</file>
+    <file type="dir">/usr/lib/.build-id/8d</file>
+    <file>/usr/lib/.build-id/8d/5f32a55995bcce087648c7473e4ff6580d3fdf</file>
+    <file type="dir">/usr/lib/.build-id/a1</file>
+    <file>/usr/lib/.build-id/a1/2c2f761564423380d5a7685dfb0d9020a78b63</file>
+    <file type="dir">/usr/lib/.build-id/a7</file>
+    <file>/usr/lib/.build-id/a7/dbfaecf0b75d68e09a8efb23308705a6f12c06</file>
+    <file type="dir">/usr/lib/.build-id/cb</file>
+    <file>/usr/lib/.build-id/cb/387e2b96151e264d50eac2b6f6ea473c85afdc</file>
+    <file type="dir">/usr/lib/.build-id/d3</file>
+    <file>/usr/lib/.build-id/d3/bfd0e25ee57f55e347366252550ce31531288f</file>
+    <file>/usr/lib/tmpfiles.d/sudo.conf</file>
+    <file type="dir">/usr/libexec/sudo</file>
+    <file>/usr/libexec/sudo/audit_json.so</file>
+    <file>/usr/libexec/sudo/group_file.so</file>
+    <file>/usr/libexec/sudo/libsudo_util.so</file>
+    <file>/usr/libexec/sudo/libsudo_util.so.0</file>
+    <file>/usr/libexec/sudo/libsudo_util.so.0.0.0</file>
+    <file>/usr/libexec/sudo/sesh</file>
+    <file>/usr/libexec/sudo/sudo_noexec.so</file>
+    <file>/usr/libexec/sudo/sudoers.so</file>
+    <file>/usr/libexec/sudo/system_group.so</file>
+    <file type="dir">/usr/share/dnf5</file>
+    <file type="dir">/usr/share/dnf5/libdnf.conf.d</file>
+    <file>/usr/share/dnf5/libdnf.conf.d/protect-sudo.conf</file>
+    <file type="dir">/usr/share/doc/sudo</file>
+    <file>/usr/share/doc/sudo/CONTRIBUTING.md</file>
+    <file>/usr/share/doc/sudo/CONTRIBUTORS.md</file>
+    <file>/usr/share/doc/sudo/HISTORY.md</file>
+    <file>/usr/share/doc/sudo/LICENSE.md</file>
+    <file>/usr/share/doc/sudo/NEWS</file>
+    <file>/usr/share/doc/sudo/README.LDAP.md</file>
+    <file>/usr/share/doc/sudo/README.md</file>
+    <file>/usr/share/doc/sudo/SECURITY.md</file>
+    <file>/usr/share/doc/sudo/TROUBLESHOOTING.md</file>
+    <file>/usr/share/doc/sudo/UPGRADE.md</file>
+    <file type="dir">/usr/share/doc/sudo/examples</file>
+    <file>/usr/share/doc/sudo/examples/cvtsudoers.conf</file>
+    <file>/usr/share/doc/sudo/examples/example_approval_plugin.py</file>
+    <file>/usr/share/doc/sudo/examples/example_audit_plugin.py</file>
+    <file>/usr/share/doc/sudo/examples/example_conversation.py</file>
+    <file>/usr/share/doc/sudo/examples/example_debugging.py</file>
+    <file>/usr/share/doc/sudo/examples/example_group_plugin.py</file>
+    <file>/usr/share/doc/sudo/examples/example_io_plugin.py</file>
+    <file>/usr/share/doc/sudo/examples/example_policy_plugin.py</file>
+    <file>/usr/share/doc/sudo/examples/pam.conf</file>
+    <file>/usr/share/doc/sudo/examples/sudo.conf</file>
+    <file>/usr/share/doc/sudo/examples/sudo_logsrvd.conf</file>
+    <file>/usr/share/doc/sudo/examples/sudoers</file>
+    <file>/usr/share/doc/sudo/examples/syslog.conf</file>
+    <file>/usr/share/doc/sudo/schema.ActiveDirectory</file>
+    <file>/usr/share/doc/sudo/schema.IBM_LDAP</file>
+    <file>/usr/share/doc/sudo/schema.OpenLDAP</file>
+    <file>/usr/share/doc/sudo/schema.iPlanet</file>
+    <file>/usr/share/doc/sudo/schema.olcSudo</file>
+    <file type="dir">/usr/share/licenses/sudo</file>
+    <file>/usr/share/licenses/sudo/LICENSE.md</file>
+    <file>/usr/share/locale/ast/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/ast/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/ca/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/ca/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/cs/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/cs/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/da/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/da/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/de/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/de/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/el/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/eo/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/eo/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/es/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/es/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/eu/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/eu/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/fa/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/fi/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/fi/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/fr/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/fr/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/fur/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/fur/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/gl/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/hr/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/hr/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/hu/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/hu/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/id/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/id/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/it/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/it/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/ja/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/ja/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/ka/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/ka/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/ko/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/ko/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/lt/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/nb/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/nb/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/nl/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/nl/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/nn/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/pl/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/pl/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/pt/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/pt/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/pt_BR/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/pt_BR/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/ro/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/ro/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/ru/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/ru/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/sk/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/sk/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/sl/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/sl/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/sq/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/sr/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/sr/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/sv/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/sv/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/tr/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/tr/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/uk/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/uk/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/vi/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/vi/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/yue/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/zh_CN/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/zh_CN/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/locale/zh_TW/LC_MESSAGES/sudo.mo</file>
+    <file>/usr/share/locale/zh_TW/LC_MESSAGES/sudoers.mo</file>
+    <file>/usr/share/man/man1/cvtsudoers.1.gz</file>
+    <file>/usr/share/man/man5/sudo.conf.5.gz</file>
+    <file>/usr/share/man/man5/sudoers.5.gz</file>
+    <file>/usr/share/man/man5/sudoers.ldap.5.gz</file>
+    <file>/usr/share/man/man5/sudoers_timestamp.5.gz</file>
+    <file>/usr/share/man/man8/sudo.8.gz</file>
+    <file>/usr/share/man/man8/sudoedit.8.gz</file>
+    <file>/usr/share/man/man8/sudoreplay.8.gz</file>
+    <file>/usr/share/man/man8/visudo.8.gz</file>
+    <file type="dir">/var/db/sudo</file>
+    <file type="dir">/var/db/sudo/lectured</file>
   </package>
 </filelists>

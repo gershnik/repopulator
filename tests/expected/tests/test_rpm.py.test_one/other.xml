@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <otherdata xmlns="http://linux.duke.edu/metadata/other" packages="1">
-  <package pkgid="9268854320030a2b27654325b585ff85551386d8d11ba68336bbf982d80ce201" name="sudo-setuid" arch="x86_64">
-    <version epoch="0" ver="1.8.17p1" rel="34" />
+  <package pkgid="f384cfae34a1846aa4e4528309a03859ba5e476b95f23921aa2adbd20f322ffd" name="sudo" arch="x86_64">
+    <version epoch="0" ver="1.9.17" rel="5.p1.fc43" />
+    <changelog author="Radovan Sroka &lt;rsroka@fedoraproject.org&gt; - 1.9.17-4.p1" date="1752753600">- RPMAUTOSPEC: unresolvable merge</changelog>
+    <changelog author="Fedora Release Engineering &lt;releng@fedoraproject.org&gt; - 1.9.17-5.p1" date="1753444800">- Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild</changelog>
   </package>
 </otherdata>
