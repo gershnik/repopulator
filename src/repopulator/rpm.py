@@ -122,7 +122,7 @@ class RpmVersion:
                 version = version[colon_pos+1:]
             else:
                 self.epoch = "0"
-            ver_parts = version.split('-', 2)
+            ver_parts = version.split('-', 1)
             self.ver = ver_parts[0]
             self.rel = ver_parts[1] if len(ver_parts) == 2 else None
         elif isinstance(version, collections.abc.Sequence):
