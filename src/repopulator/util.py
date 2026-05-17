@@ -281,22 +281,22 @@ class ImmutableDict(Mapping[Key, Val]):
     """A dictionary that cannot be modified"""
 
     def __init__(self, data: Dict[Key, Val]):
-        self._data = data
+        self.__data = data
 
     def __getitem__(self, key: Key) -> Val: 
-        return self._data[key]
+        return self.__data[key]
 
     def __len__(self):
-        return len(self._data)
+        return len(self.__data)
 
     def __iter__(self):
-        return iter(self._data)
+        return iter(self.__data)
     
     def items(self):
-        return self._data.items()
+        return self.__data.items()
     
     def values(self):
-        return self._data.values()
+        return self.__data.values()
     
 
 class NoPublicConstructor(type):
