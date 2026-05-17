@@ -179,8 +179,40 @@ class VersionKey:
 
     def __ge__(self, other):
         return not self.__lt__(other)
+    
+# Extracted from hashlib.file_digest added in Python 3.11 
+def _hash_stream(fileobj, digest_objs, bufsize):
+    """Update one or more digest objects from a file-like object."""
+    if hasattr(fileobj, "getbuffer"):
+        # io.BytesIO — zero-copy buffer, share across all hashers
+        buf = fileobj.getbuffer()
+        for d in digest_objs:
+            d.update(buf)
+        return
 
-# Copy of hashlib.file_digest added in Python 3.11 
+    # Only binary files implement readinto().
+    if not (
+        hasattr(fileobj, "readinto")
+        and hasattr(fileobj, "readable")
+        and fileobj.readable()
+    ):
+        raise ValueError(
+            f"'{fileobj!r}' is not a file-like object in binary reading mode."
+        )
+
+    # binary file, socket.SocketIO object
+    # Note: socket I/O uses different syscalls than file I/O.
+    buf = bytearray(bufsize)
+    view = memoryview(buf)
+    while True:
+        size = fileobj.readinto(buf)
+        if size == 0:
+            break  # EOF
+        chunk = view[:size]
+        for d in digest_objs:
+            d.update(chunk)
+
+# Adapted from hashlib.file_digest added in Python 3.11 
 def file_digest(fileobj, digest, /, *, _bufsize=2**18):
     """Hash the contents of a file-like object. Returns a digest object.
 
@@ -195,36 +227,34 @@ def file_digest(fileobj, digest, /, *, _bufsize=2**18):
     # On Linux we could use AF_ALG sockets and sendfile() to achieve zero-copy
     # hashing with hardware acceleration.
     if isinstance(digest, str):
-        digestobj = hashlib.new(digest)
+        digests = (hashlib.new(digest), )
     else:
-        digestobj = digest()
+        digests = (digest(), )
 
-    if hasattr(fileobj, "getbuffer"):
-        # io.BytesIO object, use zero-copy buffer
-        digestobj.update(fileobj.getbuffer())
-        return digestobj
+    _hash_stream(fileobj, digests, _bufsize)
+    return digests[0]
 
-    # Only binary files implement readinto().
-    if not (
-        hasattr(fileobj, "readinto")
-        and hasattr(fileobj, "readable")
-        and fileobj.readable()
-    ):
-        raise ValueError(
-            f"'{fileobj!r}' is not a file-like object in binary reading mode."
-        )
+def file_multi_digest(fileobj, digest, /, *, _bufsize=2**18):
+    """Hash the contents of a file-like object. Returns a digest object.
 
-    # binary file, socket.SocketIO object
-    # Note: socket I/O uses different syscalls than file I/O.
-    buf = bytearray(_bufsize)  # Reusable buffer to reduce allocations.
-    view = memoryview(buf)
-    while True:
-        size = fileobj.readinto(buf)
-        if size == 0:
-            break  # EOF
-        digestobj.update(view[:size])
+    *fileobj* must be a file-like object opened for reading in binary mode.
+    It accepts file objects from open(), io.BytesIO(), and SocketIO objects.
+    The function may bypass Python's I/O and use the file descriptor *fileno*
+    directly.
 
-    return digestobj
+    *digest* must either be a tuple/list of any of
+     - a hash algorithm name as a *str*
+     - a hash constructor
+     - a callable that returns a hash object
+    """
+    if isinstance(digest, tuple) or isinstance(digest, list):
+        digests = tuple(hashlib.new(d) if isinstance(d, str) else d() for d in digest)
+    else:
+        digests = (digest(), )
+
+    _hash_stream(fileobj, digests, _bufsize)
+    return digests
+    
 
 # Copy of ET.indent added in Python 3.9
 def indent_tree(tree, space="  ", level=0):

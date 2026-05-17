@@ -21,7 +21,8 @@ from pathlib import Path, PurePosixPath
 from typing import AbstractSet, Any, BinaryIO, Dict, KeysView, Mapping, Optional, Sequence
 
 from .pgp_signer import PgpSigner
-from .util import NoPublicConstructor, PackageParsingException, VersionKey, ensure_one_line_str, lower_bound, file_digest, path_from_pathlike
+from .util import NoPublicConstructor, PackageParsingException, VersionKey, \
+                  ensure_one_line_str, lower_bound, file_digest, file_multi_digest, path_from_pathlike
 
 
 class AptPackage(metaclass=NoPublicConstructor):
@@ -89,9 +90,9 @@ class AptPackage(metaclass=NoPublicConstructor):
                 (hashlib.sha256, 'SHA256'),
                 (hashlib.sha512, 'SHA512'),
             ]
-            for hash_func, name in hashes:
-                with open(src_path, "rb") as pack_file:
-                    digest = file_digest(pack_file, hash_func)
+            with open(src_path, "rb") as pack_file:
+                digests = file_multi_digest(pack_file, [h[0] for h in hashes])
+            for digest, (_, name) in zip(digests, hashes):
                 fields[name] = digest.hexdigest()
 
         return cls._create(src_path, fields)
