@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - `RpmVersion` now has a decent `__repr__`.
 - `PacmanRepo` now accepts string or PathLike destination paths like all other repos.
+- Performance improvements for APT and RPM repository generation
 
 ### Changed
 
