@@ -8,12 +8,15 @@
 
 from __future__ import annotations
 
+import sys
 import tarfile
 import shutil
 import stat
 import json
 import textwrap
 import hashlib
+import zstandard
+import tempfile
 
 from pathlib import Path
 from datetime import datetime, timezone
@@ -24,16 +27,38 @@ from typing import Any, BinaryIO, Mapping, Optional, Sequence
 from .pki_signer import PkiSigner
 from .util import NoPublicConstructor, PackageParsingException, lower_bound, VersionKey, file_digest, path_from_pathlike
 
+ZSTD_MAGIC = b'\x28\xb5\x2f\xfd'
 
 class FreeBSDPackage(metaclass=NoPublicConstructor):
     """A package in FreeBSDRepo"""
+
+    @staticmethod
+    def _open_pkg(path):
+        if sys.version_info >= (3, 14):
+            return tarfile.open(path, 'r:*')
+    
+        with open(path, 'rb') as fh:
+            magic = fh.read(4)
+        
+        if magic != ZSTD_MAGIC:
+            return tarfile.open(path, mode="r")
+        
+        tmp = tempfile.TemporaryFile()
+        try:
+            with open(path, 'rb') as fh:
+                zstandard.ZstdDecompressor().copy_stream(fh, tmp)
+            tmp.seek(0)
+            return tarfile.open(fileobj=tmp, mode="r")
+        except:
+            tmp.close()
+            raise
 
     @classmethod
     def _load(cls, src_path: Path, repo_filename: str) -> FreeBSDPackage:
         st = src_path.stat()
         with open(src_path, mode='rb') as pkg:
             digest = file_digest(pkg, hashlib.sha256).hexdigest()
-        with tarfile.open(src_path, mode="r") as pkg:
+        with FreeBSDPackage._open_pkg(src_path) as pkg:
             manifest = None
             try:
                 manifest = pkg.extractfile('+COMPACT_MANIFEST')
