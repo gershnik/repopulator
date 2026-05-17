@@ -8,16 +8,23 @@
 
 import hashlib
 import shutil
+import gzip
 
 from pathlib import Path
 
 from repopulator.util import file_digest
 
+GZIP_MAGIC = b'\x1f\x8b'
 
 def hash_file(path: Path):
     if not path.exists():
         return ''
     with open(path, 'rb') as f:
+        if f.read(2) == GZIP_MAGIC:
+            f.seek(0)
+            with gzip.GzipFile(fileobj=f, mode='rb') as gz:
+                return file_digest(gz, hashlib.sha256).hexdigest()
+        f.seek(0)
         return file_digest(f, hashlib.sha256).hexdigest()
     
 def compare_files(actual: Path, expected: Path, populate_expected: bool=False):
