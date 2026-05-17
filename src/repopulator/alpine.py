@@ -292,7 +292,7 @@ class AlpineRepo:
         expanded.mkdir(parents=True)
 
         description = expanded / 'DESCRIPTION'
-        description.write_text(self.__desc)
+        description.write_text(self.__desc, encoding='utf-8')
 
         def norm(info: tarfile.TarInfo):
             info.uid = 0
