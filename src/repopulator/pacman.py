@@ -255,7 +255,7 @@ class PacmanRepo:
         """Packages for a given architecture"""
         return self.__packages[arch]
     
-    def export(self, root: Path, signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
+    def export(self, root: str | PathLike[str], signer: PgpSigner, now: Optional[datetime] = None, keep_expanded: bool = False):
         """Export the repository into a given folder
 
         This actually creates an on-disk repository suitable to serve to `pacman` clients. If the directory to export to
@@ -277,6 +277,7 @@ class PacmanRepo:
         if now is None:
             now = datetime.now(timezone.utc)
 
+        root = path_from_pathlike(root)
         expanded = root / 'expanded'
         if expanded.exists():
             shutil.rmtree(expanded)
