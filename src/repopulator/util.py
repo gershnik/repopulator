@@ -81,16 +81,16 @@ class VersionKey:
         * an `str` or `bytes` object for a string part
 
         """
-        self.__parts = []
-        for arg in args:
-            if isinstance(arg, int):
-                self.__parts.append(arg)
-            elif isinstance(arg, str):
-                self.__parts.append(arg)
-            elif isinstance(arg, bytes):
-                self.__parts.append(arg.decode())
+
+        def handle_one(x): 
+            if isinstance(x, int) or isinstance(x, str):
+                return x
+            elif isinstance(x, bytes):
+                return x.decode()
             else:
                 raise ValueError('VersionKey parts must be integers, strings or bytes')
+            
+        self.__parts = tuple(handle_one(arg) for arg in args)
 
     @staticmethod
     def parse(version: str) -> VersionKey:
@@ -102,10 +102,11 @@ class VersionKey:
             version: a version string
         Returns: parsed key
         """
-        ret = VersionKey()
+        
         def isalpha(c): return ('a' <= c <= 'z') or ('A' <= c <= 'Z')
         def isdigit(c): return '0' <= c <= '9'
 
+        parts: list[int|str] = []
         start_idx = 0
         prev: Optional[Callable[[str], bool]] = None
         for idx in range(0, len(version)):
@@ -115,7 +116,7 @@ class VersionKey:
                 if prev(c):
                     continue
                 substr = version[start_idx: idx]
-                ret.__parts.append(substr if prev is isalpha else int(substr))
+                parts.append(substr if prev is isalpha else int(substr))
                 prev = None
             
             if isalpha(c):
@@ -126,7 +127,10 @@ class VersionKey:
         
         if prev is not None:
             substr = version[start_idx:]
-            ret.__parts.append(substr if prev is isalpha else int(substr))
+            parts.append(substr if prev is isalpha else int(substr))
+
+        ret = VersionKey()
+        ret.__parts = tuple(parts)
         return ret
 
     def __eq__(self, other: object) -> bool:
