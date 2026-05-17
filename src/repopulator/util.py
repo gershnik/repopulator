@@ -359,3 +359,4 @@ class HashingWriter:
     @property
     def digest(self):
         return self.__digest
+
