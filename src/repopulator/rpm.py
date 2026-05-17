@@ -257,7 +257,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
         self.__headers = headers
         self.__name: str = self.__headers['name'].decode()
         self.__arch: str = self.__headers['arch'].decode()
-        self.__version = RpmVersion((self.__headers.get('serial', '0'),
+        self.__version = RpmVersion((str(self.__headers.get('serial', '0')),
                                      self.__headers['version'].decode(),
                                      self.__headers['release'].decode()))
         
