@@ -90,7 +90,10 @@ class _AlpineHandler(_Handler):
             if last_dot_idx == 0:
                 print('unable to determine signer name from the key, please use --signer option', file=sys.stderr)
                 return 1
-            signer_name = key_path.name[0:last_dot_idx]    
+            if last_dot_idx > 0:
+                signer_name = key_path.name[0:last_dot_idx]
+            else:
+                signer_name = key_path.name
             
         print(f'Signing as {signer_name}')
         
