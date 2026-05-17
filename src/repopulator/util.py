@@ -242,16 +242,12 @@ def file_multi_digest(fileobj, digest, /, *, _bufsize=2**18):
     The function may bypass Python's I/O and use the file descriptor *fileno*
     directly.
 
-    *digest* must either be a tuple/list of any of
+    *digest* must be a tuple/list of any of
      - a hash algorithm name as a *str*
      - a hash constructor
      - a callable that returns a hash object
     """
-    if isinstance(digest, tuple) or isinstance(digest, list):
-        digests = tuple(hashlib.new(d) if isinstance(d, str) else d() for d in digest)
-    else:
-        digests = (digest(), )
-
+    digests = tuple(hashlib.new(d) if isinstance(d, str) else d() for d in digest)
     _hash_stream(fileobj, digests, _bufsize)
     return digests
     
