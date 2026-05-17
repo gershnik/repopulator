@@ -159,6 +159,9 @@ class RpmVersion:
             ret += f'-{self.rel}'
         return ret
     
+    def __repr__(self):
+        return f"RpmVersion(({self.epoch}, {self.ver}, {self.rel}))"
+    
 class _RpmFile:
     # pylint: disable=missing-function-docstring
     def __init__(self, basename: str, dirname: str, flags: int, mode: int):
