@@ -46,6 +46,7 @@ jobs:
         id: setup-python
         with:
           python-version: ${{matrix.python-version}}
+          cache: 'pip'
 
       - name: Install Nox
         run: pip install Nox
