@@ -17,12 +17,12 @@
     <size>1698</size>
     <open-size>10727</open-size>
   </data>
-  <other>
+  <data type="other">
     <checksum type="sha256">ff7d0186cb48bdcfcba174e2484993462e4ed5da0e533ad3bd8b2e864bee622c</checksum>
     <open-checksum type="sha256">bbe44a35bfb6d98ca412331a9fb42782e2b21210c65c34b4e0b681ac2484eb56</open-checksum>
     <location href="repodata/other.xml.gz" />
     <timestamp>1717163107</timestamp>
     <size>809</size>
     <open-size>2602</open-size>
-  </other>
+  </data>
 </repomd>

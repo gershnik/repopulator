@@ -595,7 +595,8 @@ class RpmRepo:
         os.utime(filelists_path, (now.timestamp(), now.timestamp()))
         self.__summarize_file(root, filelists_path, filelists, now, keep_expanded)
 
-        other = ET.SubElement(repomd, 'other')
+        other = ET.SubElement(repomd, 'data')
+        other.set('type', 'other')
         other_path = self.__export_other(repodata)
         os.utime(other_path, (now.timestamp(), now.timestamp()))
         self.__summarize_file(root, other_path, other, now, keep_expanded)
