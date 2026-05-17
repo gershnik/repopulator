@@ -541,7 +541,8 @@ class AptRepo:
 
         pool = root / 'pool'
         if pool.exists():
-            shutil.rmtree(pool)
+            for p in Path(root).rglob('*.deb'):
+                p.unlink(missing_ok=True)
         pool.mkdir(parents=True)
         for package in self.__packages:
             dest = root / package.repo_filename

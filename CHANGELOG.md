@@ -14,14 +14,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Exception when RPM "serial" key is an integer.
 - Adding an older version of a package to a Pacman repo now properly reports an exception instead of 
   silently doing nothing.
+- `AptRepo` now leaves any non `*.deb` files alone in a destination pool (as was promised by the docs).
 - Dotless signature files are now handled correctly on the command line.
 - Typos and grammar in documentation.
 - Tests now work again.
 
 ### Added
 
-- RpmVersion now has a decent `__repr__`.
-- PacmanRepo now accepts string or PathLike destination paths like all other repos.
+- `RpmVersion` now has a decent `__repr__`.
+- `PacmanRepo` now accepts string or PathLike destination paths like all other repos.
 
 ### Changed
 
