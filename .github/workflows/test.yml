@@ -41,12 +41,16 @@ jobs:
           echo -n "${{ secrets.PGP_KEY }}" | base64 --decode | gpg --import --batch --pinentry-mode=loopback
           echo -n "${{ secrets.BSD_KEY }}" > $GITHUB_WORKSPACE/bsd-key
 
+      # avoid setup-python noise on macOS
+      - name: Clear pre-baked pip cache
+        if: runner.os == 'macOS'
+        run: rm -rf ~/Library/Caches/pip
+
       - name: Set up Python
         uses: actions/setup-python@v6
         id: setup-python
         with:
           python-version: ${{matrix.python-version}}
-          cache: 'pip'
 
       - name: Install Nox
         run: pip install Nox
