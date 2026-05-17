@@ -220,6 +220,7 @@ class PacmanRepo:
                 raise ValueError('Duplicate package')
             if existing.version_key < package.version_key:
                 arch_packages[idx] = package
+            raise ValueError('Duplicate (older) package')
         else:
             arch_packages.insert(idx, package)
         return package
