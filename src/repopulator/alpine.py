@@ -165,8 +165,6 @@ class AlpinePackage(metaclass=NoPublicConstructor):
 
         for line in fp:
             line = line.decode()
-            if len(line) == 0:
-                break
             if line.startswith('#'):
                 continue
             eqpos = line.find('=')
