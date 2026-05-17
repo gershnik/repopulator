@@ -276,15 +276,17 @@ class AptDistribution(metaclass=NoPublicConstructor):
         components = []
         archs = []
         for comp, comp_archs in self.__packages.items():
-            components.append(comp)
+            entry = (comp, sorted(comp_archs.keys()))
+            idx = lower_bound(components, entry, lambda x,y: x[0]<y[0])
+            components.insert(idx, entry)
             for arch in comp_archs:
-                archs.append(arch)
-        components.sort()
-        archs.sort()
+                idx = lower_bound(archs, arch)
+                if idx == len(archs) or archs[idx] != arch:
+                    archs.insert(idx, arch)
 
         package_indices: Sequence[Path] = []
-        for comp in components:
-            for arch in archs:
+        for comp, comp_archs in components:
+            for arch in comp_archs:
                 pack, pack_gz = self.__export_packages(dist_dir, comp, arch, now)
                 package_indices += [pack, pack_gz]
 
@@ -305,7 +307,7 @@ class AptDistribution(metaclass=NoPublicConstructor):
             if self.version is not None:
                 f.write(f'Version: {self.version}\n'.encode())
             f.write(f'Architectures: {",".join(archs)}\n'.encode())
-            f.write(f'Components: {",".join(components)}\n'.encode())
+            f.write(f'Components: {",".join(x[0] for x in components)}\n'.encode())
             if self.description is not None:
                 f.write(f'Description: {self.description}\n'.encode())
             f.write(f'Date: {now.strftime("%a, %d %b %Y %I:%M:%S %z")}\n'.encode())
