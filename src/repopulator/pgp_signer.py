@@ -52,11 +52,11 @@ class PgpSigner:
         command += [
             '--armor', '--detach-sign', '--sign',
             '--default-key', self.__key_name,
-            '--passphrase', self.__key_pwd,
+            '--passphrase-fd', '0',
             '--digest-algo', 'sha512',
             '-o', sig_path, path
         ]
-        subprocess.run(command, check=True)
+        subprocess.run(command, input=(self.__key_pwd + '\n').encode('utf-8'), check=True)
         
     def binary_sign_external(self, path: Path, sig_path: Path):
         """Signs a given file, producing a binary signature in a separate file
@@ -71,11 +71,11 @@ class PgpSigner:
         command += [
             '--detach-sign', '--sign', 
             '--default-key', self.__key_name,
-            '--passphrase', self.__key_pwd,
+            '--passphrase-fd', '0',
             '--digest-algo', 'sha512',
             '-o', sig_path, path
         ]
-        subprocess.run(command, check=True)
+        subprocess.run(command, input=(self.__key_pwd + '\n').encode('utf-8'), check=True)
         
     def sign_inline(self, path: Path, out_path: Path):
         """Adds a signature to a given text file
@@ -90,11 +90,11 @@ class PgpSigner:
         command += [
             '--armor', '--detach-sign', '--sign', '--clearsign', 
             '--default-key', self.__key_name,
-            '--passphrase', self.__key_pwd,
+            '--passphrase-fd', '0',
             '--digest-algo', 'sha512',
             '-o', out_path, path
         ]
-        subprocess.run(command, check=True)
+        subprocess.run(command, input=(self.__key_pwd + '\n').encode('utf-8'), check=True)
         
     def export_public_key(self, path: Path):
         """Utility method to export the public key of the signing key into a file
