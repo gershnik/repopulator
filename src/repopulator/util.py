@@ -348,3 +348,18 @@ class NoPublicConstructor(type):
 
     def _create(cls: Type[T], *args: Any, **kwargs: Any) -> T:
         return super().__call__(*args, **kwargs) 
+
+
+class HashingWriter:
+    """File-like writer that updates a digest as bytes pass through."""
+    def __init__(self, fileobj, digest):
+        self.__fileobj = fileobj
+        self.__digest = digest
+    def write(self, data):
+        self.__digest.update(data)
+        return self.__fileobj.write(data)
+    def flush(self):
+        return self.__fileobj.flush()
+    @property
+    def digest(self):
+        return self.__digest

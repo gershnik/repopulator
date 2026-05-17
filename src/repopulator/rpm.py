@@ -25,7 +25,8 @@ from functools import total_ordering
 from typing import Any, Callable, Optional, Sequence, Tuple
 
 from .pgp_signer import PgpSigner
-from .util import ImmutableDict, NoPublicConstructor, find_if, lower_bound, VersionKey, file_digest, indent_tree, path_from_pathlike
+from .util import ImmutableDict, NoPublicConstructor, HashingWriter, VersionKey, \
+                  find_if, lower_bound, file_digest, indent_tree, path_from_pathlike
 
 _RPMSENSE_ANY           = 0
 _RPMSENSE_LESS          = 1 << 1
@@ -663,17 +664,18 @@ class RpmRepo:
         gz_path = path.parent / (path.name + '.gz')
 
         open_st = path.stat()
-        with open(path, 'rb') as f_in:
-            open_digest = file_digest(f_in, hashlib.sha256)
-            f_in.seek(0, 0)
-            with open(gz_path, 'wb') as f_out:
-                with gzip.GzipFile(filename=path.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
-                    shutil.copyfileobj(f_in, f_zip)
-            
+        open_digest = hashlib.sha256()
+        digest   = hashlib.sha256()
+
+        with open(gz_path, 'wb') as f_out:
+            gz_tap = HashingWriter(f_out, digest)
+            with gzip.GzipFile(filename=path.name, mode='wb', fileobj=gz_tap, mtime=int(now.timestamp())) as f_zip:
+                open_tap = HashingWriter(f_zip, open_digest)
+                with open(path, 'rb') as f_in:
+                    shutil.copyfileobj(f_in, open_tap)
+
         os.utime(gz_path, (now.timestamp(), now.timestamp()))
         st = gz_path.stat()
-        with open(gz_path, "rb") as f:
-            digest = file_digest(f, hashlib.sha256)
         
         checksum = ET.SubElement(parent, 'checksum')
         checksum.set('type', 'sha256')
