@@ -18,10 +18,10 @@ plugins:
       default_handler: python
       handlers:
         python:
-          import:
+          inventories:
             - https://docs.python.org/3/objects.inv
+          paths: [src]
           options:
-            paths: [src]
             docstring_style: google
             docstring_section_style: list
             show_source: false

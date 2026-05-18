@@ -1,7 +1,7 @@
 #requirements to build the docs
 
 mkdocs
-mkdocstrings[python]
+mkdocstrings[python]>=0.27
 black
 #mkdocs-bootswatch
 #mkdocs-material
