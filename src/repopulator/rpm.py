@@ -18,6 +18,8 @@ import collections.abc
 import xml.etree.ElementTree as ET
 
 from rpmfile import open as rpmfile_open
+import struct
+import rpmfile.headers as _rpmheaders
 
 from pathlib import Path
 from datetime import datetime, timezone
@@ -27,6 +29,15 @@ from typing import Any, Callable, Optional, Sequence, Tuple
 from .pgp_signer import PgpSigner
 from .util import ImmutableDict, NoPublicConstructor, HashingWriter, VersionKey, \
                   find_if, lower_bound, file_digest, indent_tree, path_from_pathlike
+
+def _extract_int64(offset, count, store):
+    end = offset + 8 * count
+    if len(store) < end:
+        raise _rpmheaders.RPMError("out of range")
+    values = struct.unpack("!" + "Q" * count, store[offset:end])
+    return values[0] if count == 1 else values
+
+_rpmheaders.ty_map.setdefault(5, _extract_int64)
 
 _RPMSENSE_ANY           = 0
 _RPMSENSE_LESS          = 1 << 1
@@ -368,9 +379,13 @@ class RpmPackage(metaclass=NoPublicConstructor):
             time.set('build', str(buildtime))
         size_el = ET.SubElement(self.primary, 'size')
         size_el.set('package', str(size))
-        size_el.set('installed', str(headers.get('longsize', headers['size'])))
-        size_el.set('archive', str(headers.get('longarchivesize',
-                                            headers.get('archivesize', headers['payloadsize']))))
+        installed = headers.get('longsize', headers.get('size'))
+        size_el.set('installed', str(installed))
+        archive = headers.get('longarchivesize',
+                    headers.get('archivesize',
+                        headers.get('payloadsize',
+                            headers.get('payloadsizealt', headers.get(5113)))))
+        size_el.set('archive', str(archive))
         ET.SubElement(self.primary, 'location').set('href', filename)
         fmt = ET.SubElement(self.primary, 'format')
         if (license_ := headers.get('copyright')) is not None:

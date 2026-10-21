@@ -20,7 +20,7 @@ authors= [
 ]
 requires-python = ">=3.9"
 dependencies = [
-    "rpmfile>=2.1.0",
+    "rpmfile>=2.2.1",
     "arpy>=2.3.0",
     "cryptography>=43.0.1",
     "zstandard[cffi]>=0.23.0"

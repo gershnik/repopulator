@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<metadata xmlns="http://linux.duke.edu/metadata/common" xmlns:rpm="http://linux.duke.edu/metadata/rpm" packages="1">
+  <package type="rpm">
+    <name>hlinktest</name>
+    <arch>noarch</arch>
+    <version epoch="0" ver="1.0" rel="1" />
+    <checksum type="sha256" pkgid="YES">14797751dd814d99d41b32a01111b0b644c329d132c0f90a2ee7b9afe9bf15b5</checksum>
+    <summary>Testing hard link behavior</summary>
+    <description />
+    <packager />
+    <url />
+    <time file="1717163107" build="1757421169" />
+    <size package="8640" installed="194" archive="448" />
+    <location href="hlinktest-1.0-1.noarch-v3sig.rpm" />
+    <format>
+      <rpm:license>Testing</rpm:license>
+      <rpm:group>Testing</rpm:group>
+      <rpm:buildhost>lumikko.koti.laiskiainen.org</rpm:buildhost>
+      <rpm:sourcerpm>hlinktest-1.0-1.src.rpm</rpm:sourcerpm>
+      <rpm:header-range start="5104" end="8530" />
+      <rpm:provides>
+        <rpm:entry name="/bin/sh" />
+        <rpm:entry name="hlinktest" flags="EQ" epoch="0" ver="1.0" rel="1" />
+      </rpm:provides>
+      <rpm:requires>
+        <rpm:entry name="/usr/bin/sh" />
+      </rpm:requires>
+    </format>
+  </package>
+</metadata>

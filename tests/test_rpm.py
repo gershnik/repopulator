@@ -124,3 +124,20 @@ def test_cmd(binaries_path, output_path, pgp_cmd):
     compare_files(output_path / 'sudo-1.9.17-5.p1.fc43.x86_64.rpm', binaries_path / 'sudo-1.9.17-5.p1.fc43.x86_64.rpm')
     compare_files(output_path / 'dhcp-devel-4.4.3-22.fc43.x86_64.rpm', binaries_path / 'dhcp-devel-4.4.3-22.fc43.x86_64.rpm')
     compare_files(output_path / 'makepasswd-0.5.3-35.fc43.x86_64.rpm', binaries_path / 'makepasswd-0.5.3-35.fc43.x86_64.rpm')
+
+@pytest.mark.download(
+    'https://www.gershnik.com/repopulator-test-binaries/hlinktest-1.0-1.noarch-v3sig.rpm'
+)
+def test_v6(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
+    repo = RpmRepo()
+    package = repo.add_package(binaries_path / 'hlinktest-1.0-1.noarch-v3sig.rpm')
+    assert package.name == 'hlinktest'
+    assert package.arch == 'noarch'
+    assert package.version_str == '1.0-1'
+    assert package.version_key == RpmVersion(('0', '1.0', '1'))
+    repo.export(output_path, pgp_signer, now=fixed_datetime, keep_expanded=True)
+    compare_files(output_path / 'hlinktest-1.0-1.noarch-v3sig.rpm', binaries_path / 'hlinktest-1.0-1.noarch-v3sig.rpm')
+    compare_xml_files(output_path / 'repodata/repomd.xml', expected_path / 'repomd.xml', REPOMD_NORMALIZE, should_populate)
+    compare_files(output_path / 'repodata/primary.xml', expected_path / 'primary.xml', should_populate)
+    compare_files(output_path / 'repodata/filelists.xml', expected_path / 'filelists.xml', should_populate)
+    compare_files(output_path / 'repodata/other.xml', expected_path / 'other.xml', should_populate)

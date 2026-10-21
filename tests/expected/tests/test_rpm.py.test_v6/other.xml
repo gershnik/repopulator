@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<otherdata xmlns="http://linux.duke.edu/metadata/other" packages="1">
+  <package pkgid="14797751dd814d99d41b32a01111b0b644c329d132c0f90a2ee7b9afe9bf15b5" name="hlinktest" arch="noarch">
+    <version epoch="0" ver="1.0" rel="1" />
+  </package>
+</otherdata>
