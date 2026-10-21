@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [2.0] - 2026-10-21
+
 ### Added
 - Support for RPM v6.
 - Official Python 3.15 support.
@@ -138,3 +140,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [1.5]: https://github.com/gershnik/repopulator/releases/1.5
 [1.6]: https://github.com/gershnik/repopulator/releases/1.6
 [1.7]: https://github.com/gershnik/repopulator/releases/1.7
+[2.0]: https://github.com/gershnik/repopulator/releases/2.0
