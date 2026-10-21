@@ -17,27 +17,15 @@ import re
 import collections.abc
 import xml.etree.ElementTree as ET
 
-from rpmfile import open as rpmfile_open
-import struct
-import rpmfile.headers as _rpmheaders
-
 from pathlib import Path
 from datetime import datetime, timezone
 from functools import total_ordering
-from typing import Any, Callable, Optional, Sequence, Tuple
+from typing import Any, Callable, Mapping, Optional, Sequence, Tuple
 
 from .pgp_signer import PgpSigner
-from .util import ImmutableDict, NoPublicConstructor, HashingWriter, VersionKey, \
+from .rpmfile import RpmFile, RpmHeader, RpmTag, RpmSigTag
+from .util import NoPublicConstructor, HashingWriter, VersionKey, \
                   find_if, lower_bound, file_digest, indent_tree, path_from_pathlike
-
-def _extract_int64(offset, count, store):
-    end = offset + 8 * count
-    if len(store) < end:
-        raise _rpmheaders.RPMError("out of range")
-    values = struct.unpack("!" + "Q" * count, store[offset:end])
-    return values[0] if count == 1 else values
-
-_rpmheaders.ty_map.setdefault(5, _extract_int64)
 
 _RPMSENSE_ANY           = 0
 _RPMSENSE_LESS          = 1 << 1
@@ -256,28 +244,29 @@ class RpmPackage(metaclass=NoPublicConstructor):
         st = src_path.stat()
         with open(src_path, "rb") as f:
             pkgid = file_digest(f, hashlib.sha256).hexdigest()
-        with rpmfile_open(src_path) as rpm:
-            headers = rpm.headers
-            header_range = rpm.header_range
-        return cls._create(src_path, filename, pkgid, st.st_size, int(st.st_mtime), headers, header_range)
+        with RpmFile(src_path) as rpm:
+            signature = rpm.signature
+            header = rpm.header
+        return cls._create(src_path, filename, pkgid, st.st_size, int(st.st_mtime), signature, header)
 
     def __init__(self, src_path: Path, filename: str, pkgid: str, size: int, mtime: int,
-                 headers: dict[str, Any], header_range: tuple[int, int]):
+                 signature: RpmHeader, header: RpmHeader):
         """Internal, do not use
         Use RpmRepo.add_package to create instances of this class
         """
         self.__src_path = src_path
         self.__filename = filename
         self.__pkgid = pkgid
-        self.__headers = headers
-        self.__name: str = self.__headers['name'].decode()
-        self.__arch: str = self.__headers['arch'].decode()
-        self.__version = RpmVersion((str(self.__headers.get('serial', '0')),
-                                     self.__headers['version'].decode(),
-                                     self.__headers['release'].decode()))
-        
+        self.__signature = signature
+        self.__header = header
+        self.__name: str = self.__header[RpmTag.NAME].decode()
+        self.__arch: str = self.__header[RpmTag.ARCH].decode()
+        self.__version = RpmVersion((str(self.__header.get(RpmTag.EPOCH, '0')),
+                                     self.__header[RpmTag.VERSION].decode(),
+                                     self.__header[RpmTag.RELEASE].decode()))
+
         primary_files = self.__fill_files()
-        self.__fill_primary(filename, size, mtime, primary_files, header_range)
+        self.__fill_primary(filename, size, mtime, primary_files, header.range)
         self.__fill_changelog()
 
     @property
@@ -306,9 +295,14 @@ class RpmPackage(metaclass=NoPublicConstructor):
         return self.__pkgid
     
     @property
-    def fields(self) -> ImmutableDict:
-        """Information about the package stored in the repository index"""
-        return ImmutableDict(self.__headers)
+    def fields(self) -> Mapping[int, Any]:
+        """Main header of the package keyed by RpmTag constants from repopulator.rpmfile"""
+        return self.__header
+
+    @property
+    def signature(self) -> Mapping[int, Any]:
+        """Signature header of the package keyed by RpmSigTag constants from repopulator.rpmfile"""
+        return self.__signature
     
     @property
     def repo_filename(self) -> str:
@@ -328,7 +322,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
 
         
     def __fill_files(self) -> list[_RpmFile]:
-        headers = self.__headers
+        headers = self.__header
 
         self.__filelist = ET.Element('package')
         self.__filelist.set('pkgid', self.pkgid)
@@ -341,11 +335,11 @@ class RpmPackage(metaclass=NoPublicConstructor):
         version.set('rel', self.version_key.rel)
 
         primary_files: list[_RpmFile] = []
-        dirnames = self.__read_list(headers, 'dirnames')
-        for basename, dirindex, flags, mode in zip(self.__read_list(headers, 'basenames'),
-                                                   self.__read_list(headers, 'dirindexes'),
-                                                   self.__read_list(headers, 'fileflags'),
-                                                   self.__read_list(headers, 'filemodes')):
+        dirnames = self.__read_list(headers, RpmTag.DIRNAMES)
+        for basename, dirindex, flags, mode in zip(self.__read_list(headers, RpmTag.BASENAMES),
+                                                   self.__read_list(headers, RpmTag.DIRINDEXES),
+                                                   self.__read_list(headers, RpmTag.FILEFLAGS),
+                                                   self.__read_list(headers, RpmTag.FILEMODES)):
             file = _RpmFile(basename.decode(), dirnames[dirindex].decode(), flags, mode)
             self.__filelist.append(file.export())
             if file.is_primary():
@@ -354,12 +348,13 @@ class RpmPackage(metaclass=NoPublicConstructor):
         return primary_files
 
     def __fill_primary(self, filename: str, size: int, mtime: int, primary_files: Sequence[_RpmFile], header_range: Tuple[int, int]):
-        headers = self.__headers
+        headers = self.__header
+        signature = self.__signature
 
         self.primary = ET.Element('package')
         self.primary.set('type', 'rpm')
-        ET.SubElement(self.primary, 'name').text = headers['name'].decode()
-        ET.SubElement(self.primary, 'arch').text = headers['arch'].decode()
+        ET.SubElement(self.primary, 'name').text = headers[RpmTag.NAME].decode()
+        ET.SubElement(self.primary, 'arch').text = headers[RpmTag.ARCH].decode()
         version = ET.SubElement(self.primary, 'version')
         version.set('epoch', self.version_key.epoch)
         version.set('ver', self.version_key.ver)
@@ -369,45 +364,48 @@ class RpmPackage(metaclass=NoPublicConstructor):
         checksum.set('type', 'sha256')
         checksum.set('pkgid', 'YES')
         checksum.text = self.pkgid 
-        ET.SubElement(self.primary, 'summary').text = headers.get('summary', b'').decode()
-        ET.SubElement(self.primary, 'description').text = headers.get('description', b'').decode()
-        ET.SubElement(self.primary, 'packager').text = headers.get('packager', b'').decode()
-        ET.SubElement(self.primary, 'url').text = headers.get('url', b'').decode()
+        ET.SubElement(self.primary, 'summary').text = headers.get(RpmTag.SUMMARY, b'').decode()
+        ET.SubElement(self.primary, 'description').text = headers.get(RpmTag.DESCRIPTION, b'').decode()
+        ET.SubElement(self.primary, 'packager').text = headers.get(RpmTag.PACKAGER, b'').decode()
+        ET.SubElement(self.primary, 'url').text = headers.get(RpmTag.URL, b'').decode()
         time = ET.SubElement(self.primary, 'time')
         time.set('file', str(mtime))
-        if (buildtime := headers.get('buildtime')) is not None:
+        if (buildtime := headers.get(RpmTag.BUILDTIME)) is not None:
             time.set('build', str(buildtime))
         size_el = ET.SubElement(self.primary, 'size')
         size_el.set('package', str(size))
-        installed = headers.get('longsize', headers.get('size'))
+        installed = headers.get(RpmTag.LONGSIZE,
+                        headers.get(RpmTag.SIZE,
+                            signature.get(RpmSigTag.SIZE)))
         size_el.set('installed', str(installed))
-        archive = headers.get('longarchivesize',
-                    headers.get('archivesize',
-                        headers.get('payloadsize',
-                            headers.get('payloadsizealt', headers.get(5113)))))
+        archive = headers.get(RpmTag.LONGARCHIVESIZE,
+                    signature.get(RpmSigTag.LONGARCHIVESIZE,
+                        headers.get(RpmTag.ARCHIVESIZE,
+                            signature.get(RpmSigTag.PAYLOADSIZE,
+                                headers.get(RpmTag.PAYLOADSIZEALT)))))
         size_el.set('archive', str(archive))
         ET.SubElement(self.primary, 'location').set('href', filename)
         fmt = ET.SubElement(self.primary, 'format')
-        if (license_ := headers.get('copyright')) is not None:
+        if (license_ := headers.get(RpmTag.LICENSE)) is not None:
             ET.SubElement(fmt, 'rpm:license').text = license_.decode()
-        if (vendor := headers.get('vendor')) is not None:
+        if (vendor := headers.get(RpmTag.VENDOR)) is not None:
             ET.SubElement(fmt, 'rpm:vendor').text = vendor.decode()
-        if (group := headers.get('group')) is not None:
+        if (group := headers.get(RpmTag.GROUP)) is not None:
             ET.SubElement(fmt, 'rpm:group').text = group.decode()
-        if (buildhost := headers.get('buildhost')) is not None:
+        if (buildhost := headers.get(RpmTag.BUILDHOST)) is not None:
             ET.SubElement(fmt, 'rpm:buildhost').text = buildhost.decode()
-        if (sourcerpm := headers.get('sourcerpm')) is not None:
+        if (sourcerpm := headers.get(RpmTag.SOURCERPM)) is not None:
             ET.SubElement(fmt, 'rpm:sourcerpm').text = sourcerpm.decode()
         header_range_el = ET.SubElement(fmt, 'rpm:header-range')
         header_start, header_end = header_range
         header_range_el.set('start', str(header_start))
         header_range_el.set('end', str(header_end))
 
-        provided = self.__collect_dependencies(headers, ('provides', 'provideflags', 'provideversion'))
+        provided = self.__collect_dependencies(headers, (RpmTag.PROVIDENAME, RpmTag.PROVIDEFLAGS, RpmTag.PROVIDEVERSION))
         self.__write_dependencies(fmt, 'rpm:provides', provided)
-        
+
         required_filter = self._RequiredFilter(provided, primary_files)
-        required = self.__collect_dependencies(headers, ('requirename', 'requireflags', 'requireversion'),
+        required = self.__collect_dependencies(headers, (RpmTag.REQUIRENAME, RpmTag.REQUIREFLAGS, RpmTag.REQUIREVERSION),
                                                filter_func=required_filter)
         if required_filter.latest_libc is not None:
             required.append(required_filter.latest_libc)
@@ -416,12 +414,12 @@ class RpmPackage(metaclass=NoPublicConstructor):
             
 
         simple_refs = [
-            ('rpm:conflicts',   ('conflictname',    'conflictflags',    'conflictversion')),
-            ('rpm:obsoletes',   ('obsoletes',       'obsoleteflags',    'obsoleteversion')),
-            ('rpm:suggests',    ('suggestname',     'suggestflags',     'suggestversion')),
-            ('rpm:enhances',    ('enhancename',     'enhanceflags',     'enhanceversion')),
-            ('rpm:supplements', ('supplementname',  'supplementflags',  'supplementversion')),
-            ('rpm:recommends',  ('recommendname',   'recommendflags',   'recommendversion'))
+            ('rpm:conflicts',   (RpmTag.CONFLICTNAME,   RpmTag.CONFLICTFLAGS,   RpmTag.CONFLICTVERSION)),
+            ('rpm:obsoletes',   (RpmTag.OBSOLETENAME,   RpmTag.OBSOLETEFLAGS,   RpmTag.OBSOLETEVERSION)),
+            ('rpm:suggests',    (RpmTag.SUGGESTNAME,    RpmTag.SUGGESTFLAGS,    RpmTag.SUGGESTVERSION)),
+            ('rpm:enhances',    (RpmTag.ENHANCENAME,    RpmTag.ENHANCEFLAGS,    RpmTag.ENHANCEVERSION)),
+            ('rpm:supplements', (RpmTag.SUPPLEMENTNAME, RpmTag.SUPPLEMENTFLAGS, RpmTag.SUPPLEMENTVERSION)),
+            ('rpm:recommends',  (RpmTag.RECOMMENDNAME,  RpmTag.RECOMMENDFLAGS,  RpmTag.RECOMMENDVERSION))
         ]
 
         for refs in simple_refs:
@@ -460,7 +458,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
             return True
 
 
-    def __collect_dependencies(self, headers, desc: Tuple[str, str, str],
+    def __collect_dependencies(self, headers: RpmHeader, desc: Tuple[int, int, int],
                                filter_func: Optional[Callable[[Sequence[_RpmDependency], _RpmDependency], bool]] = None):
         deps: list[_RpmDependency] = []
         for name, flags, version in zip(self.__read_list(headers, desc[0]),
@@ -480,7 +478,7 @@ class RpmPackage(metaclass=NoPublicConstructor):
                 ret.append(dep.export())
 
     def __fill_changelog(self):
-        headers = self.__headers
+        headers = self.__header
 
         self.__changelog = ET.Element('package')
         self.__changelog.set('pkgid', self.pkgid)
@@ -493,9 +491,9 @@ class RpmPackage(metaclass=NoPublicConstructor):
         version.set('rel', self.version_key.rel)
 
         entries = []
-        for time, author, comment in zip(self.__read_list(headers, 'changelogtime'),
-                                         self.__read_list(headers, 'authors'),
-                                         self.__read_list(headers, 'comments')):
+        for time, author, comment in zip(self.__read_list(headers, RpmTag.CHANGELOGTIME),
+                                         self.__read_list(headers, RpmTag.CHANGELOGNAME),
+                                         self.__read_list(headers, RpmTag.CHANGELOGTEXT)):
             entry = ET.Element('changelog')
             entry.text = comment.decode()
             entry.set('author', author.decode())
@@ -510,8 +508,8 @@ class RpmPackage(metaclass=NoPublicConstructor):
 
     
     @staticmethod
-    def __read_list(headers: dict[str, Any], name: str):
-        ret = headers.get(name)
+    def __read_list(headers: RpmHeader, tag: int):
+        ret = headers.get(tag)
         if ret is None: return []
         if not isinstance(ret, list) and not isinstance(ret, tuple): return [ret]
         return ret
