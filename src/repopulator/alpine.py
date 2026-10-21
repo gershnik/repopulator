@@ -345,7 +345,8 @@ class AlpineRepo:
     def __create_index_signature(path: Path, sig_path: Path, signer: PkiSigner, signer_name: str, now: datetime):
         signature = signer.get_alpine_signature(path)
         with open(sig_path, 'wb') as f_out:
-            with gzip.GzipFile(filename='', mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
+            with gzip.GzipFile(filename='', mode='wb', fileobj=f_out, 
+                               mtime=int(now.timestamp()), compresslevel=9) as f_zip:
                 python_typing_is_dumb: Any = f_zip
                 with tarfile.open(mode="w:", fileobj=python_typing_is_dumb) as archive:
                     info = tarfile.TarInfo(f'.SIGN.RSA.{signer_name}.rsa.pub')
