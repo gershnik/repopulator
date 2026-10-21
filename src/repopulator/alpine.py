@@ -315,7 +315,8 @@ class AlpineRepo:
             
             index_tgz = expanded_arch_dir / 'index.tgz'
             with open(index_tgz, 'wb') as f_out:
-                with gzip.GzipFile(filename='', mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
+                with gzip.GzipFile(filename='', mode='wb', fileobj=f_out, 
+                                   mtime=int(now.timestamp()), compresslevel=9) as f_zip:
                     python_typing_is_dumb: Any = f_zip
                     with tarfile.open(mode="w:", fileobj=python_typing_is_dumb) as archive:
                         archive.add(description, arcname=description.name, filter=norm)

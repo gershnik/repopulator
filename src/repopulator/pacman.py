@@ -334,7 +334,8 @@ class PacmanRepo:
         
         tarpath = dest_dir / (stem + '.tar.gz')
         with open(tarpath, 'wb') as f_out:
-            with gzip.GzipFile(filename=tarpath.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
+            with gzip.GzipFile(filename=tarpath.name, mode='wb', fileobj=f_out, 
+                               mtime=int(now.timestamp()), compresslevel=9) as f_zip:
                 python_typing_is_dumb: Any = f_zip
                 with tarfile.open(mode="w:", fileobj=python_typing_is_dumb) as archive:
                     for package in packages:

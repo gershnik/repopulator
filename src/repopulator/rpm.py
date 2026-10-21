@@ -669,7 +669,8 @@ class RpmRepo:
 
         with open(gz_path, 'wb') as f_out:
             gz_tap = HashingWriter(f_out, digest)
-            with gzip.GzipFile(filename=path.name, mode='wb', fileobj=gz_tap, mtime=int(now.timestamp())) as f_zip:
+            with gzip.GzipFile(filename=path.name, mode='wb', fileobj=gz_tap, 
+                               mtime=int(now.timestamp()), compresslevel=9) as f_zip:
                 open_tap = HashingWriter(f_zip, open_digest)
                 with open(path, 'rb') as f_in:
                     shutil.copyfileobj(f_in, open_tap)

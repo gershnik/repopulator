@@ -358,7 +358,9 @@ class AptDistribution(metaclass=NoPublicConstructor):
         Packages_gz_path = Packages_path.with_suffix('.gz') # pylint: disable=invalid-name
         with open(Packages_path, 'rb') as f_in:
             with open(Packages_gz_path, 'wb') as f_out:
-                with gzip.GzipFile(filename=Packages_path.name, mode='wb', fileobj=f_out, mtime=int(now.timestamp())) as f_zip:
+                with gzip.GzipFile(filename=Packages_path.name, mode='wb', 
+                                   fileobj=f_out, mtime=int(now.timestamp()), 
+                                   compresslevel=9) as f_zip:
                     shutil.copyfileobj(f_in, f_zip)
         os.utime(Packages_gz_path, (now.timestamp(), now.timestamp()))
 
