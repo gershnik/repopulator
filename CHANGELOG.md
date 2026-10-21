@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+- Official Python 3.15 support.
+
+### Fixed
+- Incorrect 12 hour timestamp for APT repos.
+- Incorrect compression level for gzipped files on Python 15.
+- Tests no longer depend on test packages from various external URLs that occasionally disappear.
+
 ## [1.7] - 2026-05-17
 
 ### Fixed
