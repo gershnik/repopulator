@@ -23,7 +23,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: [
-          "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.14t",
+          "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.14t", "3.15",
           "pypy-3.11"
         ]
 
@@ -33,7 +33,7 @@ jobs:
       BSD_KEY: ${{ github.workspace }}/bsd-key
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Preprare Keys
         shell: bash
@@ -47,7 +47,7 @@ jobs:
         run: rm -rf ~/Library/Caches/pip
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         id: setup-python
         with:
           python-version: ${{matrix.python-version}}
