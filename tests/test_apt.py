@@ -15,9 +15,12 @@ from repopulator import *
 
 from .utils import compare_files
 
+# URL to get packages from
+# https://old-releases.ubuntu.com/ubuntu/pool/main/
+
 
 @pytest.mark.download(
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10-2ubuntu0.1_sparc.deb'
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10-2ubuntu0.1_sparc.deb'
 )
 def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = AptRepo()
@@ -53,8 +56,8 @@ def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
 
 
 @pytest.mark.download(
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10-2ubuntu0.1_sparc.deb',
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/n/nano/nano-udeb_1.3.10-1_amd64.udeb'
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10-2ubuntu0.1_sparc.deb',
+    'https://www.gershnik.com/repopulator-test-binaries/nano-udeb_1.3.10-1_amd64.udeb'
 )
 def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = AptRepo()
@@ -88,8 +91,8 @@ def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     compare_files(output_path / 'dists/blah/xyz/main/binary-amd64/Packages.gz', expected_path / 'dists/blah/xyz/main/binary-amd64/Packages.gz', should_populate)
 
 @pytest.mark.download(
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10-2ubuntu0.1_sparc.deb',
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10.2-1ubuntu1.2_sparc.deb'
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10-2ubuntu0.1_sparc.deb',
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10.2-1ubuntu1.2_sparc.deb'
 )
 def test_two_close(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = AptRepo()
@@ -120,9 +123,9 @@ def test_two_close(binaries_path, output_path, expected_path, pgp_signer, fixed_
     compare_files(output_path / 'dists/blah/main/binary-sparc/Packages.gz', expected_path / 'dists/blah/main/binary-sparc/Packages.gz', should_populate)
     
 @pytest.mark.download(
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10-2ubuntu0.1_sparc.deb',
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10.2-1ubuntu1.2_sparc.deb',
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/n/nano/nano-udeb_1.3.10-1_amd64.udeb'
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10-2ubuntu0.1_sparc.deb',
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10.2-1ubuntu1.2_sparc.deb',
+    'https://www.gershnik.com/repopulator-test-binaries/nano-udeb_1.3.10-1_amd64.udeb'
 )
 def test_crud(binaries_path):
     repo = AptRepo()
@@ -166,9 +169,9 @@ def test_crud(binaries_path):
     assert [x for x in dist2.architectures('hello')] == ['sparc']
 
 @pytest.mark.download(
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10-2ubuntu0.1_sparc.deb',
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.10.2-1ubuntu1.2_sparc.deb',
-    'https://old-releases.ubuntu.com/ubuntu/pool/main/n/nano/nano-udeb_1.3.10-1_amd64.udeb'
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10-2ubuntu0.1_sparc.deb',
+    'https://www.gershnik.com/repopulator-test-binaries/wget_1.10.2-1ubuntu1.2_sparc.deb',
+    'https://www.gershnik.com/repopulator-test-binaries/nano-udeb_1.3.10-1_amd64.udeb'
 )
 def test_cmd(binaries_path, output_path, pgp_cmd):
     subprocess.run([sys.executable, '-m', 'repopulator', 'apt'] + 

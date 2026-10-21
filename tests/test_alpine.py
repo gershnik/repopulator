@@ -14,9 +14,12 @@ from repopulator import *
 
 from .utils import compare_files
 
+# URL to get packages from
+# https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64
+
 
 @pytest.mark.download(
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/samba-client-4.19.9-r0.apk',
+    'https://www.gershnik.com/repopulator-test-binaries/samba-client-4.19.9-r0.apk',
 )
 def test_one(binaries_path, output_path, expected_path, pki_signer, fixed_datetime, should_populate):
     repo = AlpineRepo('fancy repo')
@@ -36,8 +39,8 @@ def test_one(binaries_path, output_path, expected_path, pki_signer, fixed_dateti
     compare_files(output_path / 'expanded/x86_64/APKINDEX', expected_path / 'APKINDEX', should_populate)
 
 @pytest.mark.download(
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/samba-client-4.19.9-r0.apk',
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/cgdb-0.8.0-r2.apk'
+    'https://www.gershnik.com/repopulator-test-binaries/samba-client-4.19.9-r0.apk',
+    'https://www.gershnik.com/repopulator-test-binaries/cgdb-0.8.0-r2.apk'
 )
 def test_two(binaries_path, output_path, expected_path, pki_signer, fixed_datetime, should_populate):
     repo = AlpineRepo('fancy repo')
@@ -59,9 +62,9 @@ def test_two(binaries_path, output_path, expected_path, pki_signer, fixed_dateti
     compare_files(output_path / 'expanded/x86_64/APKINDEX', expected_path / 'APKINDEX', should_populate)
 
 @pytest.mark.download(
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/samba-client-4.19.9-r0.apk',
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/cgdb-0.8.0-r2.apk',
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/aarch64/7zip-23.01-r0.apk'
+    'https://www.gershnik.com/repopulator-test-binaries/samba-client-4.19.9-r0.apk',
+    'https://www.gershnik.com/repopulator-test-binaries/cgdb-0.8.0-r2.apk',
+    'https://www.gershnik.com/repopulator-test-binaries/7zip-23.01-r0.apk'
 )
 def test_crud(binaries_path):
     repo = AlpineRepo('lol')
@@ -86,9 +89,9 @@ def test_crud(binaries_path):
     assert [x for x in repo.packages('x86_64')] == [package1]
 
 @pytest.mark.download(
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/samba-client-4.19.9-r0.apk',
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/cgdb-0.8.0-r2.apk',
-    'https://dl-cdn.alpinelinux.org/alpine/v3.20/main/aarch64/7zip-23.01-r0.apk'
+    'https://www.gershnik.com/repopulator-test-binaries/samba-client-4.19.9-r0.apk',
+    'https://www.gershnik.com/repopulator-test-binaries/cgdb-0.8.0-r2.apk',
+    'https://www.gershnik.com/repopulator-test-binaries/7zip-23.01-r0.apk'
 )
 def test_cmd(binaries_path, output_path, pki_cmd):
     subprocess.run([sys.executable, '-m', 'repopulator', 'alpine',

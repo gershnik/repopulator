@@ -16,7 +16,7 @@ from .utils import compare_files
 
 
 @pytest.mark.download(
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/zsm-0.4.0_2~8e79459d43.pkg', 'zsm-0.4.0_2.pkg')
+    ('https://www.gershnik.com/repopulator-test-binaries/zsm-0.4.0_2.pkg')
 )
 def test_one(binaries_path, output_path, expected_path, pki_signer, fixed_datetime, should_populate):
     repo = FreeBSDRepo()
@@ -36,8 +36,8 @@ def test_one(binaries_path, output_path, expected_path, pki_signer, fixed_dateti
 
 
 @pytest.mark.download(
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/zsm-0.4.0_2~8e79459d43.pkg', 'zsm-0.4.0_2.pkg'),
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/gnustep-app-2.0.0_24~1dd54f3fa8.pkg', 'gnustep-app-2.0.0_24.pkg')
+    ('https://www.gershnik.com/repopulator-test-binaries/zsm-0.4.0_2.pkg'),
+    ('https://www.gershnik.com/repopulator-test-binaries/gnustep-app-2.0.0_24.pkg')
 )
 def test_two(binaries_path, output_path, expected_path, pki_signer, fixed_datetime, should_populate):
     repo = FreeBSDRepo()
@@ -58,9 +58,9 @@ def test_two(binaries_path, output_path, expected_path, pki_signer, fixed_dateti
     compare_files(output_path / 'packagesite/packagesite.yaml', expected_path / 'packagesite/packagesite.yaml', should_populate)
 
 @pytest.mark.download(
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/zsm-0.4.0_2~8e79459d43.pkg', 'zsm-0.4.0_2.pkg'),
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/gnustep-app-2.0.0_24~1dd54f3fa8.pkg', 'gnustep-app-2.0.0_24.pkg'),
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/gnurobots-1.2.0_17~07749feb8d.pkg', 'gnurobots-1.2.0_17.pkg')
+    ('https://www.gershnik.com/repopulator-test-binaries/zsm-0.4.0_2.pkg'),
+    ('https://www.gershnik.com/repopulator-test-binaries/gnustep-app-2.0.0_24.pkg'),
+    ('https://www.gershnik.com/repopulator-test-binaries/gnurobots-1.2.0_17.pkg')
 )
 def test_crud(binaries_path):
     repo = FreeBSDRepo()
@@ -84,9 +84,9 @@ def test_crud(binaries_path):
     assert [x for x in repo.packages] == [package1]
 
 @pytest.mark.download(
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/zsm-0.4.0_2~8e79459d43.pkg', 'zsm-0.4.0_2.pkg'),
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/gnustep-app-2.0.0_24~1dd54f3fa8.pkg', 'gnustep-app-2.0.0_24.pkg'),
-    ('https://pkg.freebsd.org/FreeBSD:15:amd64/release_1/All/Hashed/gnurobots-1.2.0_17~07749feb8d.pkg', 'gnurobots-1.2.0_17.pkg')
+    ('https://www.gershnik.com/repopulator-test-binaries/zsm-0.4.0_2.pkg'),
+    ('https://www.gershnik.com/repopulator-test-binaries/gnustep-app-2.0.0_24.pkg'),
+    ('https://www.gershnik.com/repopulator-test-binaries/gnurobots-1.2.0_17.pkg')
 )
 def test_cmd(binaries_path, output_path, pki_cmd):
     subprocess.run([sys.executable, '-m', 'repopulator', 'freebsd'] + 

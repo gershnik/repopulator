@@ -15,6 +15,9 @@ from repopulator.rpm import _compare_abi_version
 
 from .utils import compare_files, compare_xml_files
 
+# URL to get packages from
+# https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/
+
 REPOMD_NORMALIZE = """\
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
@@ -42,7 +45,7 @@ def test_compareAbiVersion():
     assert _compare_abi_version('libc.so.6(GLIBC_2.1.4)(64 bit)', 'libc.so.6()(64 bit)') == 1
 
 @pytest.mark.download(
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/s/sudo-1.9.17-5.p1.fc43.x86_64.rpm"
+    "https://www.gershnik.com/repopulator-test-binaries/sudo-1.9.17-5.p1.fc43.x86_64.rpm"
 )
 def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = RpmRepo()
@@ -59,8 +62,8 @@ def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     compare_files(output_path / 'repodata/other.xml', expected_path / 'other.xml', should_populate)
 
 @pytest.mark.download(
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/s/sudo-1.9.17-5.p1.fc43.x86_64.rpm",
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/d/dhcp-devel-4.4.3-22.fc43.x86_64.rpm"
+    "https://www.gershnik.com/repopulator-test-binaries/sudo-1.9.17-5.p1.fc43.x86_64.rpm",
+    "https://www.gershnik.com/repopulator-test-binaries/dhcp-devel-4.4.3-22.fc43.x86_64.rpm"
 )
 def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = RpmRepo()
@@ -79,9 +82,9 @@ def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     compare_files(output_path / 'repodata/other.xml', expected_path / 'other.xml', should_populate)
 
 @pytest.mark.download(
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/s/sudo-1.9.17-5.p1.fc43.x86_64.rpm",
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/d/dhcp-devel-4.4.3-22.fc43.x86_64.rpm",
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/m/makepasswd-0.5.3-35.fc43.x86_64.rpm"
+    "https://www.gershnik.com/repopulator-test-binaries/sudo-1.9.17-5.p1.fc43.x86_64.rpm",
+    "https://www.gershnik.com/repopulator-test-binaries/dhcp-devel-4.4.3-22.fc43.x86_64.rpm",
+    "https://www.gershnik.com/repopulator-test-binaries/makepasswd-0.5.3-35.fc43.x86_64.rpm"
 )
 def test_crud(binaries_path):
     repo = RpmRepo()
@@ -105,9 +108,9 @@ def test_crud(binaries_path):
     assert [x for x in repo.packages] == [package1]
 
 @pytest.mark.download(
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/s/sudo-1.9.17-5.p1.fc43.x86_64.rpm",
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/d/dhcp-devel-4.4.3-22.fc43.x86_64.rpm",
-    "https://rpmfind.net/linux/fedora/linux/releases/43/Everything/x86_64/os/Packages/m/makepasswd-0.5.3-35.fc43.x86_64.rpm"
+    "https://www.gershnik.com/repopulator-test-binaries/sudo-1.9.17-5.p1.fc43.x86_64.rpm",
+    "https://www.gershnik.com/repopulator-test-binaries/dhcp-devel-4.4.3-22.fc43.x86_64.rpm",
+    "https://www.gershnik.com/repopulator-test-binaries/makepasswd-0.5.3-35.fc43.x86_64.rpm"
 )
 def test_cmd(binaries_path, output_path, pgp_cmd):
     subprocess.run([sys.executable, '-m', 'repopulator', 'rpm'] + 

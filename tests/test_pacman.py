@@ -15,9 +15,12 @@ from repopulator import *
 
 from .utils import compare_files
 
+# URL to get packages from
+# https://archive.archlinux.org/packages/
+
 @pytest.mark.download(
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
 )
 def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = PacmanRepo('fancyrepo')
@@ -47,10 +50,10 @@ def test_one(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
     assert os.readlink(output_path / 'x86_64/fancyrepo.files.sig') == 'fancyrepo.files.tar.gz.sig'
 
 @pytest.mark.download(
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
-    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst.sig'
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
+    'https://www.gershnik.com/repopulator-test-binaries/pacman-5.2.2-3-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/pacman-5.2.2-3-x86_64.pkg.tar.zst.sig'
 )
 def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_datetime, should_populate):
     repo = PacmanRepo('fancyrepo')
@@ -81,12 +84,12 @@ def test_two(binaries_path, output_path, expected_path, pgp_signer, fixed_dateti
 
 
 @pytest.mark.download(
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
-    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst.sig',
-    'https://archive.archlinux.org/packages/t/tar/tar-1.34-1-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/t/tar/tar-1.34-1-x86_64.pkg.tar.zst.sig'
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
+    'https://www.gershnik.com/repopulator-test-binaries/pacman-5.2.2-3-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/pacman-5.2.2-3-x86_64.pkg.tar.zst.sig',
+    'https://www.gershnik.com/repopulator-test-binaries/tar-1.34-1-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/tar-1.34-1-x86_64.pkg.tar.zst.sig'
 )
 def test_crud(binaries_path):
     repo = PacmanRepo('lol')
@@ -111,12 +114,12 @@ def test_crud(binaries_path):
     assert [x for x in repo.packages('x86_64')] == [package1]
 
 @pytest.mark.download(
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/m/makedumpfile/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
-    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/p/pacman/pacman-5.2.2-3-x86_64.pkg.tar.zst.sig',
-    'https://archive.archlinux.org/packages/t/tar/tar-1.34-1-x86_64.pkg.tar.zst',
-    'https://archive.archlinux.org/packages/t/tar/tar-1.34-1-x86_64.pkg.tar.zst.sig'
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/makedumpfile-1.7.1-1-x86_64.pkg.tar.zst.sig',
+    'https://www.gershnik.com/repopulator-test-binaries/pacman-5.2.2-3-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/pacman-5.2.2-3-x86_64.pkg.tar.zst.sig',
+    'https://www.gershnik.com/repopulator-test-binaries/tar-1.34-1-x86_64.pkg.tar.zst',
+    'https://www.gershnik.com/repopulator-test-binaries/tar-1.34-1-x86_64.pkg.tar.zst.sig'
 )
 def test_cmd(binaries_path, output_path, pgp_cmd):
     subprocess.run([sys.executable, '-m', 'repopulator', 'pacman',
