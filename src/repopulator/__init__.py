@@ -12,6 +12,7 @@ from .pgp_signer import PgpSigner
 from .pki_signer import PkiSigner
 
 from .util import VersionKey
+from .rpmfile import RpmTag, RpmSigTag
 
 from .apt import AptPackage, AptDistribution, AptRepo
 from .rpm import RpmPackage, RpmRepo, RpmVersion
@@ -23,6 +24,8 @@ __all__ = [
     'PgpSigner', 
     'PkiSigner', 
     'VersionKey',
+    'RpmTag',
+    'RpmSigTag',
     'AptPackage', 
     'AptDistribution', 
     'AptRepo',

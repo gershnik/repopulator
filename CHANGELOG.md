@@ -6,11 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Support for RPM v6.
 - Official Python 3.15 support.
+
+### Changed
+- Breaking change for `RpmPackage` class. The `fields` property is now split into
+  two: `fields` and `signature`, both of which use integer rather than string keys.
+  See docs for details.
+- This library no longer depends on the `rpmfile` package.
 
 ### Fixed
 - Incorrect 12 hour timestamp for APT repos.
-- Incorrect compression level for gzipped files on Python 15.
+- Incorrect compression level for gzipped files on Python 3.15.
 - Tests no longer depend on test packages from various external URLs that occasionally disappear.
 
 ## [1.7] - 2026-05-17

@@ -296,12 +296,12 @@ class RpmPackage(metaclass=NoPublicConstructor):
     
     @property
     def fields(self) -> Mapping[int, Any]:
-        """Main header of the package keyed by RpmTag constants from repopulator.rpmfile"""
+        """Main header of the package keyed by `RpmTag` constants"""
         return self.__header
 
     @property
     def signature(self) -> Mapping[int, Any]:
-        """Signature header of the package keyed by RpmSigTag constants from repopulator.rpmfile"""
+        """Signature header of the package keyed by `RpmSigTag` constants"""
         return self.__signature
     
     @property
