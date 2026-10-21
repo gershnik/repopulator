@@ -6,7 +6,7 @@ Version: 1.2
 Architectures: sparc
 Components: main
 Description: hohohoho
-Date: Fri, 31 May 2024 01:45:07 +0000
+Date: Fri, 31 May 2024 13:45:07 UTC
 MD5Sum:
  dde72657d7e51fe7068981d05e97cf2d             1603 main/binary-sparc/Packages
  48816c2d3536cf08509f1738374a4a57              994 main/binary-sparc/Packages.gz

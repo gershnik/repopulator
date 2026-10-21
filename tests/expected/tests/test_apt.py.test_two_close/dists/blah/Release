@@ -6,7 +6,7 @@ Version: 3.5
 Architectures: sparc
 Components: main
 Description: hohohoho
-Date: Fri, 31 May 2024 01:45:07 +0000
+Date: Fri, 31 May 2024 13:45:07 UTC
 MD5Sum:
  43209c6b32057ce527c330a2fe0c0621             3226 main/binary-sparc/Packages
  3d5c898f0c0cf1687b58778aac600ff3             1245 main/binary-sparc/Packages.gz
