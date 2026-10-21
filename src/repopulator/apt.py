@@ -18,6 +18,7 @@ import arpy
 from functools import total_ordering
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
+from email.utils import formatdate
 from typing import AbstractSet, Any, BinaryIO, Dict, KeysView, Mapping, Optional, Sequence
 
 from .pgp_signer import PgpSigner
@@ -311,7 +312,8 @@ class AptDistribution(metaclass=NoPublicConstructor):
             f.write(f'Components: {",".join(x[0] for x in components)}\n'.encode())
             if self.description is not None:
                 f.write(f'Description: {self.description}\n'.encode())
-            f.write(f'Date: {now.strftime("%a, %d %b %Y %I:%M:%S %z")}\n'.encode())
+            formatted_date = formatdate(now.timestamp(), usegmt=True).removesuffix('GMT') + 'UTC'
+            f.write(f'Date: {formatted_date}\n'.encode())
 
             hashes = [
                 (hashlib.md5, 'MD5Sum'),
